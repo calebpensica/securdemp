@@ -8,7 +8,7 @@ public class Transaction
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int id;
+	private int transactionid;
 	
 	@Column(nullable=false)
 	private float sum;
@@ -25,7 +25,8 @@ public class Transaction
 	@Column(nullable=false)
 	private Client buyer;
 	
-	@Column(nullable=false)
+	@OneToOne(mappedBy = "transaction", cascade = CascadeType.ALL, 
+            fetch = FetchType.LAZY, optional = false)
 	private Cart cart;
 	
 	public Transaction() {
@@ -33,11 +34,11 @@ public class Transaction
 	}
 
 	public int getId() {
-		return id;
+		return transactionid;
 	}
 
 	public void setId(int id) {
-		this.id = id;
+		this.transactionid = id;
 	}
 
 	public float getSum() {

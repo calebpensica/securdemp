@@ -7,8 +7,7 @@ public class Tag
 {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int id;
-	
+	private int tagid;
 	@Column(nullable=false)
 	private String tag;
 	
@@ -17,11 +16,11 @@ public class Tag
 	}
 
 	public int getId() {
-		return id;
+		return tagid;
 	}
 
 	public void setId(int id) {
-		this.id = id;
+		this.tagid = id;
 	}
 
 	public String getTag() {

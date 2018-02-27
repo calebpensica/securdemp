@@ -7,13 +7,14 @@ public class CartItem
 {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int citemid;
-	
+	private int citemid;	
+	@OneToOne(cascade = CascadeType.ALL)	
+	private Product product;	
 	@Column(nullable=false)
-	private Product product;
-	
-	@Column(nullable=false)
-	private int quantity;
+	private int quantity;	
+	@ManyToOne
+    @JoinColumn(name="cartid", nullable=false)
+	private Cart cart;
 
 	public CartItem() {
 		// TODO Auto-generated constructor stub
@@ -41,6 +42,14 @@ public class CartItem
 
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
+	}
+
+	public Cart getCart() {
+		return cart;
+	}
+
+	public void setCart(Cart cart) {
+		this.cart = cart;
 	}
 
 }

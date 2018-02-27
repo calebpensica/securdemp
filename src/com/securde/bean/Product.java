@@ -9,19 +9,18 @@ public class Product
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int productid;
-	
+	private int productid;	
 	@Column(nullable=false)
-	private String name;
-	
+	private String name;	
 	@Column(nullable=false)
-	private float price;
-	
+	private float price;	
 	@Column(nullable=false)
-	private boolean status;
-	
+	private boolean status;	
 	@Column
 	private String imagepath;
+	@ManyToMany(cascade = CascadeType.MERGE, fetch=FetchType.EAGER )
+	@JoinTable(name = "product_tags", joinColumns = { @JoinColumn(name = "productid") }, inverseJoinColumns = { @JoinColumn(name = "tagid") })
+	private Set<Tag> tags;
 	
 	
 	public Product() {

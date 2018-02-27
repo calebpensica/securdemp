@@ -9,9 +9,12 @@ public class Cart
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int cartid;
 	
-	@ManyToMany(cascade = CascadeType.MERGE, fetch=FetchType.EAGER )
-	@JoinTable(name = "cart_items", joinColumns = { @JoinColumn(name = "cartid") }, inverseJoinColumns = { @JoinColumn(name = "citemid") })
+	@OneToMany(mappedBy = "cart")
 	private Set<CartItem> items;
+	
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "transactionid")
+	private Transaction transaction;
 	
 	public Cart() {
 		// TODO Auto-generated constructor stub
@@ -31,6 +34,14 @@ public class Cart
 
 	public void setItems(Set<CartItem> items) {
 		this.items = items;
+	}
+
+	public Transaction getTransaction() {
+		return transaction;
+	}
+
+	public void setTransaction(Transaction trans) {
+		this.transaction = trans;
 	}
 
 }
