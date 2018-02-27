@@ -29,9 +29,11 @@ public class MainServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
-		
-		
+
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
+		System.out.println(username);
+		System.out.println(password)
 		/* CODE TO ADD TO THE TEST TABLE FEEL FREE TO DELETE
 		Test t = new Test("the newest label");
 		TestService.addTest(t);
@@ -43,7 +45,8 @@ public class MainServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+		request.getRequestDispatcher("login.jsp").forward(request, response);
+		
 	}
 
 }
