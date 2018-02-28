@@ -13,7 +13,7 @@
 			<property name="javax.persistence.jdbc.password" value="040495Slrp_" />
 
 			<!-- SQL dialect -->
-			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect" />
 			
 			<!-- Create/update tables automatically using mapping metadata -->
 			<property name="hibernate.hbm2ddl.auto" value="update" />

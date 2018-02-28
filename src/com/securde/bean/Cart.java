@@ -3,6 +3,7 @@ package com.securde.bean;
 import javax.persistence.*;
 import java.util.Set;
 
+@Entity(name="cart")
 public class Cart 
 {
 	@Id

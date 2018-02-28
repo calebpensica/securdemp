@@ -32,7 +32,7 @@ CREATE TABLE `admin` (
   `lName` varchar(100) NOT NULL,
   `email` varchar(100) NOT NULL,
   PRIMARY KEY (`adminid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,6 +41,7 @@ CREATE TABLE `admin` (
 
 LOCK TABLES `admin` WRITE;
 /*!40000 ALTER TABLE `admin` DISABLE KEYS */;
+INSERT INTO `admin` VALUES (1,'o','op','ops','1','2'),(2,'sean','naes','mah','boi','@kek'),(3,'0','9','8','7','6'),(4,'a','b','c','d','e');
 /*!40000 ALTER TABLE `admin` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -54,7 +55,9 @@ DROP TABLE IF EXISTS `cart`;
 CREATE TABLE `cart` (
   `cartid` int(11) NOT NULL AUTO_INCREMENT,
   `transactionid` int(11) NOT NULL,
-  PRIMARY KEY (`cartid`,`transactionid`)
+  PRIMARY KEY (`cartid`,`transactionid`),
+  KEY `FKb2wkgnh9q3fnvk7v0u31y7o9u` (`transactionid`),
+  CONSTRAINT `FKb2wkgnh9q3fnvk7v0u31y7o9u` FOREIGN KEY (`transactionid`) REFERENCES `transaction` (`transactionid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -77,7 +80,7 @@ DROP TABLE IF EXISTS `cart_items`;
 CREATE TABLE `cart_items` (
   `cartid` int(11) NOT NULL,
   `citemid` int(11) NOT NULL,
-  PRIMARY KEY (`cartid`,`citemid`)
+  PRIMARY KEY (`cartid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -100,9 +103,13 @@ DROP TABLE IF EXISTS `cartitem`;
 CREATE TABLE `cartitem` (
   `citemid` int(11) NOT NULL AUTO_INCREMENT,
   `quantity` int(11) NOT NULL,
-  `productid` int(11) NOT NULL,
   `cartid` int(11) NOT NULL,
-  PRIMARY KEY (`citemid`)
+  `product_productid` int(11) NOT NULL,
+  PRIMARY KEY (`citemid`),
+  KEY `FKtc9npvycs1rruynyqdhyrybqw` (`cartid`),
+  KEY `FKdn0h3m726afuk0yv9u2ogrs6q` (`product_productid`),
+  CONSTRAINT `FKdn0h3m726afuk0yv9u2ogrs6q` FOREIGN KEY (`product_productid`) REFERENCES `product` (`productid`),
+  CONSTRAINT `FKtc9npvycs1rruynyqdhyrybqw` FOREIGN KEY (`cartid`) REFERENCES `cart` (`cartid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -206,8 +213,9 @@ DROP TABLE IF EXISTS `product_tags`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `product_tags` (
   `productid` int(11) NOT NULL,
-  `tagid` varchar(45) NOT NULL,
-  PRIMARY KEY (`productid`,`tagid`)
+  `tagid` int(11) NOT NULL,
+  PRIMARY KEY (`productid`,`tagid`),
+  CONSTRAINT `FK1b1ldc9ol1t4piayqrbsi0c8p` FOREIGN KEY (`productid`) REFERENCES `product` (`productid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -245,6 +253,29 @@ CREATE TABLE `storemanager` (
 LOCK TABLES `storemanager` WRITE;
 /*!40000 ALTER TABLE `storemanager` DISABLE KEYS */;
 /*!40000 ALTER TABLE `storemanager` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `tag`
+--
+
+DROP TABLE IF EXISTS `tag`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tag` (
+  `tagid` int(11) NOT NULL AUTO_INCREMENT,
+  `tag` varchar(255) NOT NULL,
+  PRIMARY KEY (`tagid`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tag`
+--
+
+LOCK TABLES `tag` WRITE;
+/*!40000 ALTER TABLE `tag` DISABLE KEYS */;
+/*!40000 ALTER TABLE `tag` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -308,9 +339,11 @@ CREATE TABLE `transaction` (
   `deliveryAdd` varchar(255) NOT NULL,
   `timeOrder` varchar(45) DEFAULT NULL,
   `timeReceived` varchar(45) DEFAULT NULL,
-  `buyer` int(11) NOT NULL,
   `cart` int(11) NOT NULL,
-  PRIMARY KEY (`transactionid`)
+  `buyer_clientid` int(11) NOT NULL,
+  PRIMARY KEY (`transactionid`),
+  KEY `FKkdchb4tr4t84axfksv4wdh952` (`buyer_clientid`),
+  CONSTRAINT `FKkdchb4tr4t84axfksv4wdh952` FOREIGN KEY (`buyer_clientid`) REFERENCES `client` (`clientid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -332,4 +365,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-02-28 18:02:05
+-- Dump completed on 2018-02-28 21:16:37

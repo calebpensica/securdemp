@@ -1,6 +1,7 @@
 package com.securde.service;
 
 import com.securde.bean.Product;
+import com.securde.util.DBUtil;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -16,8 +17,7 @@ public class ProductService {
 	{
 		List<Product> products = new ArrayList<Product>();
 		
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("mysqldb");
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = DBUtil.getEntityManager();
 		
 		EntityTransaction trans = em.getTransaction();
 		
@@ -40,8 +40,7 @@ public class ProductService {
 	{
 		boolean added = false;
 		
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("mysqldb");
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = DBUtil.getEntityManager();
 		
 		EntityTransaction trans = em.getTransaction();
 		
@@ -67,8 +66,7 @@ public class ProductService {
 	public static boolean updateProduct(int id, Product newinfo)
 	{
 		boolean updated = false;
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("mysqldb");
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = DBUtil.getEntityManager();
 		
 		EntityTransaction trans = em.getTransaction();
 		
@@ -101,8 +99,7 @@ public class ProductService {
 	public static boolean deleteProduct(int id)
 	{
 		boolean deleted = false;
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("mysqldb");
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = DBUtil.getEntityManager();
 		
 		EntityTransaction trans = em.getTransaction();
 		
@@ -129,8 +126,7 @@ public class ProductService {
 	public static Product getProduct(int id)
 	{
 		Product p = null;
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("mysqldb");
-		EntityManager em = emf.createEntityManager();
+		EntityManager em = DBUtil.getEntityManager();
 		
 		EntityTransaction trans = em.getTransaction();
 		
