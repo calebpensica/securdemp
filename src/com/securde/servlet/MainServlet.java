@@ -9,10 +9,30 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+class URLPatterns
+{
+	public final static String REGISTERUSER = "/reguser";
+	public final static String REGISTERADMIN = "/regadmin";
+	public final static String REGISTERMANAGER = "/regmanager";
+	public final static String REGISTERSTAFF = "/regstaff";
+	public final static String LOGINUSER = "/loginuser";
+	public final static String LOGINADMIN = "/loginadmin";
+	public final static String LOGINMANAGER = "/loginmanager";
+	public final static String LOGINSTAFF = "/loginstaff";
+}
+
 /**
  * Servlet implementation class MainServlet
  */
-@WebServlet({"/MainServlet", "/signup", "/login"})
+@WebServlet({"/MainServlet", 
+			 URLPatterns.REGISTERUSER,
+			 URLPatterns.REGISTERADMIN,
+			 URLPatterns.REGISTERMANAGER,
+			 URLPatterns.REGISTERSTAFF,
+			 URLPatterns.LOGINUSER,
+			 URLPatterns.LOGINADMIN,
+			 URLPatterns.LOGINMANAGER,
+			 URLPatterns.LOGINSTAFF,})
 public class MainServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -30,17 +50,12 @@ public class MainServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doPost(request, response);
-		/* CODE TO ADD TO THE TEST TABLE FEEL FREE TO DELETE
-		Test t = new Test("the newest label");
-		TestService.addTest(t);
-		*/
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		
 		String pattern = request.getServletPath();
 		
@@ -49,28 +64,156 @@ public class MainServlet extends HttpServlet {
 			case "/MainServlet":
 				request.getRequestDispatcher("signup.jsp").forward(request, response);
 				break;
-			case "/signup":
-				register(request, response);
+			case URLPatterns.REGISTERUSER:
+				registerUser(request, response);
 				break;
-			case "/login":
+			case URLPatterns.REGISTERADMIN:
+				registerAdmin(request, response);
 				break;
-			
+			case URLPatterns.REGISTERSTAFF:
+				registerStaff(request, response);
+				break;	
+			case URLPatterns.REGISTERMANAGER:
+				registerManager(request, response);
+				break;
+			case URLPatterns.LOGINUSER:
+				loginUser(request, response);
+				break;	
+			case URLPatterns.LOGINADMIN:
+				loginAdmin(request, response);
+				break;	
+			case URLPatterns.LOGINSTAFF:
+				loginStaff(request, response);
+				break;	
+			case URLPatterns.LOGINMANAGER:
+				loginManager(request, response);
+				break;	
 		}
 		
 	}
 	
-	private void register(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void loginManager(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
+		
+		StoreManager s = StoreManagerService.findManager(username, password);
+		
+		if(s != null)
+			request.getRequestDispatcher("index.jsp").forward(request, response);
+		else
+			request.getRequestDispatcher("error.jsp").forward(request, response);
+	}
+
+	private void loginStaff(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
+		
+		InventoryStaff i = InventoryStaffService.findStaff(username, password);
+		
+		if(i != null)
+			request.getRequestDispatcher("index.jsp").forward(request, response);
+		else
+			request.getRequestDispatcher("error.jsp").forward(request, response);
+	}
+
+	private void loginAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
+		
+		Admin a = AdminService.findAdmin(username, password);
+		
+		if(a != null)
+			request.getRequestDispatcher("index.jsp").forward(request, response);
+		else
+			request.getRequestDispatcher("error.jsp").forward(request, response);
+	}
+
+	private void loginUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
+	{
+		// TODO Auto-generated method stub
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
+		
+		Client c = ClientService.findClient(username, password);
+		
+		if(c != null)
+			request.getRequestDispatcher("index.jsp").forward(request, response);
+		else
+			request.getRequestDispatcher("error.jsp").forward(request, response);
+	}
+
+	private void registerManager(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
+		String fName = request.getParameter("fName");
+		String lName = request.getParameter("lName");
+		String email = request.getParameter("email");
+		
+		StoreManager s = new StoreManager();
+		s.setUsername(username);
+		s.setPassword(password);
+		s.setfName(fName);
+		s.setlName(lName);
+		s.setEmail(email);
+		System.out.println(StoreManagerService.addManager(s)); 
+		
+		request.getRequestDispatcher("login.jsp").forward(request, response);
+	}
+
+	private void registerUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
+		String fName = request.getParameter("fName");
+		String lName = request.getParameter("lName");
+		String email = request.getParameter("email");
+		String contactNo = request.getParameter("contact");
+		String homeAdd = request.getParameter("address");
+		
+		Client c = new Client();
+		c.setUsername(username);
+		c.setPassword(password);
+		c.setfName(fName);
+		c.setlName(lName);
+		c.setEmail(email);
+		c.setContactNo(contactNo);
+		c.setHomeAdd(homeAdd);
+		
+		System.out.println(ClientService.addClient(c)); 
+		
+		request.getRequestDispatcher("login.jsp").forward(request, response);
+	}
+
+	private void registerStaff(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		String username = request.getParameter("username");
+		String password = request.getParameter("password");
+		String fName = request.getParameter("fName");
+		String lName = request.getParameter("lName");
+		String email = request.getParameter("email");
+		
+		InventoryStaff i = new InventoryStaff();
+		i.setUsername(username);
+		i.setPassword(password);
+		i.setfName(fName);
+		i.setlName(lName);
+		i.setEmail(email);
+		System.out.println(InventoryStaffService.addStaff(i)); 
+		
+		request.getRequestDispatcher("login.jsp").forward(request, response);
+	}
+
+	private void registerAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		String fName = request.getParameter("fName");
 		String lName = request.getParameter("lName");
 		String email = request.getParameter("email");
-		System.out.println(username);
-		System.out.println(password);
-		System.out.println(fName);
-		System.out.println(lName);
-		System.out.println(email);
 		
 		Admin a = new Admin();
 		a.setUsername(username);
@@ -81,7 +224,6 @@ public class MainServlet extends HttpServlet {
 		System.out.println(AdminService.addAdmin(a)); 
 		
 		request.getRequestDispatcher("login.jsp").forward(request, response);
-		
 	}
 
 }

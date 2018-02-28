@@ -149,4 +149,39 @@ public class StoreManagerService
 		
 		return s;
 	}
+	
+	private static final String COL_USERNAME = "username";
+	private static final String COL_PASSWORD = "password";
+	
+	public static StoreManager findManager(String username, String password)
+	{
+		StoreManager s = null;
+		
+		EntityManager em = DBUtil.getEntityManager();
+		EntityTransaction trans = em.getTransaction();
+		
+		try {
+			trans.begin();
+			String query = "FROM storemanager where " + COL_USERNAME + " = :username AND " + COL_PASSWORD + " = :password";
+			TypedQuery<StoreManager> q = em.createQuery(query, StoreManager.class);
+			q.setParameter("username", username);
+			q.setParameter("password", password);
+			List <StoreManager> managers = q.getResultList();
+			
+			if(managers != null && managers.size() != 0) {
+				s = managers.get(0);
+			}
+			trans.commit();
+			
+		} catch(Exception e) {
+			if(trans != null) {
+				trans.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			em.close();
+		}	
+		
+		return s;
+	}
 }

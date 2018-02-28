@@ -11,6 +11,9 @@ import java.util.*;
 
 public class ClientService 
 {
+	private static final String COL_USERNAME = "username";
+	private static final String COL_PASSWORD = "password";
+
 	public static List<Client> getAllClients()
 	{
 		List<Client> clients = new ArrayList<Client>();
@@ -148,6 +151,38 @@ public class ClientService
 		} finally {
 			em.close();
 		}
+		
+		return c;
+	}
+	
+	public static Client findClient(String username, String password)
+	{
+		Client c = null;
+		
+		EntityManager em = DBUtil.getEntityManager();
+		EntityTransaction trans = em.getTransaction();
+		
+		try {
+			trans.begin();
+			String query = "FROM client where " + COL_USERNAME + " = :username AND " + COL_PASSWORD + " = :password";
+			TypedQuery<Client> q = em.createQuery(query, Client.class);
+			q.setParameter("username", username);
+			q.setParameter("password", password);
+			List <Client> clients = q.getResultList();
+			
+			if(clients != null && clients.size() != 0) {
+				c = clients.get(0);
+			}
+			trans.commit();
+			
+		} catch(Exception e) {
+			if(trans != null) {
+				trans.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			em.close();
+		}	
 		
 		return c;
 	}

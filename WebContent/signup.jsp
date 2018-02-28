@@ -8,7 +8,7 @@
 </head>
 <body>
 	Sign up:
-	<form method = "post" action="signup">
+	<form method = "post" action="regadmin">
 		Username: <input type = "text" name = "username"/><br>
 		Password: <input type = "password" name = "password"/><br>
 		First Name: <input type = "text" name = "fName"/><br>

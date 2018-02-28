@@ -150,4 +150,39 @@ public class InventoryStaffService
 		
 		return i;
 	}
+	
+	private static final String COL_USERNAME = "username";
+	private static final String COL_PASSWORD = "password";
+	
+	public static InventoryStaff findStaff(String username, String password)
+	{
+		InventoryStaff i = null;
+		
+		EntityManager em = DBUtil.getEntityManager();
+		EntityTransaction trans = em.getTransaction();
+		
+		try {
+			trans.begin();
+			String query = "FROM inventorystaff where " + COL_USERNAME + " = :username AND " + COL_PASSWORD + " = :password";
+			TypedQuery<InventoryStaff> q = em.createQuery(query, InventoryStaff.class);
+			q.setParameter("username", username);
+			q.setParameter("password", password);
+			List <InventoryStaff> staffs = q.getResultList();
+			
+			if(staffs != null && staffs.size() != 0) {
+				i = staffs.get(0);
+			}
+			trans.commit();
+			
+		} catch(Exception e) {
+			if(trans != null) {
+				trans.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			em.close();
+		}	
+		
+		return i;
+	}
 }

@@ -4,9 +4,7 @@ import com.securde.bean.Product;
 import com.securde.util.DBUtil;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import javax.persistence.TypedQuery;
 
 import java.util.*;

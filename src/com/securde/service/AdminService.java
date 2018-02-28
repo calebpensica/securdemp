@@ -11,6 +11,9 @@ import java.util.*;
 
 public class AdminService 
 {
+	private static final String COL_USERNAME = "username";
+	private static final String COL_PASSWORD = "password";
+	
 	public static List<Admin> getAllAdmins()
 	{
 		List<Admin> admins = new ArrayList<Admin>();
@@ -146,6 +149,38 @@ public class AdminService
 		} finally {
 			em.close();
 		}
+		
+		return a;
+	}
+	
+	public static Admin findAdmin(String username, String password)
+	{
+		Admin a = null;
+		
+		EntityManager em = DBUtil.getEntityManager();
+		EntityTransaction trans = em.getTransaction();
+		
+		try {
+			trans.begin();
+			String query = "FROM admin where " + COL_USERNAME + " = :username AND " + COL_PASSWORD + " = :password";
+			TypedQuery<Admin> q = em.createQuery(query, Admin.class);
+			q.setParameter("username", username);
+			q.setParameter("password", password);
+			List <Admin> admins = q.getResultList();
+			
+			if(admins != null && admins.size() != 0) {
+				a = admins.get(0);
+			}
+			trans.commit();
+			
+		} catch(Exception e) {
+			if(trans != null) {
+				trans.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			em.close();
+		}	
 		
 		return a;
 	}

@@ -4,13 +4,9 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>PAPEMA</title>
+<title>Insert title here</title>
 </head>
 <body>
-	<form method = "post" action="loginadmin">
-		Username: <input type = "text" name = "username"/><br>
-		Password: <input type = "password" name = "password"/><br>
-		<input type="submit" value="Login">
-	</form>
+	<h1>sad</h1>
 </body>
 </html>
