@@ -69,4 +69,16 @@ public class Product
 		this.imagepath = filepath;
 	}
 
+	public Set<Tag> getTags() {
+		return tags;
+	}
+
+	public void setTags(Set<Tag> tags) {
+		this.tags = tags;
+	}
+	
+	public void addProductTag(Tag tag) {
+		tags.add(tag);
+	}
+
 }

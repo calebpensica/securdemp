@@ -33,7 +33,7 @@ public class MainServlet extends HttpServlet {
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		System.out.println(username);
-		System.out.println(password)
+		System.out.println(password);
 		/* CODE TO ADD TO THE TEST TABLE FEEL FREE TO DELETE
 		Test t = new Test("the newest label");
 		TestService.addTest(t);
