@@ -17,8 +17,7 @@ class URLPatterns
 {
 	public final static String REGISTERUSER = "/reguser";
 	public final static String REGISTERADMIN = "/regadmin";
-	public final static String REGISTERMANAGER = "/regmanager";
-	public final static String REGISTERSTAFF = "/regstaff";
+	public final static String REGISTEREMPLOYEE = "/regemployee";
 	public final static String LOGINUSER = "/loginuser";
 	public final static String LOGINADMIN = "/loginadmin";
 	public final static String LOGINMANAGER = "/loginmanager";
@@ -32,8 +31,7 @@ class URLPatterns
 @WebServlet({"/MainServlet", 
 			 URLPatterns.REGISTERUSER,
 			 URLPatterns.REGISTERADMIN,
-			 URLPatterns.REGISTERMANAGER,
-			 URLPatterns.REGISTERSTAFF,
+			 URLPatterns.REGISTEREMPLOYEE,
 			 URLPatterns.LOGINUSER,
 			 URLPatterns.LOGINADMIN,
 			 URLPatterns.LOGINMANAGER,
@@ -67,27 +65,30 @@ public class MainServlet extends HttpServlet {
 		
 		switch(pattern)
 		{
-			case "/MainServlet":
-				request.getRequestDispatcher("signup.jsp").forward(request, response);
+			case "/MainServlet":{
+				request.getRequestDispatcher("employeesignup.jsp").forward(request, response);
 				break;
-			case URLPatterns.REGISTERUSER:
+			}
+			case URLPatterns.REGISTERUSER:{
 				registerUser(request, response);
 				break;
-			case URLPatterns.REGISTERADMIN:
+			}
+			case URLPatterns.REGISTERADMIN:{
 				registerAdmin(request, response);
 				break;
-			case URLPatterns.REGISTERSTAFF:
-				registerStaff(request, response);
+			}
+			case URLPatterns.REGISTEREMPLOYEE:{
+				registerEmployee(request, response);
 				break;	
-			case URLPatterns.REGISTERMANAGER:
-				registerManager(request, response);
-				break;
-			case URLPatterns.LOGINUSER:
+			}
+			case URLPatterns.LOGINUSER:{
 				loginUser(request, response);
 				break;	
-			case URLPatterns.LOGINADMIN:
+			}
+			case URLPatterns.LOGINADMIN:{
 				loginAdmin(request, response);
 				break;	
+			}
 			case URLPatterns.LOGINSTAFF:
 				loginStaff(request, response);
 				break;	
@@ -154,8 +155,9 @@ public class MainServlet extends HttpServlet {
 			request.getRequestDispatcher("error.jsp").forward(request, response);
 	}
 
-	private void registerManager(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void registerEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		String fName = request.getParameter("fName");
@@ -163,12 +165,25 @@ public class MainServlet extends HttpServlet {
 		String email = request.getParameter("email");
 		
 		StoreManager s = new StoreManager();
-		s.setUsername(username);
-		s.setPassword(password);
-		s.setfName(fName);
-		s.setlName(lName);
-		s.setEmail(email);
-		System.out.println(StoreManagerService.addManager(s)); 
+		InventoryStaff is = new InventoryStaff();
+		if(request.getParameter("employeetype").equals("StoreManager")) {
+			s.setUsername(username);
+			s.setPassword(password);
+			s.setfName(fName);
+			s.setlName(lName);
+			s.setEmail(email);
+			System.out.println(StoreManagerService.addManager(s)); 
+		}
+		else {
+			is.setUsername(username);
+			is.setPassword(password);
+			is.setfName(fName);
+			is.setlName(lName);
+			is.setEmail(email);
+			System.out.println(InventoryStaffService.addStaff(is)); 
+		}
+		
+
 		
 		request.getRequestDispatcher("login.jsp").forward(request, response);
 	}
