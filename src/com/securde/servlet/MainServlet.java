@@ -3,6 +3,7 @@ package com.securde.servlet;
 import com.securde.bean.*;
 import com.securde.service.*;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -16,10 +17,14 @@ class URLPatterns
 {
 	public final static String REGISTERUSER = "/reguser";
 	public final static String REGISTERADMIN = "/regadmin";
-	public final static String REGISTERMANAGER = "/regmanager";
-	public final static String REGISTERSTAFF = "/regstaff";
 	public final static String LOGIN = "/login";
 	public final static String SEARCH = "/search";
+	public final static String REGISTEREMPLOYEE = "/regemployee";
+	public final static String LOGINUSER = "/loginuser";
+	public final static String LOGINADMIN = "/loginadmin";
+	public final static String LOGINMANAGER = "/loginmanager";
+	public final static String LOGINSTAFF = "/loginstaff";
+	public final static String ADDPRODUCT = "/addproduct";
 }
 
 /**
@@ -28,10 +33,14 @@ class URLPatterns
 @WebServlet({"/MainServlet", 
 			 URLPatterns.REGISTERUSER,
 			 URLPatterns.REGISTERADMIN,
-			 URLPatterns.REGISTERMANAGER,
-			 URLPatterns.REGISTERSTAFF,
 			 URLPatterns.LOGIN,
 			 URLPatterns.SEARCH})
+			 URLPatterns.REGISTEREMPLOYEE,
+			 URLPatterns.LOGINUSER,
+			 URLPatterns.LOGINADMIN,
+			 URLPatterns.LOGINMANAGER,
+			 URLPatterns.LOGINSTAFF,
+			 URLPatterns.ADDPRODUCT,})
 public class MainServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -60,27 +69,44 @@ public class MainServlet extends HttpServlet {
 		
 		switch(pattern)
 		{
-			case "/MainServlet":
-				request.getRequestDispatcher("signup.jsp").forward(request, response);
+			case "/MainServlet":{
+				request.getRequestDispatcher("employeesignup.jsp").forward(request, response);
 				break;
-			case URLPatterns.REGISTERUSER:
+			}
+			case URLPatterns.REGISTERUSER:{
 				registerUser(request, response);
 				break;
-			case URLPatterns.REGISTERADMIN:
+			}
+			case URLPatterns.REGISTERADMIN:{
 				registerAdmin(request, response);
 				break;
-			case URLPatterns.REGISTERSTAFF:
-				registerStaff(request, response);
+			}
+			case URLPatterns.REGISTEREMPLOYEE:{
+				registerEmployee(request, response);
 				break;	
-			case URLPatterns.REGISTERMANAGER:
-				registerManager(request, response);
-				break;
 			case URLPatterns.LOGIN:
 				loginUser(request, response);
 				break;	
 			case URLPatterns.SEARCH:
 				searchProducts(request, response);
 				break;
+			case URLPatterns.LOGINUSER:{
+				loginUser(request, response);
+				break;	
+			}
+			case URLPatterns.LOGINADMIN:{
+				loginAdmin(request, response);
+				break;	
+			}
+			case URLPatterns.LOGINSTAFF:
+				loginStaff(request, response);
+				break;	
+			case URLPatterns.LOGINMANAGER:
+				loginManager(request, response);
+				break;
+			case URLPatterns.ADDPRODUCT:
+				addProduct(request, response);
+				break;	
 		}
 		
 	}
@@ -115,8 +141,9 @@ public class MainServlet extends HttpServlet {
 			
 	}
 
-	private void registerManager(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void registerEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		String fName = request.getParameter("fName");
@@ -124,12 +151,25 @@ public class MainServlet extends HttpServlet {
 		String email = request.getParameter("email");
 		
 		StoreManager s = new StoreManager();
-		s.setUsername(username);
-		s.setPassword(password);
-		s.setfName(fName);
-		s.setlName(lName);
-		s.setEmail(email);
-		System.out.println(StoreManagerService.addManager(s)); 
+		InventoryStaff is = new InventoryStaff();
+		if(request.getParameter("employeetype").equals("StoreManager")) {
+			s.setUsername(username);
+			s.setPassword(password);
+			s.setfName(fName);
+			s.setlName(lName);
+			s.setEmail(email);
+			System.out.println(StoreManagerService.addManager(s)); 
+		}
+		else {
+			is.setUsername(username);
+			is.setPassword(password);
+			is.setfName(fName);
+			is.setlName(lName);
+			is.setEmail(email);
+			System.out.println(InventoryStaffService.addStaff(is)); 
+		}
+		
+
 		
 		request.getRequestDispatcher("login.jsp").forward(request, response);
 	}
@@ -195,6 +235,41 @@ public class MainServlet extends HttpServlet {
 		
 		request.getRequestDispatcher("login.jsp").forward(request, response);
 	}
+	
+	private void addProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		String name = request.getParameter("productName");
+		String description = request.getParameter("productDescription");
+		float price = Float.parseFloat(request.getParameter("productPrice"));
+		int quantity = Integer.parseInt(request.getParameter("productQuantity"));
+		Tag tag = new Tag();
+		tag.setTag(request.getParameter("productTag"));
+		Product p = new Product();
+		p.setName(name);
+		p.setPrice(price);
+		p.setStatus(true);
+		p.setTags(new HashSet<Tag>());
+		if(p.addProductTag(tag)) {
+			if(TagService.addTag(tag))
+				System.out.println("Tag added");
+			else
+				System.out.println("Tag add failure");
+		}
+		else
+			System.out.println("Tag exists already");
+		
+		
+		if(ProductService.addProduct(p))
+			System.out.println("Success");
+		else
+			System.out.println("Failed");
+	
+		List<Product> products = ProductService.getAllProducts();
+		
+		request.setAttribute("products", products);
+		request.getRequestDispatcher("showproducts.jsp").forward(request,response);
+	}
+
 
 	private void searchProducts(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		String key = request.getParameter("searchkey");

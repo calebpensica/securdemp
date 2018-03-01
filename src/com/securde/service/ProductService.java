@@ -1,6 +1,7 @@
 package com.securde.service;
 
 import com.securde.bean.Product;
+import com.securde.bean.Tag;
 import com.securde.util.DBUtil;
 
 import javax.persistence.EntityManager;
@@ -77,7 +78,7 @@ public class ProductService {
 			p.setName(newinfo.getName());
 			p.setPrice(newinfo.getPrice());
 			p.setStatus(newinfo.isStatus());
-			p.setTags(newinfo.getTags());
+			p.setTags((HashSet<Tag>)newinfo.getTags());
 			
 			em.merge(p);
 			trans.commit();

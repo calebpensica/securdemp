@@ -1,5 +1,6 @@
 package com.securde.bean;
 
+import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.*;
 
@@ -73,12 +74,12 @@ public class Product
 		return tags;
 	}
 
-	public void setTags(Set<Tag> tags) {
+	public void setTags(HashSet<Tag> tags) {
 		this.tags = tags;
 	}
 	
-	public void addProductTag(Tag tag) {
-		tags.add(tag);
+	public boolean addProductTag(Tag tag) {
+		return tags.add(tag);
 	}
 
 }
