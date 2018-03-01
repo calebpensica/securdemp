@@ -3,6 +3,8 @@ package com.securde.servlet;
 import com.securde.bean.*;
 import com.securde.service.*;
 import java.io.IOException;
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -19,6 +21,7 @@ class URLPatterns
 	public final static String LOGINADMIN = "/loginadmin";
 	public final static String LOGINMANAGER = "/loginmanager";
 	public final static String LOGINSTAFF = "/loginstaff";
+	public final static String ADDPRODUCT = "/addproduct";
 }
 
 /**
@@ -32,7 +35,8 @@ class URLPatterns
 			 URLPatterns.LOGINUSER,
 			 URLPatterns.LOGINADMIN,
 			 URLPatterns.LOGINMANAGER,
-			 URLPatterns.LOGINSTAFF,})
+			 URLPatterns.LOGINSTAFF,
+			 URLPatterns.ADDPRODUCT,})
 public class MainServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -87,6 +91,9 @@ public class MainServlet extends HttpServlet {
 				break;	
 			case URLPatterns.LOGINMANAGER:
 				loginManager(request, response);
+				break;
+			case URLPatterns.ADDPRODUCT:
+				addProduct(request, response);
 				break;	
 		}
 		
@@ -225,5 +232,31 @@ public class MainServlet extends HttpServlet {
 		
 		request.getRequestDispatcher("login.jsp").forward(request, response);
 	}
+	
+	private void addProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		String name = request.getParameter("productName");
+		String description = request.getParameter("productDescription");
+		float price = Float.parseFloat(request.getParameter("productPrice"));
+		int quantity = Integer.parseInt(request.getParameter("productQuantity"));
+		Tag tag = new Tag();
+		tag.setTag(request.getParameter("productTag"));
+		Product p = new Product();
+		p.setName(name);
+		p.setPrice(price);
+		p.setStatus(true);
+		//p.setTags(tag);
+		
+		if(ProductService.addProduct(p))
+			System.out.println("Success");
+		else
+			System.out.println("Failed");
+	
+		List<Product> products = ProductService.getAllProducts();
+		
+		request.setAttribute("products", products);
+		request.getRequestDispatcher("showproducts.jsp").forward(request,response);
+	}
+
 
 }
