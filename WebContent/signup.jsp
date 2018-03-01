@@ -1,3 +1,7 @@
+<%@page import="com.securde.bean.Client"%>
+<%@page import="com.securde.bean.InventoryStaff"%>
+<%@page import="com.securde.bean.StoreManager"%>
+<%@page import="com.securde.bean.Admin"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -56,7 +60,7 @@
 				<div class="pull-left">
 					<!-- Logo -->
 					<div class="header-logo">
-						<a class="logo" href="#">
+						<a class="logo" href="index.jsp">
 							<img src="./img/Papema_Logo.png" alt="">
 						</a>
 					</div>
@@ -64,13 +68,13 @@
 
 					<!-- Search -->
 					<div class="header-search">
-						<form>
-							<input class="input search-input" type="text" placeholder="Enter your keyword">
+						<form action = "search">
+							<input class="input search-input" type="text" placeholder="Enter your keyword" name = "searchkey">
 							<select class="input search-categories">
 								<option value="0">By Name</option>
 								<option value="1">By Tag</option>
 							</select>
-							<button class="search-btn"><i class="fa fa-search"></i></button>
+							<button type = 'submit' class="search-btn"><i class="fa fa-search"></i></button>
 						</form>
 					</div>
 					<!-- /Search -->
@@ -83,14 +87,41 @@
 								<div class="header-btns-icon">
 									<i class="fa fa-user-o"></i>
 								</div>
-								<strong class="text-uppercase">My Account <i class="fa fa-caret-down"></i></strong>
+								<strong class="text-uppercase">
+								<% if (session.getAttribute("user") != null){ %>
+										Welcome back!
+								<%		if (session.getAttribute("userType") == "Client"){
+											Client c = (Client) session.getAttribute("user");
+											out.print(c.getUsername());
+										} else if  (session.getAttribute("userType") == "Staff") {
+											InventoryStaff i = (InventoryStaff) session.getAttribute("user");
+											out.print(i.getUsername());
+										} else if (session.getAttribute("userType") == "Manager") {
+											StoreManager s = (StoreManager) session.getAttribute("user");
+											out.print(s.getUsername());
+										} else if (session.getAttribute("userType") == "Admin") {
+											Admin a = (Admin) session.getAttribute("user");
+											out.print(a.getUsername());
+										}
+								} else { %>
+									My Account
+								<% } %>
+								<i class="fa fa-caret-down"></i></strong>
 							</div>
-							<a href="#" class="text-uppercase">Login</a> / <a href="#" class="text-uppercase">Join</a>
+							<%	if (session.getAttribute("user") == null) { %>
+								<a href="login.jsp" class="text-uppercase">Login</a> / <a href="signup.jsp" class="text-uppercase">Join</a>
+							<% } %>
 							<ul class="custom-menu">
 								<li><a href="#"><i class="fa fa-user-o"></i> My Account</a></li>
 								<li><a href="#"><i class="fa fa-check"></i> Checkout</a></li>
-								<li><a href="#"><i class="fa fa-unlock-alt"></i> Login</a></li>
-								<li><a href="#"><i class="fa fa-user-plus"></i> Create An Account</a></li>
+								<% if (session.getAttribute("user") == null) { %>
+									<li><a href="login.jsp"><i class="fa fa-unlock-alt"></i> Login</a></li>
+									<li><a href="signup.jsp"><i class="fa fa-user-plus"></i> Create An Account</a></li>
+								<% } else {
+									if (session.getAttribute("userType") == "Admin") {%>
+										<li><a href="employeesignup.jsp"><i class="fa fa-user-plus"></i> Create An Employee Account</a></li>
+								<% } 
+								}	%>
 							</ul>
 						</li>
 						<!-- /Account -->
@@ -161,7 +192,7 @@
 	<div id="breadcrumb">
 		<div class="container">
 			<ul class="breadcrumb">
-				<li><a href="#">Home</a></li>
+				<li><a href="index.jsp">Home</a></li>
 				<li class="active">Sign Up</li>
 			</ul>
 		</div>

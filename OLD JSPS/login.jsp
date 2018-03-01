@@ -7,15 +7,9 @@
 <title>PAPEMA</title>
 </head>
 <body>
-<<<<<<< HEAD
 	<form method = "post" action="login">
-		Username: <input type = "text" name = "username"/><br>
-		Password: <input type = "password" name = "password"/><br>
-=======
-	<form method = "post" action="loginadmin">
-		Username: <input type = "text" name = "username" required/><br>
-		Password: <input type = "password" name = "password" required/><br>
->>>>>>> be9438f312d8110b0c427015aaa435fa9ad59971
+		Username: <input type = "text" name = "username" placeholder = "Username..."/><br>
+		Password: <input type = "password" name = "password" placeholder = "Password..."/><br>
 		<input type="submit" value="Login">
 	</form>
 </body>

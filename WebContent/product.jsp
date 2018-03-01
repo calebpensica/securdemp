@@ -1,3 +1,7 @@
+<%@page import="com.securde.bean.Client"%>
+<%@page import="com.securde.bean.InventoryStaff"%>
+<%@page import="com.securde.bean.StoreManager"%>
+<%@page import="com.securde.bean.Admin"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -10,7 +14,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-	<title>E-SHOP HTML Template</title>
+	<title>Product Page</title>
 
 	<!-- Google font -->
 	<link href="https://fonts.googleapis.com/css?family=Hind:400,700" rel="stylesheet">
@@ -55,7 +59,7 @@
 				<div class="pull-left">
 					<!-- Logo -->
 					<div class="header-logo">
-						<a class="logo" href="#">
+						<a class="logo" href="index.jsp">
 							<img src="./img/Papema_Logo.png" alt="">
 						</a>
 					</div>
@@ -63,13 +67,13 @@
 
 					<!-- Search -->
 					<div class="header-search">
-						<form>
-							<input class="input search-input" type="text" placeholder="Enter your keyword">
+						<form action = "search">
+							<input class="input search-input" type="text" placeholder="Enter your keyword" name = "searchkey">
 							<select class="input search-categories">
 								<option value="0">By Name</option>
 								<option value="1">By Tag</option>
 							</select>
-							<button class="search-btn"><i class="fa fa-search"></i></button>
+							<button type = 'submit' class="search-btn"><i class="fa fa-search"></i></button>
 						</form>
 					</div>
 					<!-- /Search -->
@@ -82,14 +86,41 @@
 								<div class="header-btns-icon">
 									<i class="fa fa-user-o"></i>
 								</div>
-								<strong class="text-uppercase">My Account <i class="fa fa-caret-down"></i></strong>
+								<strong class="text-uppercase">
+								<% if (session.getAttribute("user") != null){ %>
+										Welcome back!
+								<%		if (session.getAttribute("userType") == "Client"){
+											Client c = (Client) session.getAttribute("user");
+											out.print(c.getUsername());
+										} else if  (session.getAttribute("userType") == "Staff") {
+											InventoryStaff i = (InventoryStaff) session.getAttribute("user");
+											out.print(i.getUsername());
+										} else if (session.getAttribute("userType") == "Manager") {
+											StoreManager s = (StoreManager) session.getAttribute("user");
+											out.print(s.getUsername());
+										} else if (session.getAttribute("userType") == "Admin") {
+											Admin a = (Admin) session.getAttribute("user");
+											out.print(a.getUsername());
+										}
+								} else { %>
+									My Account
+								<% } %>
+								<i class="fa fa-caret-down"></i></strong>
 							</div>
-							<a href="#" class="text-uppercase">Login</a> / <a href="#" class="text-uppercase">Join</a>
+							<%	if (session.getAttribute("user") == null) { %>
+								<a href="login.jsp" class="text-uppercase">Login</a> / <a href="signup.jsp" class="text-uppercase">Join</a>
+							<% } %>
 							<ul class="custom-menu">
 								<li><a href="#"><i class="fa fa-user-o"></i> My Account</a></li>
 								<li><a href="#"><i class="fa fa-check"></i> Checkout</a></li>
-								<li><a href="#"><i class="fa fa-unlock-alt"></i> Login</a></li>
-								<li><a href="#"><i class="fa fa-user-plus"></i> Create An Account</a></li>
+								<% if (session.getAttribute("user") == null) { %>
+									<li><a href="login.jsp"><i class="fa fa-unlock-alt"></i> Login</a></li>
+									<li><a href="signup.jsp"><i class="fa fa-user-plus"></i> Create An Account</a></li>
+								<% } else {
+									if (session.getAttribute("userType") == "Admin") {%>
+										<li><a href="employeesignup.jsp"><i class="fa fa-user-plus"></i> Create An Employee Account</a></li>
+								<% } 
+								}	%>
 							</ul>
 						</li>
 						<!-- /Account -->
@@ -160,10 +191,9 @@
 	<div id="breadcrumb">
 		<div class="container">
 			<ul class="breadcrumb">
-				<li><a href="#">Home</a></li>
-				<li><a href="#">Products</a></li>
-				<li><a href="#">Category</a></li>
-				<li class="active">Product Name Goes Here</li>
+				<li><a href="index.jsp">Home</a></li>
+				<li><a href="showproducts.jsp">Products</a></li>
+				<li class="active">${product.name}</li>
 			</ul>
 		</div>
 	</div>
@@ -188,11 +218,10 @@
 					<div class="col-md-6">
 						<div class="product-body">
 							<h2 class="product-name">${product.name}</h2>
-							<h3 class="product-price">Php ${product.price}</h3>
+							<h3 class="product-price">Php ${product.price}0</h3>
 							
 							<p><strong>Availability:</strong> In Stock</p>
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-								dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+							<p>Product Description</p>
 						
 
 							<div class="product-btns">

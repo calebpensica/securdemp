@@ -1,3 +1,7 @@
+<%@page import="com.securde.bean.Client"%>
+<%@page import="com.securde.bean.InventoryStaff"%>
+<%@page import="com.securde.bean.StoreManager"%>
+<%@page import="com.securde.bean.Admin"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -10,7 +14,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-	<title>E-SHOP HTML Template</title>
+	<title>Log In</title>
 
 	<!-- Google font -->
 	<link href="https://fonts.googleapis.com/css?family=Hind:400,700" rel="stylesheet">
@@ -53,7 +57,7 @@
 				<div class="pull-left">
 					<!-- Logo -->
 					<div class="header-logo">
-						<a class="logo" href="#">
+						<a class="logo" href="index.jsp">
 							<img src="./img/Papema_Logo.png" alt="">
 						</a>
 					</div>
@@ -61,13 +65,13 @@
 
 					<!-- Search -->
 					<div class="header-search">
-						<form>
-							<input class="input search-input" type="text" placeholder="Enter your keyword">
+						<form action = "search">
+							<input class="input search-input" type="text" placeholder="Enter your keyword" name = "searchkey">
 							<select class="input search-categories">
 								<option value="0">By Name</option>
 								<option value="1">By Tag</option>
 							</select>
-							<button class="search-btn"><i class="fa fa-search"></i></button>
+							<button type = 'submit' class="search-btn"><i class="fa fa-search"></i></button>
 						</form>
 					</div>
 					<!-- /Search -->
@@ -80,14 +84,41 @@
 								<div class="header-btns-icon">
 									<i class="fa fa-user-o"></i>
 								</div>
-								<strong class="text-uppercase">My Account <i class="fa fa-caret-down"></i></strong>
+								<strong class="text-uppercase">
+								<% if (session.getAttribute("user") != null){ %>
+										Welcome back!
+								<%		if (session.getAttribute("userType") == "Client"){
+											Client c = (Client) session.getAttribute("user");
+											out.print(c.getUsername());
+										} else if  (session.getAttribute("userType") == "Staff") {
+											InventoryStaff i = (InventoryStaff) session.getAttribute("user");
+											out.print(i.getUsername());
+										} else if (session.getAttribute("userType") == "Manager") {
+											StoreManager s = (StoreManager) session.getAttribute("user");
+											out.print(s.getUsername());
+										} else if (session.getAttribute("userType") == "Admin") {
+											Admin a = (Admin) session.getAttribute("user");
+											out.print(a.getUsername());
+										}
+								} else { %>
+									My Account
+								<% } %>
+								<i class="fa fa-caret-down"></i></strong>
 							</div>
-							<a href="#" class="text-uppercase">Login</a> / <a href="#" class="text-uppercase">Join</a>
+							<%	if (session.getAttribute("user") == null) { %>
+								<a href="login.jsp" class="text-uppercase">Login</a> / <a href="signup.jsp" class="text-uppercase">Join</a>
+							<% } %>
 							<ul class="custom-menu">
 								<li><a href="#"><i class="fa fa-user-o"></i> My Account</a></li>
 								<li><a href="#"><i class="fa fa-check"></i> Checkout</a></li>
-								<li><a href="#"><i class="fa fa-unlock-alt"></i> Login</a></li>
-								<li><a href="#"><i class="fa fa-user-plus"></i> Create An Account</a></li>
+								<% if (session.getAttribute("user") == null) { %>
+									<li><a href="login.jsp"><i class="fa fa-unlock-alt"></i> Login</a></li>
+									<li><a href="signup.jsp"><i class="fa fa-user-plus"></i> Create An Account</a></li>
+								<% } else {
+									if (session.getAttribute("userType") == "Admin") {%>
+										<li><a href="employeesignup.jsp"><i class="fa fa-user-plus"></i> Create An Employee Account</a></li>
+								<% } 
+								}	%>
 							</ul>
 						</li>
 						<!-- /Account -->
@@ -158,7 +189,7 @@
 	<div id="breadcrumb">
 		<div class="container">
 			<ul class="breadcrumb">
-				<li><a href="#">Home</a></li>
+				<li><a href="index.jsp">Home</a></li>
 				<li class="active">Login</li>
 			</ul>
 		</div>
@@ -169,35 +200,27 @@
 	<div class = "section">
 		<div class = "container">
 			<div class = "row">
-				<form method = "post" action="MainServlet">
+				<form method = "post" action="login">
 					<div class="section-title">
 						<h3 class="title">Login</h3>
 					</div>
 					<div class = "login-section">
-						<strong>Username:</strong> <input class = "login-section-content" type = "text" name = "username" value="username"/><br>
-						<strong>Password:</strong> <input class = "login-section-content" type = "password" name = "password" value="password"/><br>
+						<strong>Username:</strong> <input class = "login-section-content" type = "text" name = "username" /><br>
+						<strong>Password:</strong> <input class = "login-section-content" type = "password" name = "password" /><br>
 						<input class = "main-btn login-section-content" type="submit" value="Login">
-						<input class = "main-btn login-section-content" type="create" value="Create an Account">
+						<input class = "main-btn login-section-content" type="submit" href = "signup.jsp" value="Create an Account">
+						<% if (request.getAttribute("error") != null)  {
+							boolean error = (boolean) request.getAttribute("error");
+							if (error) { %>
+								<strong><font color = "red"><p class = "login-section-content">Invalid Username and/or Password. Please try again.</p></font></strong>
+							<% } 
+						}%>
 					</div>
 				</form>
 			</div>
 		</div>
 	</div>
 	<!-- /LOGIN SECTION -->
-	
-	
-	<!-- section -->
-	<div class="section">
-		<!-- container -->
-		<div class="container">
-			<!-- row -->
-			<div class="row">
-			</div>
-			<!-- /row -->
-		</div>
-		<!-- /container -->
-	</div>
-	<!-- /section -->
 
 	<!-- FOOTER -->
 	<footer id="footer" class="section section-grey">

@@ -1744,6 +1744,7 @@ textarea.input {
 	width: 200%;
 }
 
+
 /*=========================================================
 	14 -> SIGNUP PAGE
 ===========================================================*/
@@ -1755,6 +1756,21 @@ textarea.input {
 }
 
 .signup-section-content {
+	margin-bottom: 10px;
+	width: 200%;
+}
+
+/*=========================================================
+	15 -> ADD PRODUCT PAGE
+===========================================================*/
+
+.add-product-section {
+	margin:auto;
+	width: 10%;
+	padding: 10px;
+}
+
+.add-product-section-content {
 	margin-bottom: 10px;
 	width: 200%;
 }

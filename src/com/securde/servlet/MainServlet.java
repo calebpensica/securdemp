@@ -12,6 +12,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 class URLPatterns
 {
@@ -101,6 +102,8 @@ public class MainServlet extends HttpServlet {
 	private void loginUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{
 		
+		HttpSession session = request.getSession();
+		
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		
@@ -109,19 +112,31 @@ public class MainServlet extends HttpServlet {
 		InventoryStaff i = InventoryStaffService.findStaff(username, password);
 		StoreManager s = StoreManagerService.findManager(username, password);
 		
-		if(c != null)
+		
+		
+		if(c != null) {
+			session.setAttribute("user", c);
+			session.setAttribute("userType", "Client");
 			request.getRequestDispatcher("index.jsp").forward(request, response);
-		else {
-			if(i != null)
+		} else {
+			if(i != null) {
+				session.setAttribute("user", i);
+				session.setAttribute("userType", "Staff");
 				request.getRequestDispatcher("index.jsp").forward(request, response);
-			else {
-				if(s != null)
+			} else {
+				if(s != null) {
+					session.setAttribute("user", s);
+					session.setAttribute("userType", "Manager");
 					request.getRequestDispatcher("index.jsp").forward(request, response);
-				else {
-					if(a != null)
+				} else {
+					if(a != null) {
+						session.setAttribute("user", a);
+						session.setAttribute("userType", "Admin");
 						request.getRequestDispatcher("index.jsp").forward(request, response);
-					else
-						request.getRequestDispatcher("error.jsp").forward(request, response);
+					} else {
+						request.setAttribute("error", new Boolean(true));
+						request.getRequestDispatcher("login.jsp").forward(request, response);
+					}
 				}
 			}
 		}
@@ -222,6 +237,8 @@ public class MainServlet extends HttpServlet {
 		
 		System.out.println(ProductService.addProduct(p));
 		
+		request.getRequestDispatcher("showProducts.jsp").forward(request, response);
+		
 	}
 	
 	private void showProducts(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -232,6 +249,7 @@ public class MainServlet extends HttpServlet {
 	
 	private void viewProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
+		System.out.println("THE NUMBER IS: " + id);
 		Product p = ProductService.getProduct(id);
 		
 		request.setAttribute("product", p);

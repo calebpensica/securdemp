@@ -64,13 +64,13 @@
 
 					<!-- Search -->
 					<div class="header-search">
-						<form>
-							<input class="input search-input" type="text" placeholder="Enter your keyword">
+						<form action = "search">
+							<input class="input search-input" type="text" placeholder="Enter your keyword" name = "searchkey">
 							<select class="input search-categories">
 								<option value="0">By Name</option>
 								<option value="1">By Tag</option>
 							</select>
-							<button class="search-btn"><i class="fa fa-search"></i></button>
+							<button type = 'submit' class="search-btn"><i class="fa fa-search"></i></button>
 						</form>
 					</div>
 					<!-- /Search -->
