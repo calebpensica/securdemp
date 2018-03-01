@@ -122,14 +122,9 @@ public class MainServlet extends HttpServlet {
 	}
 
 	private void loginUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
-	{
-<<<<<<< HEAD
-		
+	{		
 		HttpSession session = request.getSession();
-		
-=======
-		HttpSession session = request.getSession();
->>>>>>> bf07e29a244c3ab645b513ea9ca452b9734fd06c
+
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		
@@ -233,6 +228,8 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 		
 		List<Client> clients = ClientService.getAllClients();
 		boolean exist = false;
+		
+		System.out.println(contactNo);
 		
 		for(Client c : clients)
 			if(c.getUsername().equalsIgnoreCase(username))

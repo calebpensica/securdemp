@@ -208,7 +208,7 @@
 						<strong>Username:</strong> <input class = "login-section-content" type = "text" name = "username" /><br>
 						<strong>Password:</strong> <input class = "login-section-content" type = "password" name = "password" /><br>
 						<input class = "main-btn login-section-content" type="submit" value="Login">
-						<input class = "main-btn login-section-content" type="submit" href = "signup.jsp" value="Create an Account">
+						<a a href = "signup.jsp"><button class = "main-btn login-section-content" type="button" >Create an Account</button></a>
 						<% if (request.getAttribute("error") != null)  {
 							boolean error = (boolean) request.getAttribute("error");
 							if (error) { %>

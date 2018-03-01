@@ -1004,6 +1004,10 @@ textarea.input {
   visibility: visible;
 }
 
+.product-btns {
+	float:left;
+}
+
 /*----------------------------*\
 	 Widget product
 \*----------------------------*/

@@ -239,6 +239,10 @@
 												<input type="hidden" name="productid" value="<c:out value="${product.id}"/>" >	
 												<button class="primary-btn add-to-cart" type = "submit">Edit Product</button>
 											</form>
+											<form method = "post" action="deleteproduct">
+												<input type="hidden" name="productid" value="<c:out value="${product.id}"/>" >	
+												<button class="primary-btn add-to-cart" type = "submit">Delete Product</button>
+											</form>
 										<% }
 								}%>
 							</div>
