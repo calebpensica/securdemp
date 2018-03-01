@@ -15,10 +15,7 @@ class URLPatterns
 	public final static String REGISTERADMIN = "/regadmin";
 	public final static String REGISTERMANAGER = "/regmanager";
 	public final static String REGISTERSTAFF = "/regstaff";
-	public final static String LOGINUSER = "/loginuser";
-	public final static String LOGINADMIN = "/loginadmin";
-	public final static String LOGINMANAGER = "/loginmanager";
-	public final static String LOGINSTAFF = "/loginstaff";
+	public final static String LOGIN = "/login";
 }
 
 /**
@@ -29,10 +26,7 @@ class URLPatterns
 			 URLPatterns.REGISTERADMIN,
 			 URLPatterns.REGISTERMANAGER,
 			 URLPatterns.REGISTERSTAFF,
-			 URLPatterns.LOGINUSER,
-			 URLPatterns.LOGINADMIN,
-			 URLPatterns.LOGINMANAGER,
-			 URLPatterns.LOGINSTAFF,})
+			 URLPatterns.LOGIN})
 public class MainServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -76,59 +70,11 @@ public class MainServlet extends HttpServlet {
 			case URLPatterns.REGISTERMANAGER:
 				registerManager(request, response);
 				break;
-			case URLPatterns.LOGINUSER:
+			case URLPatterns.LOGIN:
 				loginUser(request, response);
-				break;	
-			case URLPatterns.LOGINADMIN:
-				loginAdmin(request, response);
-				break;	
-			case URLPatterns.LOGINSTAFF:
-				loginStaff(request, response);
-				break;	
-			case URLPatterns.LOGINMANAGER:
-				loginManager(request, response);
 				break;	
 		}
 		
-	}
-	
-	private void loginManager(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
-		
-		StoreManager s = StoreManagerService.findManager(username, password);
-		
-		if(s != null)
-			request.getRequestDispatcher("index.jsp").forward(request, response);
-		else
-			request.getRequestDispatcher("error.jsp").forward(request, response);
-	}
-
-	private void loginStaff(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
-		
-		InventoryStaff i = InventoryStaffService.findStaff(username, password);
-		
-		if(i != null)
-			request.getRequestDispatcher("index.jsp").forward(request, response);
-		else
-			request.getRequestDispatcher("error.jsp").forward(request, response);
-	}
-
-	private void loginAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
-		
-		Admin a = AdminService.findAdmin(username, password);
-		
-		if(a != null)
-			request.getRequestDispatcher("index.jsp").forward(request, response);
-		else
-			request.getRequestDispatcher("error.jsp").forward(request, response);
 	}
 
 	private void loginUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
@@ -138,11 +84,27 @@ public class MainServlet extends HttpServlet {
 		String password = request.getParameter("password");
 		
 		Client c = ClientService.findClient(username, password);
+		Admin a = AdminService.findAdmin(username, password);
+		InventoryStaff i = InventoryStaffService.findStaff(username, password);
+		StoreManager s = StoreManagerService.findManager(username, password);
 		
 		if(c != null)
 			request.getRequestDispatcher("index.jsp").forward(request, response);
-		else
-			request.getRequestDispatcher("error.jsp").forward(request, response);
+		else {
+			if(i != null)
+				request.getRequestDispatcher("index.jsp").forward(request, response);
+			else {
+				if(s != null)
+					request.getRequestDispatcher("index.jsp").forward(request, response);
+				else {
+					if(a != null)
+						request.getRequestDispatcher("index.jsp").forward(request, response);
+					else
+						request.getRequestDispatcher("error.jsp").forward(request, response);
+				}
+			}
+		}
+			
 	}
 
 	private void registerManager(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
