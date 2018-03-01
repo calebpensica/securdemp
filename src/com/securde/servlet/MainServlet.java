@@ -395,6 +395,14 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 		
 	}
 	
+	private void deleteProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int id = Integer.parseInt(request.getParameter("id"));
+		
+		ProductService.deleteProduct(id);
+		
+		showProducts(request, response);
+	}
+	
 	
 	private void showProducts(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<Product> products = ProductService.getAllProducts();
