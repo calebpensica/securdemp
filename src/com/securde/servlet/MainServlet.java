@@ -23,6 +23,8 @@ class URLPatterns
 	public final static String ADDPRODUCT = "/addproduct";
 	public final static String SHOWPRODUCTS = "/showproducts";
 	public final static String PRODUCT = "/product";
+	public final static String EDITPRODUCT = "/editproduct";
+	public final static String COMMITEDITPRODUCT = "/commiteditproduct";
 }
 
 /**
@@ -36,7 +38,10 @@ class URLPatterns
 			 URLPatterns.REGISTEREMPLOYEE,
 			 URLPatterns.ADDPRODUCT,
 			 URLPatterns.PRODUCT,
-			 URLPatterns.SHOWPRODUCTS})
+			 URLPatterns.SHOWPRODUCTS,
+			 URLPatterns.EDITPRODUCT,
+			 URLPatterns.COMMITEDITPRODUCT,
+			 })
 public class MainServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -65,7 +70,7 @@ public class MainServlet extends HttpServlet {
 		switch(pattern)
 		{
 			case "/MainServlet":
-				request.getRequestDispatcher("showproducts.jsp").forward(request, response);
+				showProducts(request,response);
 				break;
 			
 			case URLPatterns.REGISTERUSER:
@@ -93,6 +98,12 @@ public class MainServlet extends HttpServlet {
 				break;
 			case URLPatterns.PRODUCT:
 				viewProduct(request, response);
+				break;
+			case URLPatterns.EDITPRODUCT:
+				editProduct(request, response);
+				break;
+			case URLPatterns.COMMITEDITPRODUCT:
+				commitEditProduct(request, response);
 				break;
 		}
 		
@@ -202,14 +213,10 @@ public class MainServlet extends HttpServlet {
 	
 	private void addProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		String name = request.getParameter("productName");
-		float price = Float.parseFloat(request.getParameter("productPrice"));
+
+		Product p = new Product();
 		Tag tag = new Tag();
 		tag.setTag(request.getParameter("productTag"));
-		Product p = new Product();
-		p.setName(name);
-		p.setPrice(price);
-		p.setStatus(true);
 		p.setTags(new HashSet<Tag>());
 		if(p.addProductTag(tag)) {
 			if(TagService.addTag(tag))
@@ -220,12 +227,65 @@ public class MainServlet extends HttpServlet {
 		else
 			System.out.println("Tag exists already");
 		
+		String name = request.getParameter("productName");
+		float price = Float.parseFloat(request.getParameter("productPrice"));
+		p.setName(name);
+		p.setPrice(price);
+		p.setStatus(true);
+
+		
 		System.out.println(ProductService.addProduct(p));
+		
+	}
+	
+	private void editProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		Product product = ProductService.getProduct(Integer.parseInt(request.getParameter("productid")));
+		request.setAttribute("product", product);
+		request.getRequestDispatcher("editProduct.jsp").forward(request, response);
+	}
+	
+	private void commitEditProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		int id = Integer.parseInt(request.getParameter("productid"));
+		Product p = ProductService.getProduct(id);
+	//	Tag tag = new Tag();
+	//	tag.setTag(request.getParameter("productTag"));
+	//	p.setTags(new HashSet<Tag>());
+		//		if(p.addProductTag(tag)) {
+	//		if(TagService.addTag(tag))
+		//		System.out.println("Tag added");
+		//	else
+	//			System.out.println("Tag add failure");
+	//	}
+	//	else
+		//	System.out.println("Tag exists already");
+		
+		String name = request.getParameter("productName");
+		float price = Float.parseFloat(request.getParameter("productPrice"));
+		p.setName(name);
+		p.setPrice(price);
+
+		System.out.println(ProductService.updateProduct(id, p));
+		
+		List<Product> products = ProductService.getAllProducts();
+		for(Product product: products) {
+			System.out.println(product.getName());
+		}
+		if(products==null)
+			System.out.println("null sad");
+		else
+			System.out.println(products.size());
+		request.setAttribute("products", products);
+		request.getRequestDispatcher("showproducts.jsp").forward(request, response);
 		
 	}
 	
 	private void showProducts(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<Product> products = ProductService.getAllProducts();
+		for(Product product: products) {
+			System.out.println(product.getName());
+		}
 		request.setAttribute("products", products);
 		request.getRequestDispatcher("showproducts.jsp").forward(request, response);
 	}

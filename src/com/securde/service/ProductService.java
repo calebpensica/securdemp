@@ -78,7 +78,7 @@ public class ProductService {
 			p.setName(newinfo.getName());
 			p.setPrice(newinfo.getPrice());
 			p.setStatus(newinfo.isStatus());
-			p.setTags((HashSet<Tag>)newinfo.getTags());
+	//		p.setTags((HashSet<Tag>)newinfo.getTags());
 			
 			em.merge(p);
 			trans.commit();
