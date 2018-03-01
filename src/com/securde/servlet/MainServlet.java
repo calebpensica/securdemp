@@ -21,6 +21,7 @@ class URLPatterns
 	public final static String SEARCH = "/search";
 	public final static String REGISTEREMPLOYEE = "/regemployee";
 	public final static String ADDPRODUCT = "/addproduct";
+	public final static String SHOWPRODUCTS = "/showproducts";
 	public final static String PRODUCT = "/product";
 }
 
@@ -34,7 +35,8 @@ class URLPatterns
 			 URLPatterns.SEARCH,
 			 URLPatterns.REGISTEREMPLOYEE,
 			 URLPatterns.ADDPRODUCT,
-			 URLPatterns.PRODUCT})
+			 URLPatterns.PRODUCT,
+			 URLPatterns.SHOWPRODUCTS})
 public class MainServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -43,7 +45,6 @@ public class MainServlet extends HttpServlet {
      */
     public MainServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
@@ -87,6 +88,9 @@ public class MainServlet extends HttpServlet {
 			case URLPatterns.ADDPRODUCT:
 				addProduct(request, response);
 				break;	
+			case URLPatterns.SHOWPRODUCTS:
+				showProducts(request, response);
+				break;
 			case URLPatterns.PRODUCT:
 				viewProduct(request, response);
 				break;
@@ -96,7 +100,7 @@ public class MainServlet extends HttpServlet {
 
 	private void loginUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{
-		// TODO Auto-generated method stub
+		
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		
@@ -125,7 +129,6 @@ public class MainServlet extends HttpServlet {
 	}
 
 	private void registerEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
 		
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
@@ -152,13 +155,11 @@ public class MainServlet extends HttpServlet {
 			System.out.println(InventoryStaffService.addStaff(is)); 
 		}
 		
-
-		
 		request.getRequestDispatcher("login.jsp").forward(request, response);
 	}
 
 	private void registerUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+		
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		String fName = request.getParameter("fName");
@@ -177,26 +178,6 @@ public class MainServlet extends HttpServlet {
 		c.setHomeAdd(homeAdd);
 		
 		System.out.println(ClientService.addClient(c)); 
-		
-		request.getRequestDispatcher("login.jsp").forward(request, response);
-	}
-
-	private void registerStaff(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
-		String fName = request.getParameter("fName");
-		String lName = request.getParameter("lName");
-		String email = request.getParameter("email");
-		
-		InventoryStaff i = new InventoryStaff();
-		i.setUsername(username);
-		i.setPassword(password);
-		i.setfName(fName);
-		i.setlName(lName);
-		i.setEmail(email);
-		System.out.println(InventoryStaffService.addStaff(i)); 
-		
 		request.getRequestDispatcher("login.jsp").forward(request, response);
 	}
 
@@ -222,9 +203,7 @@ public class MainServlet extends HttpServlet {
 	private void addProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		String name = request.getParameter("productName");
-		String description = request.getParameter("productDescription");
 		float price = Float.parseFloat(request.getParameter("productPrice"));
-		int quantity = Integer.parseInt(request.getParameter("productQuantity"));
 		Tag tag = new Tag();
 		tag.setTag(request.getParameter("productTag"));
 		Product p = new Product();
@@ -241,16 +220,14 @@ public class MainServlet extends HttpServlet {
 		else
 			System.out.println("Tag exists already");
 		
+		System.out.println(ProductService.addProduct(p));
 		
-		if(ProductService.addProduct(p))
-			System.out.println("Success");
-		else
-			System.out.println("Failed");
+	}
 	
+	private void showProducts(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<Product> products = ProductService.getAllProducts();
-		
 		request.setAttribute("products", products);
-		request.getRequestDispatcher("showproducts.jsp").forward(request,response);
+		request.getRequestDispatcher("showproducts.jsp").forward(request, response);
 	}
 	
 	private void viewProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -277,6 +254,7 @@ public class MainServlet extends HttpServlet {
 				if(products.get(j).getName().toLowerCase().contains(keywords[i].toLowerCase()))
 					found = true;
 				else {
+					//filtering by tags
 					Set<Tag> tags = products.get(j).getTags();
 					for(Tag t : tags)
 						if(t.getTag().toLowerCase().contains(keywords[i].toLowerCase()))
