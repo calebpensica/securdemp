@@ -10,7 +10,7 @@
 <body>
 <form action="showproducts">
 	<c:forEach items="${products}" var="p">
-	<div class="productItem" onclick="redirectFunc">
+	<div class="productItem" onclick="redirectFunc()">
 		<table>
 			<tr>
 				<td id="${p.id}">
@@ -24,4 +24,11 @@
 </form>
 
 </body>
+<script>
+function redirectFunc(){
+	
+}
+</script>
+
+
 </html>

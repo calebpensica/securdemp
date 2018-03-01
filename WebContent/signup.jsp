@@ -8,12 +8,14 @@
 </head>
 <body>
 	Sign up:
-	<form method = "post" action="regadmin">
-		Username: <input type = "text" name = "username"/><br>
-		Password: <input type = "password" name = "password"/><br>
-		First Name: <input type = "text" name = "fName"/><br>
-		Last Name: <input type = "text" name = "lName"/><br>
-		Email: <input type = "text" name = "email"/><br>
+	<form method = "post" action="reguser">
+		Username: <input type = "text" name = "username" required/><br>
+		Password: <input type = "password" name = "password" required/><br>
+		First Name: <input type = "text" name = "fName" required/><br>
+		Last Name: <input type = "text" name = "lName" required/><br>
+		Email: <input type = "email" name = "email" required/><br>
+		Contact Number: <input type = "number" name = "contact" required/><br>
+		Address: <input type = "text" name = "address" required/><br>
 		<input type="submit" value="Add">
 	</form>
 </body>

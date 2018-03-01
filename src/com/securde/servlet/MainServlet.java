@@ -3,7 +3,9 @@ package com.securde.servlet;
 import com.securde.bean.*;
 import com.securde.service.*;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -66,7 +68,7 @@ public class MainServlet extends HttpServlet {
 		switch(pattern)
 		{
 			case "/MainServlet":
-				request.getRequestDispatcher("addproduct.jsp").forward(request, response);
+				request.getRequestDispatcher("signup.jsp").forward(request, response);
 				break;
 			case URLPatterns.REGISTERUSER:
 				registerUser(request, response);
@@ -245,7 +247,16 @@ public class MainServlet extends HttpServlet {
 		p.setName(name);
 		p.setPrice(price);
 		p.setStatus(true);
-		//p.setTags(tag);
+		p.setTags(new HashSet<Tag>());
+		if(p.addProductTag(tag)) {
+			if(TagService.addTag(tag))
+				System.out.println("Tag added");
+			else
+				System.out.println("Tag add failure");
+		}
+		else
+			System.out.println("Tag exists already");
+		
 		
 		if(ProductService.addProduct(p))
 			System.out.println("Success");
