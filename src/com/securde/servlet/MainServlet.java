@@ -268,16 +268,7 @@ public class MainServlet extends HttpServlet {
 
 		System.out.println(ProductService.updateProduct(id, p));
 		
-		List<Product> products = ProductService.getAllProducts();
-		for(Product product: products) {
-			System.out.println(product.getName());
-		}
-		if(products==null)
-			System.out.println("null sad");
-		else
-			System.out.println(products.size());
-		request.setAttribute("products", products);
-		request.getRequestDispatcher("showproducts.jsp").forward(request, response);
+		showProducts(request,response);
 		
 	}
 	
