@@ -1,5 +1,6 @@
 package com.securde.service;
 
+import com.securde.bean.Admin;
 import com.securde.bean.Product;
 import com.securde.bean.Tag;
 import com.securde.util.DBUtil;
@@ -11,6 +12,8 @@ import javax.persistence.TypedQuery;
 import java.util.*;
 
 public class ProductService {
+	
+	private static final String COL_PRICE = "price";
 
 	public static List<Product> getAllProducts()
 	{
@@ -146,6 +149,35 @@ public class ProductService {
 		}
 		
 		return p;
+	}
+	
+	public static List<Product> getAllProductsByPriceRange(float min, float max)
+	{
+		List<Product> products = null;
+		
+		EntityManager em = DBUtil.getEntityManager();
+		EntityTransaction trans = em.getTransaction();
+		
+		try {
+			trans.begin();
+			String query = "FROM product where " + COL_PRICE + " >= :min AND " + COL_PRICE + " <= :max";
+			TypedQuery<Product> q = em.createQuery(query, Product.class);
+			q.setParameter("min", min);
+			q.setParameter("max", max);
+			products = q.getResultList();
+			
+			trans.commit();
+			
+		} catch(Exception e) {
+			if(trans != null) {
+				trans.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			em.close();
+		}
+		
+		return products;
 	}
 
 }
