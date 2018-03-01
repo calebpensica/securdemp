@@ -225,15 +225,25 @@
 						
 
 							<div class="product-btns">
-								<div class="qty-input">
-									<span class="text-uppercase">QTY: </span>
-									<input class="input" type="number">
-								</div>
-								<button class="primary-btn add-to-cart"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
+								<form method = "post" action = "buyproduct">
+									<input type="hidden" name="productid" value="<c:out value="${product.id}"/>" >
+									<div class="qty-input">
+										<span class="text-uppercase">QTY: </span>
+										<input class="input" type="number" name = "quantity" value = "1">
+									</div>
+									<button class="primary-btn add-to-cart" type = "submit"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
+								</form>
+								<% if (session.getAttribute("user") != null) {
+										if (session.getAttribute("userType") == "Staff" || session.getAttribute("userType") == "Manager" || session.getAttribute("userType") == "Admin") {%>
+											<form method ="post" action="editproduct">
+												<input type="hidden" name="productid" value="<c:out value="${product.id}"/>" >	
+												<button class="primary-btn add-to-cart" type = "submit">Edit Product</button>
+											</form>
+										<% }
+								}%>
 							</div>
 						</div>
 					</div>
-
 				</div>
 				<!-- /Product Details -->
 			</div>
@@ -278,7 +288,6 @@
 	<script src="js/nouislider.min.js"></script>
 	<script src="js/jquery.zoom.min.js"></script>
 	<script src="js/main.js"></script>
-
 </body>
 
 </html>

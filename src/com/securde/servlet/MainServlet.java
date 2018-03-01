@@ -3,6 +3,7 @@ package com.securde.servlet;
 import com.securde.bean.*;
 import com.securde.service.*;
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +25,10 @@ class URLPatterns
 	public final static String ADDPRODUCT = "/addproduct";
 	public final static String SHOWPRODUCTS = "/showproducts";
 	public final static String PRODUCT = "/product";
+	public final static String EDITPRODUCT = "/editproduct";
+	public final static String COMMITEDITPRODUCT = "/commiteditproduct";
+	public final static String BUYPRODUCT = "/buyproduct";
+	public final static String ACCOUNTDETAILS = "/accountdetails";
 }
 
 /**
@@ -37,7 +42,12 @@ class URLPatterns
 			 URLPatterns.REGISTEREMPLOYEE,
 			 URLPatterns.ADDPRODUCT,
 			 URLPatterns.PRODUCT,
-			 URLPatterns.SHOWPRODUCTS})
+			 URLPatterns.SHOWPRODUCTS,
+			 URLPatterns.EDITPRODUCT,
+			 URLPatterns.COMMITEDITPRODUCT,
+			 URLPatterns.BUYPRODUCT,
+			 URLPatterns.ACCOUNTDETAILS,
+			 })
 public class MainServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -66,7 +76,7 @@ public class MainServlet extends HttpServlet {
 		switch(pattern)
 		{
 			case "/MainServlet":
-				request.getRequestDispatcher("index.jsp").forward(request, response);
+				showProducts(request,response);
 				break;
 			
 			case URLPatterns.REGISTERUSER:
@@ -95,15 +105,31 @@ public class MainServlet extends HttpServlet {
 			case URLPatterns.PRODUCT:
 				viewProduct(request, response);
 				break;
+			case URLPatterns.EDITPRODUCT:
+				editProduct(request, response);
+				break;
+			case URLPatterns.COMMITEDITPRODUCT:
+				commitEditProduct(request, response);
+				break;
+			case URLPatterns.BUYPRODUCT:
+				buyProduct(request, response);
+				break;
+			case URLPatterns.ACCOUNTDETAILS:
+		//		accountDetails(request, response);
+				break;
 		}
 		
 	}
 
 	private void loginUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{
+<<<<<<< HEAD
 		
 		HttpSession session = request.getSession();
 		
+=======
+		HttpSession session = request.getSession();
+>>>>>>> bf07e29a244c3ab645b513ea9ca452b9734fd06c
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		
@@ -111,8 +137,6 @@ public class MainServlet extends HttpServlet {
 		Admin a = AdminService.findAdmin(username, password);
 		InventoryStaff i = InventoryStaffService.findStaff(username, password);
 		StoreManager s = StoreManagerService.findManager(username, password);
-		
-		
 		
 		if(c != null) {
 			session.setAttribute("user", c);
@@ -143,7 +167,7 @@ public class MainServlet extends HttpServlet {
 			
 	}
 
-	private void registerEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+private void registerEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
@@ -151,26 +175,50 @@ public class MainServlet extends HttpServlet {
 		String lName = request.getParameter("lName");
 		String email = request.getParameter("email");
 		
-		StoreManager s = new StoreManager();
-		InventoryStaff is = new InventoryStaff();
+		StoreManager s = null;
+		InventoryStaff is = null;
+		boolean exist = false;
+		
 		if(request.getParameter("employeetype").equals("StoreManager")) {
-			s.setUsername(username);
-			s.setPassword(password);
-			s.setfName(fName);
-			s.setlName(lName);
-			s.setEmail(email);
-			System.out.println(StoreManagerService.addManager(s)); 
+			
+			List<StoreManager> managers = StoreManagerService.getAllManagers();
+			for(StoreManager sm : managers)
+				if(sm.getUsername().equalsIgnoreCase(username))
+					exist = true;
+			
+			if(!exist)
+			{
+				s = new StoreManager();
+				s.setUsername(username);
+				s.setPassword(password);
+				s.setfName(fName);
+				s.setlName(lName);
+				s.setEmail(email);
+				System.out.println(StoreManagerService.addManager(s));
+				request.getRequestDispatcher("login.jsp").forward(request, response);
+			}else
+				request.getRequestDispatcher("signup.jsp").forward(request, response);
 		}
 		else {
-			is.setUsername(username);
-			is.setPassword(password);
-			is.setfName(fName);
-			is.setlName(lName);
-			is.setEmail(email);
-			System.out.println(InventoryStaffService.addStaff(is)); 
+			
+			List<InventoryStaff> staffs = InventoryStaffService.getAllInventoryStaffs();
+			for(InventoryStaff i : staffs)
+				if(i.getUsername().equalsIgnoreCase(username))
+					exist = true;
+			
+			if(!exist)
+			{
+				is = new InventoryStaff();
+				is.setUsername(username);
+				is.setPassword(password);
+				is.setfName(fName);
+				is.setlName(lName);
+				is.setEmail(email);
+				System.out.println(InventoryStaffService.addStaff(is)); 
+				request.getRequestDispatcher("login.jsp").forward(request, response);
+			} else
+				request.getRequestDispatcher("signup.jsp").forward(request, response);	
 		}
-		
-		request.getRequestDispatcher("login.jsp").forward(request, response);
 	}
 
 	private void registerUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -183,17 +231,28 @@ public class MainServlet extends HttpServlet {
 		String contactNo = request.getParameter("contact");
 		String homeAdd = request.getParameter("address");
 		
-		Client c = new Client();
-		c.setUsername(username);
-		c.setPassword(password);
-		c.setfName(fName);
-		c.setlName(lName);
-		c.setEmail(email);
-		c.setContactNo(contactNo);
-		c.setHomeAdd(homeAdd);
+		List<Client> clients = ClientService.getAllClients();
+		boolean exist = false;
 		
-		System.out.println(ClientService.addClient(c)); 
-		request.getRequestDispatcher("login.jsp").forward(request, response);
+		for(Client c : clients)
+			if(c.getUsername().equalsIgnoreCase(username))
+				exist = true;
+		
+		if(!exist) {
+			Client c = new Client();
+			c.setUsername(username);
+			c.setPassword(password);
+			c.setfName(fName);
+			c.setlName(lName);
+			c.setEmail(email);
+			c.setContactNo(contactNo);
+			c.setHomeAdd(homeAdd);
+			
+			System.out.println(ClientService.addClient(c)); 
+			request.getRequestDispatcher("login.jsp").forward(request, response);
+		} else
+			request.getRequestDispatcher("signup.jsp").forward(request, response);
+		
 	}
 
 	private void registerAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -204,27 +263,32 @@ public class MainServlet extends HttpServlet {
 		String lName = request.getParameter("lName");
 		String email = request.getParameter("email");
 		
-		Admin a = new Admin();
-		a.setUsername(username);
-		a.setPassword(password);
-		a.setfName(fName);
-		a.setlName(lName);
-		a.setEmail(email);
-		System.out.println(AdminService.addAdmin(a)); 
+		List<Admin> admins = AdminService.getAllAdmins();
+		boolean exist = false;
 		
-		request.getRequestDispatcher("login.jsp").forward(request, response);
+		for(Admin ad : admins)
+			if(ad.getUsername().equalsIgnoreCase(username))
+				exist = true;
+		
+		if(!exist) {
+			Admin a = new Admin();
+			a.setUsername(username);
+			a.setPassword(password);
+			a.setfName(fName);
+			a.setlName(lName);
+			a.setEmail(email);
+			System.out.println(AdminService.addAdmin(a));
+			request.getRequestDispatcher("login.jsp").forward(request, response);
+		} else
+			request.getRequestDispatcher("signup.jsp").forward(request, response);
 	}
 	
 	private void addProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		String name = request.getParameter("productName");
-		float price = Float.parseFloat(request.getParameter("productPrice"));
+
+		Product p = new Product();
 		Tag tag = new Tag();
 		tag.setTag(request.getParameter("productTag"));
-		Product p = new Product();
-		p.setName(name);
-		p.setPrice(price);
-		p.setStatus(true);
 		p.setTags(new HashSet<Tag>());
 		if(p.addProductTag(tag)) {
 			if(TagService.addTag(tag))
@@ -235,14 +299,122 @@ public class MainServlet extends HttpServlet {
 		else
 			System.out.println("Tag exists already");
 		
+		String name = request.getParameter("productName");
+		float price = Float.parseFloat(request.getParameter("productPrice"));
+		p.setName(name);
+		p.setPrice(price);
+		p.setStatus(true);
+
+		
 		System.out.println(ProductService.addProduct(p));
 		
 		request.getRequestDispatcher("showProducts.jsp").forward(request, response);
 		
 	}
 	
+	private void editProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		Product product = ProductService.getProduct(Integer.parseInt(request.getParameter("productid")));
+		request.setAttribute("product", product);
+		request.getRequestDispatcher("editProduct.jsp").forward(request, response);
+	}
+	
+	private void commitEditProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		int id = Integer.parseInt(request.getParameter("productid"));
+		Product p = ProductService.getProduct(id);
+	//	Tag tag = new Tag();
+	//	tag.setTag(request.getParameter("productTag"));
+	//	p.setTags(new HashSet<Tag>());
+		//		if(p.addProductTag(tag)) {
+	//		if(TagService.addTag(tag))
+		//		System.out.println("Tag added");
+		//	else
+	//			System.out.println("Tag add failure");
+	//	}
+	//	else
+		//	System.out.println("Tag exists already");
+		
+		String name = request.getParameter("productName");
+		float price = Float.parseFloat(request.getParameter("productPrice"));
+		p.setName(name);
+		p.setPrice(price);
+
+		System.out.println(ProductService.updateProduct(id, p));
+		
+		showProducts(request,response);
+		
+	}
+	
+	private void buyProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		HttpSession session = request.getSession();
+		Cart cart = (Cart)session.getAttribute("cart");
+		if(cart==null){
+			cart = new Cart();
+			HashSet<CartItem> items = new HashSet<CartItem>();
+			cart.setItems(items);
+			CartService.addCart(cart);
+		}
+		
+		Product product = ProductService.getProduct(Integer.parseInt(request.getParameter("productid")));
+		CartItem item = new CartItem();
+		item.setProduct(product);
+		item.setQuantity(Integer.parseInt(request.getParameter("quantity")));
+		item.setCart(cart);
+		cart.addCartItem(item);
+		Transaction transaction = new Transaction();
+		Client client = (Client)session.getAttribute("user");
+		transaction.setBuyer(client);
+		transaction.setDeliveryAdd(client.getHomeAdd());
+		transaction.setSum(product.getPrice()*item.getQuantity());
+		Calendar c = Calendar.getInstance();
+		transaction.setTimeOrder(c.toString());
+		//transaction.setTimeReceived(timeReceived);
+		CartItemService.addCartItem(item);
+		TransactionService.addTransaction(transaction);
+		
+		showProducts(request,response);
+		
+	}
+	
+	private void deleteProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int id = Integer.parseInt(request.getParameter("id"));
+		
+		System.out.println(ProductService.deleteProduct(id));
+		
+		showProducts(request, response);
+	}
+	
+	private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int id = Integer.parseInt(request.getParameter("id"));
+		String type = request.getParameter("usertype");
+		
+		switch(type)
+		{
+			case "Client":
+				System.out.println(ClientService.deleteClient(id));
+				break;
+			case "Inventory Staff":
+				System.out.println(InventoryStaffService.deleteStaff(id));
+				break;	
+			case "StoreManager":
+				System.out.println(StoreManagerService.deleteManager(id));
+				break;	
+			case "Admin":
+				System.out.println(AdminService.deleteAdmin(id));
+				break;	
+		}
+		
+		request.getRequestDispatcher("index.jsp").forward(request, response);
+	}
+	
+	
 	private void showProducts(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<Product> products = ProductService.getAllProducts();
+		for(Product product: products) {
+			System.out.println(product.getName());
+		}
 		request.setAttribute("products", products);
 		request.getRequestDispatcher("showproducts.jsp").forward(request, response);
 	}
