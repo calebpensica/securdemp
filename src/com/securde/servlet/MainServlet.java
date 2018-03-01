@@ -25,6 +25,7 @@ class URLPatterns
 	public final static String LOGINMANAGER = "/loginmanager";
 	public final static String LOGINSTAFF = "/loginstaff";
 	public final static String ADDPRODUCT = "/addproduct";
+	public final static String PRODUCT = "/product";
 }
 
 /**
@@ -40,7 +41,8 @@ class URLPatterns
 			 URLPatterns.LOGINADMIN,
 			 URLPatterns.LOGINMANAGER,
 			 URLPatterns.LOGINSTAFF,
-			 URLPatterns.ADDPRODUCT,})
+			 URLPatterns.ADDPRODUCT,
+			 URLPatterns.PRODUCT})
 public class MainServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -107,6 +109,9 @@ public class MainServlet extends HttpServlet {
 			case URLPatterns.ADDPRODUCT:
 				addProduct(request, response);
 				break;	
+			case URLPatterns.PRODUCT:
+				viewProduct(request, response);
+				break;
 		}
 		
 	}
@@ -268,6 +273,14 @@ public class MainServlet extends HttpServlet {
 		
 		request.setAttribute("products", products);
 		request.getRequestDispatcher("showproducts.jsp").forward(request,response);
+	}
+	
+	private void viewProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int id = Integer.parseInt(request.getParameter("id"));
+		Product p = ProductService.getProduct(id);
+		
+		request.setAttribute("product", p);
+		request.getRequestDispatcher("product.jsp").forward(request, response);
 	}
 
 
