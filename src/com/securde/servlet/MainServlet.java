@@ -65,7 +65,7 @@ public class MainServlet extends HttpServlet {
 		switch(pattern)
 		{
 			case "/MainServlet":
-				request.getRequestDispatcher("showproducts.jsp").forward(request, response);
+				request.getRequestDispatcher("index.jsp").forward(request, response);
 				break;
 			
 			case URLPatterns.REGISTERUSER:
