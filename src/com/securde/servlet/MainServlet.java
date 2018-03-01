@@ -29,6 +29,7 @@ class URLPatterns
 	public final static String COMMITEDITPRODUCT = "/commiteditproduct";
 	public final static String BUYPRODUCT = "/buyproduct";
 	public final static String ACCOUNTDETAILS = "/accountdetails";
+	public final static String DELETEPRODUCT = "/deleteproduct";
 }
 
 /**
@@ -47,6 +48,7 @@ class URLPatterns
 			 URLPatterns.COMMITEDITPRODUCT,
 			 URLPatterns.BUYPRODUCT,
 			 URLPatterns.ACCOUNTDETAILS,
+			 URLPatterns.DELETEPRODUCT,
 			 })
 public class MainServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -117,6 +119,9 @@ public class MainServlet extends HttpServlet {
 			case URLPatterns.ACCOUNTDETAILS:
 		//		accountDetails(request, response);
 				break;
+			case URLPatterns.DELETEPRODUCT:
+				deleteProduct(request, response);
+				break;
 		}
 		
 	}
@@ -136,22 +141,22 @@ public class MainServlet extends HttpServlet {
 		if(c != null) {
 			session.setAttribute("user", c);
 			session.setAttribute("userType", "Client");
-			request.getRequestDispatcher("index.jsp").forward(request, response);
+			request.getRequestDispatcher("showproducts.jsp").forward(request, response);
 		} else {
 			if(i != null) {
 				session.setAttribute("user", i);
 				session.setAttribute("userType", "Staff");
-				request.getRequestDispatcher("index.jsp").forward(request, response);
+				request.getRequestDispatcher("showproducts.jsp").forward(request, response);
 			} else {
 				if(s != null) {
 					session.setAttribute("user", s);
 					session.setAttribute("userType", "Manager");
-					request.getRequestDispatcher("index.jsp").forward(request, response);
+					request.getRequestDispatcher("showproducts.jsp").forward(request, response);
 				} else {
 					if(a != null) {
 						session.setAttribute("user", a);
 						session.setAttribute("userType", "Admin");
-						request.getRequestDispatcher("index.jsp").forward(request, response);
+						request.getRequestDispatcher("showproducts.jsp").forward(request, response);
 					} else {
 						request.setAttribute("error", new Boolean(true));
 						request.getRequestDispatcher("login.jsp").forward(request, response);
@@ -305,7 +310,7 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 		
 		System.out.println(ProductService.addProduct(p));
 		
-		request.getRequestDispatcher("showProducts.jsp").forward(request, response);
+		request.getRequestDispatcher("showproducts.jsp").forward(request, response);
 		
 	}
 	
@@ -313,7 +318,7 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 
 		Product product = ProductService.getProduct(Integer.parseInt(request.getParameter("productid")));
 		request.setAttribute("product", product);
-		request.getRequestDispatcher("editProduct.jsp").forward(request, response);
+		request.getRequestDispatcher("editproduct.jsp").forward(request, response);
 	}
 	
 	private void commitEditProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
