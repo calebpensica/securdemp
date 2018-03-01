@@ -20,10 +20,6 @@ class URLPatterns
 	public final static String LOGIN = "/login";
 	public final static String SEARCH = "/search";
 	public final static String REGISTEREMPLOYEE = "/regemployee";
-	public final static String LOGINUSER = "/loginuser";
-	public final static String LOGINADMIN = "/loginadmin";
-	public final static String LOGINMANAGER = "/loginmanager";
-	public final static String LOGINSTAFF = "/loginstaff";
 	public final static String ADDPRODUCT = "/addproduct";
 	public final static String PRODUCT = "/product";
 }
@@ -35,12 +31,8 @@ class URLPatterns
 			 URLPatterns.REGISTERUSER,
 			 URLPatterns.REGISTERADMIN,
 			 URLPatterns.LOGIN,
-			 URLPatterns.SEARCH})
+			 URLPatterns.SEARCH,
 			 URLPatterns.REGISTEREMPLOYEE,
-			 URLPatterns.LOGINUSER,
-			 URLPatterns.LOGINADMIN,
-			 URLPatterns.LOGINMANAGER,
-			 URLPatterns.LOGINSTAFF,
 			 URLPatterns.ADDPRODUCT,
 			 URLPatterns.PRODUCT})
 public class MainServlet extends HttpServlet {
@@ -71,19 +63,19 @@ public class MainServlet extends HttpServlet {
 		
 		switch(pattern)
 		{
-			case "/MainServlet":{
+			case "/MainServlet":
 				request.getRequestDispatcher("employeesignup.jsp").forward(request, response);
 				break;
-			}
-			case URLPatterns.REGISTERUSER:{
+			
+			case URLPatterns.REGISTERUSER:
 				registerUser(request, response);
 				break;
-			}
-			case URLPatterns.REGISTERADMIN:{
+			
+			case URLPatterns.REGISTERADMIN:
 				registerAdmin(request, response);
 				break;
-			}
-			case URLPatterns.REGISTEREMPLOYEE:{
+			
+			case URLPatterns.REGISTEREMPLOYEE:
 				registerEmployee(request, response);
 				break;	
 			case URLPatterns.LOGIN:
@@ -91,20 +83,6 @@ public class MainServlet extends HttpServlet {
 				break;	
 			case URLPatterns.SEARCH:
 				searchProducts(request, response);
-				break;
-			case URLPatterns.LOGINUSER:{
-				loginUser(request, response);
-				break;	
-			}
-			case URLPatterns.LOGINADMIN:{
-				loginAdmin(request, response);
-				break;	
-			}
-			case URLPatterns.LOGINSTAFF:
-				loginStaff(request, response);
-				break;	
-			case URLPatterns.LOGINMANAGER:
-				loginManager(request, response);
 				break;
 			case URLPatterns.ADDPRODUCT:
 				addProduct(request, response);
