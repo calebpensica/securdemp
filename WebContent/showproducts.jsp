@@ -10,14 +10,20 @@
 	<script src = "js/scripts.js"></script>
 </head>
 <body>
+<form action="search">
+<input type="text" name="searchkey"><br>
+<input type="submit"><br>
+</form>
+
+
 <form action="showproducts">
 	<c:forEach items="${products}" var="p">
 	<div>
 		<table>
 			<tr>
 				<td class = "product" id="${p.id}">
-					Name: ${p.name}<br>
-					Price: ${p.price}<br>
+					${p.name}<br>
+					${p.price}<br>
 				</td>
 			</tr>	
 		</table>
@@ -26,11 +32,4 @@
 </form>
 
 </body>
-<script>
-function redirectFunc(){
-	
-}
-</script>
-
-
 </html>

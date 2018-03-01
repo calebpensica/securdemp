@@ -65,7 +65,7 @@ public class MainServlet extends HttpServlet {
 		switch(pattern)
 		{
 			case "/MainServlet":
-				request.getRequestDispatcher("employeesignup.jsp").forward(request, response);
+				request.getRequestDispatcher("showproducts.jsp").forward(request, response);
 				break;
 			
 			case URLPatterns.REGISTERUSER:
@@ -268,7 +268,7 @@ public class MainServlet extends HttpServlet {
 		
 		request.setAttribute("searchkey", key);
 		request.setAttribute("products", products);
-		request.getRequestDispatcher("index.jsp").forward(request, response);
+		request.getRequestDispatcher("showproducts.jsp").forward(request, response);
 		
 	}
 }
