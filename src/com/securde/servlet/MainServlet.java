@@ -28,6 +28,7 @@ class URLPatterns
 	public final static String EDITPRODUCT = "/editproduct";
 	public final static String COMMITEDITPRODUCT = "/commiteditproduct";
 	public final static String BUYPRODUCT = "/buyproduct";
+	public final static String ACCOUNTDETAILS = "/accountdetails";
 }
 
 /**
@@ -45,6 +46,7 @@ class URLPatterns
 			 URLPatterns.EDITPRODUCT,
 			 URLPatterns.COMMITEDITPRODUCT,
 			 URLPatterns.BUYPRODUCT,
+			 URLPatterns.ACCOUNTDETAILS,
 			 })
 public class MainServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -112,6 +114,9 @@ public class MainServlet extends HttpServlet {
 			case URLPatterns.BUYPRODUCT:
 				buyProduct(request, response);
 				break;
+			case URLPatterns.ACCOUNTDETAILS:
+		//		accountDetails(request, response);
+				break;
 		}
 		
 	}
@@ -129,21 +134,25 @@ public class MainServlet extends HttpServlet {
 		
 		if(c != null) {
 			session.setAttribute("user", c);
+			session.setAttribute("usertype", "client");
 			showProducts(request,response);
 		}
 		else {
 			if(i != null) {
 				session.setAttribute("user", i);
+				session.setAttribute("usertype", "staff");
 				request.getRequestDispatcher("index.jsp").forward(request, response);
 			}
 			else {
 				if(s != null) {
 					session.setAttribute("user", s);
+					session.setAttribute("usertype", "manager");
 					request.getRequestDispatcher("index.jsp").forward(request, response);
 				}
 				else {
 					if(a != null) {
 						session.setAttribute("user", s);
+						session.setAttribute("usertype", "admin");
 						request.getRequestDispatcher("index.jsp").forward(request, response);
 					}
 					else {
@@ -153,37 +162,6 @@ public class MainServlet extends HttpServlet {
 			}
 		}
 			
-	}
-
-
-	private void registerEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
-		String fName = request.getParameter("fName");
-		String lName = request.getParameter("lName");
-		String email = request.getParameter("email");
-		
-		StoreManager s = new StoreManager();
-		InventoryStaff is = new InventoryStaff();
-		if(request.getParameter("employeetype").equals("StoreManager")) {
-			s.setUsername(username);
-			s.setPassword(password);
-			s.setfName(fName);
-			s.setlName(lName);
-			s.setEmail(email);
-			System.out.println(StoreManagerService.addManager(s)); 
-		}
-		else {
-			is.setUsername(username);
-			is.setPassword(password);
-			is.setfName(fName);
-			is.setlName(lName);
-			is.setEmail(email);
-			System.out.println(InventoryStaffService.addStaff(is)); 
-		}
-		
-		request.getRequestDispatcher("login.jsp").forward(request, response);
 	}
 
 private void registerEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -398,9 +376,32 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 	private void deleteProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
 		
-		ProductService.deleteProduct(id);
+		System.out.println(ProductService.deleteProduct(id));
 		
 		showProducts(request, response);
+	}
+	
+	private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int id = Integer.parseInt(request.getParameter("id"));
+		String type = request.getParameter("usertype");
+		
+		switch(type)
+		{
+			case "Client":
+				System.out.println(ClientService.deleteClient(id));
+				break;
+			case "Inventory Staff":
+				System.out.println(InventoryStaffService.deleteStaff(id));
+				break;	
+			case "StoreManager":
+				System.out.println(StoreManagerService.deleteManager(id));
+				break;	
+			case "Admin":
+				System.out.println(AdminService.deleteAdmin(id));
+				break;	
+		}
+		
+		request.getRequestDispatcher("index.jsp").forward(request, response);
 	}
 	
 	
