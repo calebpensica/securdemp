@@ -3,6 +3,9 @@ package com.securde.servlet;
 import com.securde.bean.*;
 import com.securde.service.*;
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,6 +19,7 @@ class URLPatterns
 	public final static String REGISTERMANAGER = "/regmanager";
 	public final static String REGISTERSTAFF = "/regstaff";
 	public final static String LOGIN = "/login";
+	public final static String SEARCH = "/search";
 }
 
 /**
@@ -26,7 +30,8 @@ class URLPatterns
 			 URLPatterns.REGISTERADMIN,
 			 URLPatterns.REGISTERMANAGER,
 			 URLPatterns.REGISTERSTAFF,
-			 URLPatterns.LOGIN})
+			 URLPatterns.LOGIN,
+			 URLPatterns.SEARCH})
 public class MainServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -73,6 +78,9 @@ public class MainServlet extends HttpServlet {
 			case URLPatterns.LOGIN:
 				loginUser(request, response);
 				break;	
+			case URLPatterns.SEARCH:
+				searchProducts(request, response);
+				break;
 		}
 		
 	}
@@ -188,4 +196,35 @@ public class MainServlet extends HttpServlet {
 		request.getRequestDispatcher("login.jsp").forward(request, response);
 	}
 
+	private void searchProducts(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		String key = request.getParameter("searchkey");
+		String[] keywords = key.split(" ");
+		
+		List<Product> products = ProductService.getAllProducts();
+		
+		for(int i = 0; i < keywords.length; i++)
+		{
+			for(int j = 0; j < products.size(); j++)
+			{
+				// filtering by name
+				boolean found = false;
+				if(products.get(j).getName().toLowerCase().contains(keywords[i].toLowerCase()))
+					found = true;
+				else {
+					Set<Tag> tags = products.get(j).getTags();
+					for(Tag t : tags)
+						if(t.getTag().toLowerCase().contains(keywords[i].toLowerCase()))
+							found = true;							
+				}
+				
+				if(found == false)
+					products.remove(j);
+			}
+		}
+		
+		request.setAttribute("searchkey", key);
+		request.setAttribute("products", products);
+		request.getRequestDispatcher("index.jsp").forward(request, response);
+		
+	}
 }
