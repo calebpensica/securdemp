@@ -1,6 +1,7 @@
 package com.securde.service;
 
 import com.securde.bean.Cart;
+import com.securde.bean.CartItem;
 import com.securde.util.DBUtil;
 
 import javax.persistence.EntityManager;
@@ -75,7 +76,7 @@ public class CartService
 			Cart c = em.find(Cart.class, id);
 			
 			c.setTransaction(newinfo.getTransaction());
-			c.setItems(newinfo.getItems());
+			c.setItems((HashSet<CartItem>)newinfo.getItems());
 			
 			em.merge(c);
 			trans.commit();

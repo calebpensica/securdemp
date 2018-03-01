@@ -12,6 +12,14 @@
 <body>
 	<p>${product.name}</p>
 	<p>${product.price}</p>
-	
+	<form method ="post" action="editproduct">
+		<input type="hidden" name="productid" value="<c:out value="${product.id}"/>" >
+		<input type="submit" value="Edit Product"><br>
+	</form>
+	<form method ="post" action="buyproduct">
+		<input type="hidden" name="productid" value="<c:out value="${product.id}"/>" >
+		Quantity: <input type="number" name="quantity" value="1"><br>
+		<input type="submit" value="Add to Cart"><br>
+	</form>
 </body>
 </html>

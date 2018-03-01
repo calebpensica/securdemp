@@ -1,6 +1,8 @@
 package com.securde.bean;
 
 import javax.persistence.*;
+
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name="cart")
@@ -19,7 +21,7 @@ public class Cart
 	
 	public Cart() {
 		// TODO Auto-generated constructor stub
-	}
+	}	
 
 	public int getCartid() {
 		return cartid;
@@ -33,8 +35,12 @@ public class Cart
 		return items;
 	}
 
-	public void setItems(Set<CartItem> items) {
+	public void setItems(HashSet<CartItem> items) {
 		this.items = items;
+	}
+	
+	public boolean addCartItem(CartItem item) {
+		return items.add(item);
 	}
 
 	public Transaction getTransaction() {
