@@ -10,7 +10,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-	<title>E-SHOP HTML Template</title>
+	<title>Checkout</title>
 
 	<!-- Google font -->
 	<link href="https://fonts.googleapis.com/css?family=Hind:400,700" rel="stylesheet">
@@ -47,6 +47,7 @@
 	<!-- HEADER -->
 	<header>
 		<!-- top Header -->
+		
 		<!-- /top Header -->
 
 		<!-- header -->
@@ -161,9 +162,7 @@
 		<div class="container">
 			<ul class="breadcrumb">
 				<li><a href="#">Home</a></li>
-				<li><a href="#">Products</a></li>
-				<li><a href="#">Category</a></li>
-				<li class="active">Product Name Goes Here</li>
+				<li class="active">Checkout</li>
 			</ul>
 		</div>
 	</div>
@@ -175,49 +174,57 @@
 		<div class="container">
 			<!-- row -->
 			<div class="row">
-				<!--  Product Details -->
-				<div class="product product-details clearfix">
-					<div class="col-md-6">
-						<div id="product-main-view">
-							<div class="product-view">
-								<img src="./img/main-product01.jpg" alt="">
+				<form id="checkout-form" class="clearfix">
+
+					<div class="col-md-12">
+						<div class="order-summary clearfix">
+							<div class="section-title">
+								<h3 class="title">Order Review</h3>
+							</div>
+							<table class="shopping-cart-table table">
+								<thead>
+									<tr>
+										<th>Product</th>
+										<th></th>
+										<th class="text-center">Price</th>
+										<th class="text-center">Quantity</th>
+										<th class="text-center">Total</th>
+										<th class="text-right"></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td class="thumb"><img src="./img/thumb-product01.jpg" alt=""></td>
+										<td class="details">
+											<a href="#">Product Name Goes Here</a>
+										</td>
+										<td class="price text-center"><strong>$32.50</strong><br><del class="font-weak"><small>$40.00</small></del></td>
+										<td class="qty text-center"><input class="input" type="number" value="1"></td>
+										<td class="total text-center"><strong class="primary-color">$32.50</strong></td>
+										<td class="text-right"><button class="main-btn icon-btn"><i class="fa fa-close"></i></button></td>
+									</tr>
+								</tbody>
+								<tfoot>
+									<tr>
+										<th class="empty" colspan="3"></th>
+										<th>TOTAL</th>
+										<th colspan="2" class="total">$97.50</th>
+									</tr>
+								</tfoot>
+							</table>
+							<div class="pull-right">
+								<button class="primary-btn">Place Order</button>
 							</div>
 						</div>
-					</div>
-					
-					<div class="col-md-6">
-						<div class="product-body">
-							<h2 class="product-name">${product.name}</h2>
-							<h3 class="product-price">Php ${product.price}</h3>
-							
-							<p><strong>Availability:</strong> In Stock</p>
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-								dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-						
 
-							<div class="product-btns">
-								<div class="qty-input">
-									<span class="text-uppercase">QTY: </span>
-									<input class="input" type="number">
-								</div>
-								<button class="primary-btn add-to-cart"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
-							</div>
-						</div>
 					</div>
-
-				</div>
-				<!-- /Product Details -->
+				</form>
 			</div>
 			<!-- /row -->
 		</div>
 		<!-- /container -->
 	</div>
 	<!-- /section -->
-
-	<!-- section -->
-	
-	<!-- /section -->
-
 
 	<!-- FOOTER -->
 	<footer id="footer" class="section section-grey">
