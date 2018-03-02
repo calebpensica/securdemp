@@ -30,6 +30,7 @@ class URLPatterns
 	public final static String BUYPRODUCT = "/buyproduct";
 	public final static String ACCOUNTDETAILS = "/accountdetails";
 	public final static String DELETEPRODUCT = "/deleteproduct";
+	public final static String LOGOUT = "/logout";
 }
 
 /**
@@ -49,6 +50,7 @@ class URLPatterns
 			 URLPatterns.BUYPRODUCT,
 			 URLPatterns.ACCOUNTDETAILS,
 			 URLPatterns.DELETEPRODUCT,
+			 URLPatterns.LOGOUT,
 			 })
 public class MainServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -122,6 +124,9 @@ public class MainServlet extends HttpServlet {
 			case URLPatterns.DELETEPRODUCT:
 				deleteProduct(request, response);
 				break;
+			case URLPatterns.LOGOUT:
+				logoutUser(request, response);
+				break;
 		}
 		
 	}
@@ -166,6 +171,14 @@ public class MainServlet extends HttpServlet {
 		}
 			
 	}
+	
+	private void logoutUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		
+		session.setAttribute("user", null);
+		
+		request.getRequestDispatcher("index.jsp").forward(request, response);
+	}
 
 private void registerEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
@@ -198,6 +211,9 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 				request.getRequestDispatcher("login.jsp").forward(request, response);
 			}else
 				request.getRequestDispatcher("signup.jsp").forward(request, response);
+		}
+		else if(request.getParameter("employeetype").equals("Admin")) {
+			registerAdmin(request,response);
 		}
 		else {
 			
@@ -381,7 +397,7 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 	}
 	
 	private void deleteProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		int id = Integer.parseInt(request.getParameter("id"));
+		int id = Integer.parseInt(request.getParameter("productid"));
 		
 		System.out.println(ProductService.deleteProduct(id));
 		

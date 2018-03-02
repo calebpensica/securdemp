@@ -118,11 +118,17 @@
 									<li><a href="login.jsp"><i class="fa fa-unlock-alt"></i> Login</a></li>
 									<li><a href="signup.jsp"><i class="fa fa-user-plus"></i> Create An Account</a></li>
 								<% } else {
-									if (session.getAttribute("userType") == "Admin") {%>
-										<li><a href="employeesignup.jsp"><i class="fa fa-user-plus"></i> Create An Employee Account</a></li>
-								<% } 
-								}	%>
-							</ul>
+									if (session.getAttribute("userType") != "Client") { %>
+									<li><a href="addproduct.jsp"><i class="fa fa-user-plus"></i> Add Product</a></li>
+								<%	if (session.getAttribute("userType") == "Admin") { %>
+									<li><a href="employeesignup.jsp"><i class="fa fa-user-plus"></i> Create An Employee Account</a></li>
+								<% } %>	
+							<% } %>
+							<form method = "post" action = "logout">
+								<li> <input class = "main-btn" type = "submit" value = "Logout"></li>
+							</form>
+						<% }	%>
+						</ul>
 						</li>
 						<!-- /Account -->
 
@@ -212,13 +218,14 @@
 						<select name="employeetype" class = "signup-section-content" id="employeetype">
 							<option value="InventoryStaff">Inventory Staff</option>
 							<option value="StoreManager">Store Manager</option>
+							<option value="Admin">Admin</option>
 						</select><br>	
 						<strong>Username:<font color="red">*</font></strong> <input class = "signup-section-content" type = "text" name = "username" required /><br>
 						<strong>Password:<font color="red">*</font></strong> <input class = "signup-section-content" type = "password" name = "password" required /><br>
-						<strong>First Name:<font color="red">*</font></strong> <input class = "signup-section-content" type = "text" name = "fname" required /><br>
-						<strong>Last Name:<font color="red">*</font></strong> <input class = "signup-section-content" type = "text" name = "lname" required /><br>
+						<strong>First Name:<font color="red">*</font></strong> <input class = "signup-section-content" type = "text" name = "fName" required /><br>
+						<strong>Last Name:<font color="red">*</font></strong> <input class = "signup-section-content" type = "text" name = "lName" required /><br>
 						<strong>Email:<font color="red">*</font></strong> <input class = "signup-section-content" type = "email" name = "email" required /><br>
-						<strong>Contact Number:<font color="red">*</font></strong> <input class = "signup-section-content" type = "number" name = "number" required /><br>
+						<strong>Contact Number:<font color="red">*</font></strong> <input class = "signup-section-content" type = "number" name = "contact" required /><br>
 						<strong>Address:<font color="red">*</font></strong> <input class = "signup-section-content" type = "text" name = "address" required /><br>
 						<input class = "main-btn signup-section-content" type="submit" value="Add">
 					</div>

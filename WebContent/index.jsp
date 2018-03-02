@@ -118,10 +118,16 @@
 									<li><a href="login.jsp"><i class="fa fa-unlock-alt"></i> Login</a></li>
 									<li><a href="signup.jsp"><i class="fa fa-user-plus"></i> Create An Account</a></li>
 								<% } else {
-									if (session.getAttribute("userType") == "Admin") {%>
+									if (session.getAttribute("userType") != "Client") { %>
+										<li><a href="addproduct.jsp"><i class="fa fa-user-plus"></i> Add Product</a></li>
+									<%	if (session.getAttribute("userType") == "Admin") { %>
 										<li><a href="employeesignup.jsp"><i class="fa fa-user-plus"></i> Create An Employee Account</a></li>
-								<% } 
-								}	%>
+									<% } %>	
+								<% } %>
+								<form method = "post" action = "logout">
+									<li> <input class = "main-btn" type = "submit" value = "Logout"></li>
+								</form>
+							<% }	%>
 							</ul>
 						</li>
 						<!-- /Account -->
