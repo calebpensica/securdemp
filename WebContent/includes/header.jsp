@@ -2,54 +2,7 @@
 <%@page import="com.securde.bean.InventoryStaff"%>
 <%@page import="com.securde.bean.StoreManager"%>
 <%@page import="com.securde.bean.Admin"%>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html lang="en">
-
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-
-	<title>E-SHOP HTML Template</title>
-
-	<!-- Google font -->
-	<link href="https://fonts.googleapis.com/css?family=Hind:400,700" rel="stylesheet">
-
-	<!-- Bootstrap -->
-	<link type="text/css" rel="stylesheet" href="css/bootstrap.min.css" />
-
-	<!-- Slick -->
-	<link type="text/css" rel="stylesheet" href="css/slick.css" />
-	<link type="text/css" rel="stylesheet" href="css/slick-theme.css" />
-
-	<!-- nouislider -->
-	<link type="text/css" rel="stylesheet" href="css/nouislider.min.css" />
-
-	<!-- Font Awesome Icon -->
-	<link rel="stylesheet" href="css/font-awesome.min.css">
-
-	<!-- Custom stlylesheet -->
-	<link type="text/css" rel="stylesheet" href="css/style.css" />
-	
-	<script src = "js/jquery-min.js"></script>
-	<script src = "js/scripts.js"></script>
-
-	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-	<!--[if lt IE 9]>
-		  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-		  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-		<![endif]-->
-
-</head>
-
-<body>
 	<!-- HEADER -->
-	<header>
 		<!-- top Header -->
 		
 		<!-- /top Header -->
@@ -111,8 +64,24 @@
 							<%	if (session.getAttribute("user") == null) { %>
 								<a href="login.jsp" class="text-uppercase">Login</a> / <a href="signup.jsp" class="text-uppercase">Join</a>
 							<% } %>
-						<ul class="custom-menu">
-						<%@include file="includes/dropdown.jsp" %>
+							<ul class="custom-menu">
+				
+								<% if (session.getAttribute("user") == null) { %>
+									<li><a href="login.jsp"><i class="fa fa-unlock-alt"></i> Login</a></li>
+									<li><a href="signup.jsp"><i class="fa fa-user-plus"></i> Create An Account</a></li>
+								<% } else {
+								%>	<li><a href="#"><i class="fa fa-user-o"></i> My Account</a></li>
+									<li><a href="#"><i class="fa fa-check"></i> Checkout</a></li> <%
+									if (session.getAttribute("userType") != "Client") { %>
+									<li><a href="addproduct.jsp"><i class="fa fa-user-plus"></i> Add Product</a></li>
+								<%	if (session.getAttribute("userType") == "Admin") { %>
+									<li><a href="employeesignup.jsp"><i class="fa fa-user-plus"></i> Create An Employee Account</a></li>
+								<% } %>	
+							<% } %>
+							<form method = "post" action = "logout">
+								<li> <input class = "main-btn" type = "submit" value = "Logout"></li>
+							</form>
+						<% }	%>
 						</ul>
 						</li>
 						<!-- /Account -->
@@ -172,56 +141,4 @@
 			<!-- header -->
 		</div>
 		<!-- container -->
-	</header>
 	<!-- /HEADER -->
-
-	<!-- NAVIGATION -->
-	<hr>
-	<!-- /NAVIGATION -->
-
-	<!-- BREADCRUMB -->
-	<div id="breadcrumb">
-		<div class="container">
-			<ul class="breadcrumb">
-				<li><a href="index.jsp">Home</a></li>
-				<li class="active">Blank</li>
-			</ul>
-		</div>
-	</div>
-	<!-- /BREADCRUMB -->
-	
-	<!-- BLANK SECTION -->
-	
-	
-	<!-- /BLANK SECTION -- >
-	
-	<!-- section -->
-	<div class="section">
-		<!-- container -->
-		<div class="container">
-			<!-- row -->
-			<div class="row">
-			</div>
-			<!-- /row -->
-		</div>
-		<!-- /container -->
-	</div>
-	<!-- /section -->
-
-	<!-- FOOTER -->
-	<footer id="footer" class="section section-grey">
-		<%@include file="includes/footer.jsp" %>
-	</footer> 	
-	<!-- /FOOTER -->
-
-	<!-- jQuery Plugins -->
-	<script src="js/jquery.min.js"></script>
-	<script src="js/bootstrap.min.js"></script>
-	<script src="js/slick.min.js"></script>
-	<script src="js/nouislider.min.js"></script>
-	<script src="js/jquery.zoom.min.js"></script>
-	<script src="js/main.js"></script>
-
-</body>
-
-</html>
