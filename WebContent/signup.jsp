@@ -78,8 +78,8 @@
 						<h3 class="title">Sign Up</h3>
 					</div>
 					<div class = "signup-section">
-						<strong>Username:<font color="red">*</font></strong> <input class = "signup-section-content" type = "text" pattern="[A-Za-z.-_]{7,15}" size="15" name = "username" required /><br>
-						<strong>Password:<font color="red">*</font></strong> <input class = "signup-section-content" type = "password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}" minlength="8"  maxlength="20" size="20" name = "password" required /><br>
+						<strong>Username:<font color="red">*</font></strong> <input class = "signup-section-content" type = "text" pattern="[A-Za-z.-_]{7,15}" oninvalid="UsernameInvalidMsg(this)" size="15" name = "username" required /><br>
+						<strong>Password:<font color="red">*</font></strong> <input class = "signup-section-content" type = "password" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&.])[A-Za-z\d$@$!%*?&.]{8,}" oninvalid="PasswordInvalidMsg(this)" name = "password" required /><br>
 						<strong>First Name:<font color="red">*</font></strong> <input class = "signup-section-content" type = "text" pattern="[A-Za-zñ\s]{1,50}" oninvalid="NameInvalidMsg(this)" name = "fName" required /><br>
 						<strong>Last Name:<font color="red">*</font></strong> <input class = "signup-section-content" type = "text" pattern="[A-Za-zñ\s]{1,50}" oninvalid="NameInvalidMsg(this)" name = "lName" required /><br>
 						<strong>Email:<font color="red">*</font></strong> <input class = "signup-section-content" type = "email" name = "email" required /><br>
@@ -135,7 +135,7 @@ function NameInvalidMsg(textbox) {
 
 function PasswordInvalidMsg(textbox){
 	if(textbox.validity.patternMismatch){
-	    textbox.setCustomValidity('Password must include at least 1 uppercase letter, 1 lower case letter, 1 number, 1 special character and at least 8 characters long.');
+	    textbox.setCustomValidity('Password must contain at least 1 uppercase letter, 1 lower case letter, 1 number, 1 special character and at least 8 characters long.');
 	}    
 	else {
 	    textbox.setCustomValidity('');
