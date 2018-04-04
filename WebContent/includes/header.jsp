@@ -123,7 +123,8 @@
 									</div>
 									<div class="shopping-cart-btns">
 										<button class="main-btn">View Cart</button>
-										<button class="primary-btn">Checkout <i class="fa fa-arrow-circle-right"></i></button>
+										<form method="post" action="checkout">
+										<button type="submit" class="primary-btn">Checkout</button></form>
 									</div>
 								</div>
 							</div>

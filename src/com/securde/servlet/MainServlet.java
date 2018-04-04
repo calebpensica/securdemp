@@ -3,6 +3,7 @@ package com.securde.servlet;
 import com.securde.bean.*;
 import com.securde.service.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +32,7 @@ class URLPatterns
 	public final static String ACCOUNTDETAILS = "/accountdetails";
 	public final static String DELETEPRODUCT = "/deleteproduct";
 	public final static String LOGOUT = "/logout";
+	public final static String CHECKOUT = "/checkout";
 }
 
 /**
@@ -51,6 +53,7 @@ class URLPatterns
 			 URLPatterns.ACCOUNTDETAILS,
 			 URLPatterns.DELETEPRODUCT,
 			 URLPatterns.LOGOUT,
+			 URLPatterns.CHECKOUT
 			 })
 public class MainServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -126,6 +129,9 @@ public class MainServlet extends HttpServlet {
 				break;
 			case URLPatterns.LOGOUT:
 				logoutUser(request, response);
+				break;
+			case URLPatterns.CHECKOUT:
+				checkout(request, response);
 				break;
 		}
 		
@@ -368,8 +374,11 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 
 		HttpSession session = request.getSession();
 		Cart cart = (Cart)session.getAttribute("cart");
+		System.out.print("CART: ");
+		System.out.println(cart);
 		if(cart==null){
 			cart = new Cart();
+			System.out.println("Cart Instantiated");
 			HashSet<CartItem> items = new HashSet<CartItem>();
 			cart.setItems(items);
 			CartService.addCart(cart);
@@ -381,18 +390,50 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 		item.setQuantity(Integer.parseInt(request.getParameter("quantity")));
 		item.setCart(cart);
 		cart.addCartItem(item);
-		Transaction transaction = new Transaction();
 		Client client = (Client)session.getAttribute("user");
-		transaction.setBuyer(client);
-		transaction.setDeliveryAdd(client.getHomeAdd());
-		transaction.setSum(product.getPrice()*item.getQuantity());
-		Calendar c = Calendar.getInstance();
-		transaction.setTimeOrder(c.toString());
+		if(client==null) 
+			loginUser(request,response);
+		
+		ArrayList<CartItem> items = (ArrayList<CartItem>)session.getAttribute("items");
+		if(items==null){
+			items = new ArrayList();
+			session.setAttribute("items", items);
+		}
+		items.add(item);
+		session.setAttribute("items", items);
+		session.setAttribute("cart", cart);
+
 		//transaction.setTimeReceived(timeReceived);
-		CartItemService.addCartItem(item);
-		TransactionService.addTransaction(transaction);
 		
 		showProducts(request,response);
+		
+	}
+	
+	private void checkout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		Cart cart = (Cart)session.getAttribute("cart");
+		if(cart==null) {
+			System.out.println("Cart Null");
+			showProducts(request,response);
+		}
+		System.out.println(cart);
+		Client client = (Client)session.getAttribute("user");
+		if(client==null) {
+			System.out.println("Client Null");
+			showProducts(request,response);
+		}
+		ArrayList<CartItem> items = (ArrayList<CartItem>)session.getAttribute("items");
+		if(items==null) {
+			System.out.println("CartItems Null");
+			showProducts(request,response);
+		}
+		Transaction transaction = new Transaction();
+		transaction.setBuyer(client);
+		transaction.setDeliveryAdd(client.getHomeAdd());
+		Calendar c = Calendar.getInstance();
+		transaction.setTimeOrder(c.toString());
+		cart.setTransaction(transaction);
+		TransactionService.addTransaction(transaction);
 		
 	}
 	
