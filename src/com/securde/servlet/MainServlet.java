@@ -430,9 +430,9 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 		Transaction transaction = new Transaction();
 		transaction.setBuyer(client);
 		transaction.setDeliveryAdd(client.getHomeAdd());
+		transaction.setCart(cart);
 		Calendar c = Calendar.getInstance();
 		transaction.setTimeOrder(c.toString());
-		cart.setTransaction(transaction);
 		TransactionService.addTransaction(transaction);
 		
 	}
