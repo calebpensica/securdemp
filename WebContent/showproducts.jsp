@@ -123,10 +123,10 @@
 							<div class="col-md-4 col-sm-6 col-xs-6">
 								<div class="product product-single">
 									<div class="product-thumb">
-										<form method = "post" action ="product">
-											<button class="main-btn quick-view" name = "id" value = ${p.id } type = "submit"><i class="fa fa-search-plus"></i>View Item</button>
+									<a href="product?id=${p.id }">
+											<button class="main-btn quick-view" name="id" value="${p.id}" ><i class="fa fa-search-plus"></i>View Item</button></a>
 											<img src="./img/product01.jpg" alt="">
-										</form>
+
 									</div>
 									<div class="product-body">
 										<h3 class="product-price">Php ${p.price}0</h3>

@@ -383,23 +383,28 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 	private void buyProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		HttpSession session = request.getSession();
-		Cart cart = (Cart)session.getAttribute("cart");
-		System.out.print("CART: ");
-		System.out.println(cart);
-		if(cart==null){
+		Cart cart;
+		if(session.getAttribute("cartID")==null){
 			cart = new Cart();
-			System.out.println("Cart Instantiated");
-			HashSet<CartItem> items = new HashSet<CartItem>();
-			cart.setItems(items);
-			CartService.addCart(cart);
+			CartService.addCart(cart);	
+			for(Cart newCart: CartService.getAllCarts()) {
+				cart.setCartid(newCart.getCartid());
+			}
+			System.out.println("Cart Instantiated: " +cart.getCartid());
+			session.setAttribute("cartID", cart.getCartid());
 		}
+		else {
+			cart = CartService.getCart((int)session.getAttribute("cartID"));
+		}
+		
+		
+		System.out.println("CARTID: " + Integer.toString((int)session.getAttribute("cartID")));
 		
 		Product product = ProductService.getProduct(Integer.parseInt(request.getParameter("productid")));
 		CartItem item = new CartItem();
 		item.setProduct(product);
 		item.setQuantity(Integer.parseInt(request.getParameter("quantity")));
 		item.setCart(cart);
-		cart.addCartItem(item);
 		Client client = (Client)session.getAttribute("user");
 		if(client==null) 
 			loginUser(request,response);
@@ -411,7 +416,6 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 		}
 		items.add(item);
 		session.setAttribute("items", items);
-		session.setAttribute("cart", cart);
 
 		//transaction.setTimeReceived(timeReceived);
 		
@@ -421,12 +425,18 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 	
 	private void confirmproducts(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		Cart cart = (Cart)session.getAttribute("cart");
-		if(cart==null) {
+		Cart cart;
+		if(session.getAttribute("cartID")==null) {
+			cart = new Cart();
 			System.out.println("Cart Null");
 			showProducts(request,response);
 		}
-		System.out.println(cart);
+		else {
+			cart = CartService.getCart((int)session.getAttribute("cartID"));
+			System.out.print("ahh cart gotten: ");
+			System.out.println(cart);
+		}
+		
 		Client client = (Client)session.getAttribute("user");
 		if(client==null) {
 			System.out.println("Client Null");
@@ -452,12 +462,17 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 	
 	private void confirmcontact(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		Cart cart = (Cart)session.getAttribute("cart");
-		if(cart==null) {
+		Cart cart;
+		if(session.getAttribute("cartID")==null) {
+			cart = new Cart();
 			System.out.println("Cart Null");
 			showProducts(request,response);
 		}
-		System.out.println(cart);
+		else {
+			cart = CartService.getCart((int)session.getAttribute("cartID"));
+			System.out.print("ahh cart gotten: ");
+			System.out.println(cart);
+		}
 		Client client = (Client)session.getAttribute("user");
 		if(client==null) {
 			System.out.println("Client Null");
@@ -473,12 +488,17 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 	
 	private void checkout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
-		Cart cart = (Cart)session.getAttribute("cart");
-		if(cart==null) {
+		Cart cart;
+		if(session.getAttribute("cartID")==null) {
+			cart = new Cart();
 			System.out.println("Cart Null");
 			showProducts(request,response);
 		}
-		System.out.println(cart);
+		else {
+			cart = CartService.getCart((int)session.getAttribute("cartID"));
+			System.out.print("ahh cart gotten: ");
+			System.out.println(cart);
+		}
 		Client client = (Client)session.getAttribute("user");
 		if(client==null) {
 			System.out.println("Client Null");
@@ -490,7 +510,6 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 			System.out.println("CartItems Null");
 			showProducts(request,response);
 		}
-		CartService.addCart(cart);
 		for(CartItem item: items) {
 			item.setCart(cart);
 			CartItemService.addCartItem(item);
@@ -499,8 +518,11 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 		Transaction transaction = new Transaction();
 		transaction.setBuyer(client);
 		transaction.setCart(cart);
+		System.out.print("CART: WIP");
+		System.out.println(cart);
 		transaction.setDeliveryAdd(request.getParameter("homeAdd"));
 		transaction.setSum((float)((double)session.getAttribute("total")));
+		transaction.setTimeOrder("ah");
 		TransactionService.addTransaction(transaction);
 		System.out.println("Transaction Created");
 		request.getRequestDispatcher("index.jsp").forward(request,response);

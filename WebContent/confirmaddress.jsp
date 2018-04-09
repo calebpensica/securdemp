@@ -75,52 +75,21 @@
 		<div class="container">
 			<!-- row -->
 			<div class="row">
-				<form id="checkout-form" class="clearfix" method="post" action="confirmcontact">
+				<form method="post" action="checkout" id="checkout-form" class="clearfix">
 
 					<div class="col-md-12">
 						<div class="order-summary clearfix">
 							<div class="section-title">
 								<h3 class="title">Order Review</h3>
 							</div>
-							<table class="shopping-cart-table table">
-								<thead>
-									<tr>
-										<th>Product</th>
-										<th></th>
-										<th class="text-center">Price</th>
-										<th class="text-center">Quantity</th>
-										<th class="text-center">Total</th>
-										<th class="text-right"></th>
-									</tr>
-								</thead>
-								<tbody>
-								
-							<c:forEach items="${items}" var ="item">
-									<tr>
-										<td class="thumb"><img src="./img/thumb-product01.jpg" alt=""></td>
-										<td class="details">
-											<a href="#">${item.product.name }</a>
-										</td>
-										<td class="price text-center"><strong>$${item.product.price }</strong></td>
-										<td class="qty text-center"><input class="input" type="number" name="quantity" id="quantity" value="${item.quantity }"></td>
-										<td class="total text-center"><strong class="primary-color">${item.product.price*item.quantity }</strong></td>
-										<td class="text-right"><button class="main-btn icon-btn"><i class="fa fa-close"></i></button></td>
-									</tr>
-								</c:forEach>
-								</tbody>
-								<tfoot>
-									<tr>
-										<th class="empty" colspan="3"></th>
-										<th>TOTAL</th>
-										<th colspan="2" class="total">${total }</th>
-									</tr>
-								</tfoot>
-							</table>
+								put address inputs here
+								<input type="text" name="homeAdd" value="${user.homeAdd }">
+								<input type="number" name="contactNo" value="${user.contactNo }">
+								<input type="email" name="email" value="${user.email }">
 							<div class="pull-right">
-								<button type="submit" class="primary-btn">Place Order</button>
+								<button type="submit" class="primary-btn">Confirm Address</button>
 							</div>
 						</div>
-
 					</div>
 				</form>
 			</div>

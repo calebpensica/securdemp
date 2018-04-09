@@ -21,7 +21,7 @@ public class Transaction
 	
 	@Column
 	private String timeReceived;
-	
+		
 	@ManyToOne(cascade = CascadeType.ALL)
 	private Client buyer;
 	

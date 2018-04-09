@@ -122,9 +122,9 @@
 										</div>
 									</div>
 									<div class="shopping-cart-btns">
-										<button class="main-btn">View Cart</button>
-										<form method="post" action="checkout">
-										<button type="submit" class="primary-btn">Checkout</button></form>
+										<form method="post" action="confirmcheckout">
+										<button type ="submit" class="main-btn">View Cart</button></form>
+										<button type="submit" class="primary-btn">Checkout</button>
 									</div>
 								</div>
 							</div>
