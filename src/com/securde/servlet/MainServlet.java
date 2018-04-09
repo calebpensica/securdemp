@@ -32,6 +32,8 @@ class URLPatterns
 	public final static String ACCOUNTDETAILS = "/accountdetails";
 	public final static String DELETEPRODUCT = "/deleteproduct";
 	public final static String LOGOUT = "/logout";
+	public final static String CONFIRMCHECKOUT = "/confirmcheckout";
+	public final static String CONFIRMCONTACT = "/confirmcontact";
 	public final static String CHECKOUT = "/checkout";
 }
 
@@ -53,6 +55,8 @@ class URLPatterns
 			 URLPatterns.ACCOUNTDETAILS,
 			 URLPatterns.DELETEPRODUCT,
 			 URLPatterns.LOGOUT,
+			 URLPatterns.CONFIRMCHECKOUT,
+			 URLPatterns.CONFIRMCONTACT,
 			 URLPatterns.CHECKOUT
 			 })
 public class MainServlet extends HttpServlet {
@@ -129,6 +133,12 @@ public class MainServlet extends HttpServlet {
 				break;
 			case URLPatterns.LOGOUT:
 				logoutUser(request, response);
+				break;
+			case URLPatterns.CONFIRMCHECKOUT:
+				confirmproducts(request, response);
+				break;
+			case URLPatterns.CONFIRMCONTACT:
+				confirmcontact(request, response);
 				break;
 			case URLPatterns.CHECKOUT:
 				checkout(request, response);
@@ -409,7 +419,7 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 		
 	}
 	
-	private void checkout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void confirmproducts(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		Cart cart = (Cart)session.getAttribute("cart");
 		if(cart==null) {
@@ -427,13 +437,73 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 			System.out.println("CartItems Null");
 			showProducts(request,response);
 		}
+		
+		double total = 0.0;
+		for(CartItem item: items) {
+			total += (item.getQuantity()*item.getProduct().getPrice());
+		}
+		
+		session.setAttribute("total", total);
+		
+
+		request.getRequestDispatcher("checkout.jsp").forward(request, response);
+		
+	}
+	
+	private void confirmcontact(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		Cart cart = (Cart)session.getAttribute("cart");
+		if(cart==null) {
+			System.out.println("Cart Null");
+			showProducts(request,response);
+		}
+		System.out.println(cart);
+		Client client = (Client)session.getAttribute("user");
+		if(client==null) {
+			System.out.println("Client Null");
+			showProducts(request,response);
+		}
+		ArrayList<CartItem> items = (ArrayList<CartItem>)session.getAttribute("items");
+		if(items==null) {
+			System.out.println("CartItems Null");
+			showProducts(request,response);
+		}
+		request.getRequestDispatcher("confirmaddress.jsp").forward(request, response);
+	}
+	
+	private void checkout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		Cart cart = (Cart)session.getAttribute("cart");
+		if(cart==null) {
+			System.out.println("Cart Null");
+			showProducts(request,response);
+		}
+		System.out.println(cart);
+		Client client = (Client)session.getAttribute("user");
+		if(client==null) {
+			System.out.println("Client Null");
+			showProducts(request,response);
+		}
+		
+		ArrayList<CartItem> items = (ArrayList<CartItem>)session.getAttribute("items");
+		if(items==null) {
+			System.out.println("CartItems Null");
+			showProducts(request,response);
+		}
+		CartService.addCart(cart);
+		for(CartItem item: items) {
+			item.setCart(cart);
+			CartItemService.addCartItem(item);
+		}
+		
 		Transaction transaction = new Transaction();
 		transaction.setBuyer(client);
-		transaction.setDeliveryAdd(client.getHomeAdd());
 		transaction.setCart(cart);
-		Calendar c = Calendar.getInstance();
-		transaction.setTimeOrder(c.toString());
+		transaction.setDeliveryAdd(request.getParameter("homeAdd"));
+		transaction.setSum((float)((double)session.getAttribute("total")));
 		TransactionService.addTransaction(transaction);
+		System.out.println("Transaction Created");
+		request.getRequestDispatcher("index.jsp").forward(request,response);
 		
 	}
 	
