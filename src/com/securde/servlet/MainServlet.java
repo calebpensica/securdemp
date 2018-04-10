@@ -163,7 +163,7 @@ public class MainServlet extends HttpServlet {
 		/* Password Encryption */
 		StringBuffer sb = new StringBuffer();
 		try {
-			MD5 = MessageDigest.getInstance(password);
+			MD5 = MessageDigest.getInstance("MD5");
 			MD5.update(password.getBytes());
 			byte[] messageDigestMD5 = MD5.digest();
 			for(byte bytes : messageDigestMD5) {
@@ -203,7 +203,7 @@ public class MainServlet extends HttpServlet {
 						request.getRequestDispatcher("showproducts.jsp").forward(request, response);
 					} else {
 						request.setAttribute("error", new Boolean(true));
-						/* Brute Force Attack Prevention
+						/* Brute Force Attack Prevention */
 						int loginAttempt;
 			            if (session.getAttribute("loginCount") == null)
 			            {
@@ -224,7 +224,7 @@ public class MainServlet extends HttpServlet {
 			                long currentTime = date.getTime();
 			                long timeDiff = currentTime - lastAccessedTime;
 			                // 20 minutes in milliseconds  
-			                if (timeDiff >= 1200000)
+			                if (timeDiff >= 120000)
 			                {
 			                    //invalidate user session, so they can try again
 			                    session.invalidate();
@@ -232,7 +232,7 @@ public class MainServlet extends HttpServlet {
 			                else
 			                {
 			                     // Error message 
-			                     session.setAttribute("message","You have exceeded the 3 failed login attempt. Please try logging in in 20 minutes.");
+			                     request.setAttribute("errorMessage","You have exceeded the 5 failed login attempt. Please try logging in in 20 minutes.");
 			                }  
 
 			            }
@@ -241,8 +241,9 @@ public class MainServlet extends HttpServlet {
 			                 loginAttempt++;
 			                 int allowLogin = 5-loginAttempt;
 			                 session.setAttribute("message","loginAttempt= "+loginAttempt+". Invalid username or password. You have "+allowLogin+" attempts remaining. Please try again! <br>Not a registered cusomer? Please <a href=\"register.jsp\">register</a>!");
+			                 request.setAttribute("errorMessage", "Invalid username or password. You have "+allowLogin+" attempts remaining. Please try again!");
 			            }
-			             */
+			            request.setAttribute("errorMessage", "Invalid Username and/or Password. Please try again");
 			            session.setAttribute("loginCount",loginAttempt);
 						request.getRequestDispatcher("login.jsp").forward(request, response);
 					}
@@ -272,7 +273,7 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 		/* Password Encryption */
 		StringBuffer sb = new StringBuffer();
 		try {
-			MD5 = MessageDigest.getInstance(password);
+			MD5 = MessageDigest.getInstance("MD5");
 			MD5.update(password.getBytes());
 			byte[] messageDigestMD5 = MD5.digest();
 			for(byte bytes : messageDigestMD5) {
@@ -313,12 +314,7 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 		}
 		else {
 			
-			List<InventoryStaff> staffs = InventoryStaffService.getAllInventoryStaffs();
-			for(InventoryStaff i : staffs)
-				if(i.getUsername().equalsIgnoreCase(username))
-					exist = true;
-			
-			if(!exist)
+			if(!checkDuplicates(username))
 			{
 				is = new InventoryStaff();
 				is.setUsername(username);
@@ -328,8 +324,11 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 				is.setEmail(email);
 				System.out.println(InventoryStaffService.addStaff(is)); 
 				request.getRequestDispatcher("login.jsp").forward(request, response);
-			} else
-				request.getRequestDispatcher("signup.jsp").forward(request, response);	
+			} else {
+				request.setAttribute("error", true);
+				request.setAttribute("errorMessage", "Invalid Username.");
+				request.getRequestDispatcher("employeesignup.jsp").forward(request, response);
+			}
 		}
 	}
 
@@ -348,7 +347,7 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 
 		/* Password Encryption */
 		try {
-			MD5 = MessageDigest.getInstance(password);
+			MD5 = MessageDigest.getInstance("MD5");
 			MD5.update(password.getBytes());
 			byte[] messageDigestMD5 = MD5.digest();
 			for(byte bytes : messageDigestMD5) {
@@ -360,18 +359,13 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
         }
 		
 		List<Client> clients = ClientService.getAllClients();
-		boolean exist = false;
 		
 		System.out.println(contactNo);
 		
-		for(Client c : clients)
-			if(c.getUsername().equalsIgnoreCase(username))
-				exist = true;
-		
-		if(!exist) {
+		if(checkDuplicates(username)) {
 			Client c = new Client();
 			c.setUsername(username);
-			c.setPassword(password);
+			c.setPassword(sb.toString());
 			c.setfName(fName);
 			c.setlName(lName);
 			c.setEmail(email);
@@ -380,8 +374,11 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 			
 			System.out.println(ClientService.addClient(c)); 
 			request.getRequestDispatcher("login.jsp").forward(request, response);
-		} else
-			request.getRequestDispatcher("signup.jsp").forward(request, response);
+		} else {
+			request.setAttribute("error", true);
+			request.setAttribute("errorMessage", "Invalid Username.");
+			request.getRequestDispatcher("employeesignup.jsp").forward(request, response);
+		}
 		
 	}
 
@@ -394,10 +391,10 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 		String fName = request.getParameter("fName");
 		String lName = request.getParameter("lName");
 		String email = request.getParameter("email");
-
+		
 		/* Password Encryption */
 		try {
-			MD5 = MessageDigest.getInstance(password);
+			MD5 = MessageDigest.getInstance("MD5");
 			MD5.update(password.getBytes());
 			byte[] messageDigestMD5 = MD5.digest();
 			for(byte bytes : messageDigestMD5) {
@@ -407,14 +404,11 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
             // TODO Auto-generated catch block
             exception.printStackTrace();
         }
-		List<Admin> admins = AdminService.getAllAdmins();
-		boolean exist = false;
+
 		
-		for(Admin ad : admins)
-			if(ad.getUsername().equalsIgnoreCase(username))
-				exist = true;
+		/* CHECKS FOR DUPLICATES */
 		
-		if(!exist) {
+		if(!checkDuplicates(username)) {
 			Admin a = new Admin();
 			a.setUsername(username);
 			a.setPassword(password);
@@ -423,8 +417,38 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 			a.setEmail(email);
 			System.out.println(AdminService.addAdmin(a));
 			request.getRequestDispatcher("login.jsp").forward(request, response);
-		} else
-			request.getRequestDispatcher("signup.jsp").forward(request, response);
+		} else {
+			request.setAttribute("error", true);
+			request.setAttribute("errorMessage", "Invalid Username.");
+			request.getRequestDispatcher("employeesignup.jsp").forward(request, response);
+		}
+	}
+	
+	public boolean checkDuplicates(String username) {
+		for(Client client: ClientService.getAllClients() ) {
+			if(username==client.getUsername()) {
+				return true;
+			}
+			System.out.println(username);
+			System.out.println("client: " + client.getUsername() );
+		}
+		
+		for(Admin admin: AdminService.getAllAdmins() ) {
+			if(username==admin.getUsername())
+				return true;
+		}
+		
+		for(StoreManager manager: StoreManagerService.getAllManagers() ) {
+			if(username==manager.getUsername())
+				return true;
+		}
+		
+		for(InventoryStaff staff: InventoryStaffService.getAllInventoryStaffs() ) {
+			if(username==staff.getUsername())
+				return true;
+		}
+		
+		return false;
 	}
 	
 	private void addProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -82,7 +82,7 @@
 						<% if (request.getAttribute("error") != null)  {
 							boolean error = (boolean) request.getAttribute("error");
 							if (error) { %>
-								<strong><font color = "red"><p class = "login-section-content">Invalid Username and/or Password. Please try again.</p></font></strong>
+								<strong><font color = "red"><p class = "login-section-content"><%request.getAttribute("errorMessage"); %>.</p></font></strong>
 							<% } 
 						}%>
 					</div>

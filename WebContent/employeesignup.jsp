@@ -91,6 +91,12 @@
 						<strong>Email:<font color="red">*</font></strong> <input class = "signup-section-content" type = "email" name = "email" required /><br>
 						<strong>Contact Number:<font color="red">*</font></strong> <input class = "signup-section-content" type = "number" name = "contact" required /><br>
 						<strong>Address:<font color="red">*</font></strong> <input class = "signup-section-content" type = "text" name = "address" required /><br>
+						<% if (request.getAttribute("error") != null)  {
+							boolean error = (boolean) request.getAttribute("error");
+							if (error) { %>
+								<strong><font color = "red"><p class = "login-section-content">${errorMessage }</p></font></strong>
+							<% } 
+						}%>
 						<input class = "main-btn signup-section-content" type="submit" value="Add">
 					</div>
 				</form>	
