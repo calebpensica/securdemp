@@ -5,9 +5,14 @@ import com.securde.service.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -149,15 +154,33 @@ public class MainServlet extends HttpServlet {
 
 	private void loginUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{		
+		MessageDigest MD5;
 		HttpSession session = request.getSession();
-
+		String url;
+		Date date;
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
+		/* Password Encryption */
+		StringBuffer sb = new StringBuffer();
+		try {
+			MD5 = MessageDigest.getInstance(password);
+			MD5.update(password.getBytes());
+			byte[] messageDigestMD5 = MD5.digest();
+			for(byte bytes : messageDigestMD5) {
+				sb.append(String.format("%02x", bytes & 0xff));
+			}
+		} catch (NoSuchAlgorithmException exception) {
+            // TODO Auto-generated catch block
+            exception.printStackTrace();
+        }
 		
-		Client c = ClientService.findClient(username, password);
-		Admin a = AdminService.findAdmin(username, password);
-		InventoryStaff i = InventoryStaffService.findStaff(username, password);
-		StoreManager s = StoreManagerService.findManager(username, password);
+		Client c = ClientService.findClient(username, sb.toString());
+		Admin a = AdminService.findAdmin(username, sb.toString());
+		InventoryStaff i = InventoryStaffService.findStaff(username, sb.toString());
+		StoreManager s = StoreManagerService.findManager(username, sb.toString());
+		
+
+
 		
 		if(c != null) {
 			session.setAttribute("user", c);
@@ -180,6 +203,47 @@ public class MainServlet extends HttpServlet {
 						request.getRequestDispatcher("showproducts.jsp").forward(request, response);
 					} else {
 						request.setAttribute("error", new Boolean(true));
+						/* Brute Force Attack Prevention
+						int loginAttempt;
+			            if (session.getAttribute("loginCount") == null)
+			            {
+			                session.setAttribute("loginCount", 0);
+			                loginAttempt = 0;
+			            }
+			            else
+			            {
+			                 loginAttempt = (Integer) session.getAttribute("loginCount");
+			            }
+
+			            //this is 3 attempts counting from 0,1,2
+			            if (loginAttempt >= 4 )
+			            {
+			            	
+			                long lastAccessedTime = session.getLastAccessedTime();
+			                date = new Date();
+			                long currentTime = date.getTime();
+			                long timeDiff = currentTime - lastAccessedTime;
+			                // 20 minutes in milliseconds  
+			                if (timeDiff >= 1200000)
+			                {
+			                    //invalidate user session, so they can try again
+			                    session.invalidate();
+			                }
+			                else
+			                {
+			                     // Error message 
+			                     session.setAttribute("message","You have exceeded the 3 failed login attempt. Please try logging in in 20 minutes.");
+			                }  
+
+			            }
+			            else
+			            {
+			                 loginAttempt++;
+			                 int allowLogin = 5-loginAttempt;
+			                 session.setAttribute("message","loginAttempt= "+loginAttempt+". Invalid username or password. You have "+allowLogin+" attempts remaining. Please try again! <br>Not a registered cusomer? Please <a href=\"register.jsp\">register</a>!");
+			            }
+			             */
+			            session.setAttribute("loginCount",loginAttempt);
 						request.getRequestDispatcher("login.jsp").forward(request, response);
 					}
 				}
@@ -191,18 +255,34 @@ public class MainServlet extends HttpServlet {
 	private void logoutUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		
-		session.setAttribute("user", null);
+		session.invalidate();
 		
 		request.getRequestDispatcher("index.jsp").forward(request, response);
 	}
 
 private void registerEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+		MessageDigest MD5;
+	
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		String fName = request.getParameter("fName");
 		String lName = request.getParameter("lName");
 		String email = request.getParameter("email");
+		
+		/* Password Encryption */
+		StringBuffer sb = new StringBuffer();
+		try {
+			MD5 = MessageDigest.getInstance(password);
+			MD5.update(password.getBytes());
+			byte[] messageDigestMD5 = MD5.digest();
+			for(byte bytes : messageDigestMD5) {
+				sb.append(String.format("%02x", bytes & 0xff));
+			}
+		} catch (NoSuchAlgorithmException exception) {
+            // TODO Auto-generated catch block
+            exception.printStackTrace();
+        }
+
 		
 		StoreManager s = null;
 		InventoryStaff is = null;
@@ -219,7 +299,7 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 			{
 				s = new StoreManager();
 				s.setUsername(username);
-				s.setPassword(password);
+				s.setPassword(sb.toString());
 				s.setfName(fName);
 				s.setlName(lName);
 				s.setEmail(email);
@@ -242,7 +322,7 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 			{
 				is = new InventoryStaff();
 				is.setUsername(username);
-				is.setPassword(password);
+				is.setPassword(sb.toString());
 				is.setfName(fName);
 				is.setlName(lName);
 				is.setEmail(email);
@@ -255,6 +335,9 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 
 	private void registerUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
+		MessageDigest MD5;
+		StringBuffer sb = new StringBuffer();
+		
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		String fName = request.getParameter("fName");
@@ -262,6 +345,19 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 		String email = request.getParameter("email");
 		String contactNo = request.getParameter("contact");
 		String homeAdd = request.getParameter("address");
+
+		/* Password Encryption */
+		try {
+			MD5 = MessageDigest.getInstance(password);
+			MD5.update(password.getBytes());
+			byte[] messageDigestMD5 = MD5.digest();
+			for(byte bytes : messageDigestMD5) {
+				sb.append(String.format("%02x", bytes & 0xff));
+			}
+		} catch (NoSuchAlgorithmException exception) {
+            // TODO Auto-generated catch block
+            exception.printStackTrace();
+        }
 		
 		List<Client> clients = ClientService.getAllClients();
 		boolean exist = false;
@@ -290,13 +386,27 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 	}
 
 	private void registerAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		MessageDigest MD5;
+		StringBuffer sb = new StringBuffer();
 		
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		String fName = request.getParameter("fName");
 		String lName = request.getParameter("lName");
 		String email = request.getParameter("email");
-		
+
+		/* Password Encryption */
+		try {
+			MD5 = MessageDigest.getInstance(password);
+			MD5.update(password.getBytes());
+			byte[] messageDigestMD5 = MD5.digest();
+			for(byte bytes : messageDigestMD5) {
+				sb.append(String.format("%02x", bytes & 0xff));
+			}
+		} catch (NoSuchAlgorithmException exception) {
+            // TODO Auto-generated catch block
+            exception.printStackTrace();
+        }
 		List<Admin> admins = AdminService.getAllAdmins();
 		boolean exist = false;
 		
@@ -525,6 +635,10 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 		transaction.setTimeOrder("ah");
 		TransactionService.addTransaction(transaction);
 		System.out.println("Transaction Created");
+		session.removeAttribute("cart");
+		session.removeAttribute("items");
+		session.removeAttribute("total");
+		session.setAttribute("total", 0.00);
 		request.getRequestDispatcher("index.jsp").forward(request,response);
 		
 	}

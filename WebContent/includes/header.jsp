@@ -2,6 +2,7 @@
 <%@page import="com.securde.bean.InventoryStaff"%>
 <%@page import="com.securde.bean.StoreManager"%>
 <%@page import="com.securde.bean.Admin"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 	<!-- HEADER -->
 		<!-- top Header -->
 		
@@ -95,36 +96,28 @@
 								</div>
 								<strong class="text-uppercase">My Cart:</strong>
 								<br>
-								<span>35.20$</span>
+								<span>${total }</span>
 							</a>
 							<div class="custom-menu">
 								<div id="shopping-cart">
 									<div class="shopping-cart-list">
+									<c:forEach items="${items}" var ="item">
 										<div class="product product-widget">
 											<div class="product-thumb">
 												<img src="./img/thumb-product01.jpg" alt="">
 											</div>
 											<div class="product-body">
-												<h3 class="product-price">$32.50 <span class="qty">x3</span></h3>
-												<h2 class="product-name"><a href="#">Product Name Goes Here</a></h2>
+												<h3 class="product-price">$${item.product.price } <span class="qty">x${item.quantity }</span></h3>
+												<h2 class="product-name"><a href="#">${item.product.name }</a></h2>
 											</div>
 											<button class="cancel-btn"><i class="fa fa-trash"></i></button>
 										</div>
-										<div class="product product-widget">
-											<div class="product-thumb">
-												<img src="./img/thumb-product01.jpg" alt="">
-											</div>
-											<div class="product-body">
-												<h3 class="product-price">$32.50 <span class="qty">x3</span></h3>
-												<h2 class="product-name"><a href="#">Product Name Goes Here</a></h2>
-											</div>
-											<button class="cancel-btn"><i class="fa fa-trash"></i></button>
-										</div>
+										</c:forEach>
 									</div>
 									<div class="shopping-cart-btns">
 										<form method="post" action="confirmcheckout">
-										<button type ="submit" class="main-btn">View Cart</button></form>
-										<button type="submit" class="primary-btn">Checkout</button>
+											<button type="submit" class="primary-btn">Checkout</button>
+										</form>
 									</div>
 								</div>
 							</div>

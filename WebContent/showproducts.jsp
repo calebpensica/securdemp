@@ -131,9 +131,6 @@
 									<div class="product-body">
 										<h3 class="product-price">Php ${p.price}0</h3>
 										<h2 class="product-name">${p.name}</h2>
-										<div class="product-btns">
-											<button class="primary-btn add-to-cart"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
-										</div>
 									</div>
 								</div>
 							</div>
