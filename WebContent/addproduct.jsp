@@ -80,11 +80,11 @@
 				</div>
 				<div class = "login-section">
 					<form method = "post" action="addproduct">
-						<strong>Name:</strong> <input class = "login-section-content" type = "text" name = "productName"required/><br>
+						<strong>Name:</strong> <input class = "login-section-content" pattern="[A-Za-zñ._-\s]{1,50}" type = "text" name = "productName"required/><br>
 						<strong>Price:</strong> <input class = "login-section-content" type = "number" name = "productPrice"required/><br>
 						<strong>Quantity:</strong> <input class = "login-section-content" type = "number" name = "productQuantity" required/><br>
-						<strong>Description:</strong> <input class = "login-section-content" type = "text" name = "productDescription"required/><br>
-						<strong>Tag:</strong> <input class = "login-section-content" type = "text" name = "productTag" required/><br>
+						<strong>Description:</strong> <input class = "login-section-content" pattern="[A-Za-zñ._-\s]{1,50}" type = "text" name = "productDescription"required/><br>
+						<strong>Tag:</strong> <input class = "login-section-content" type = "text" pattern="[A-Za-zñ._-\s]{1,50}" name = "productTag" required/><br>
 						<input class = "main-btn login-section-content" type="submit" value="Add Product">
 					</form>
 				</div>

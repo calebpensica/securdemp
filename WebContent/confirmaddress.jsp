@@ -83,7 +83,7 @@
 								<h3 class="title">Order Review</h3>
 							</div>
 								put address inputs here
-								<input type="text" name="homeAdd" value="${user.homeAdd }">
+								<input type="text"  pattern="[A-Za-zñ._-\s]{1,50}" name="homeAdd" value="${user.homeAdd }">
 								<input type="number" name="contactNo" value="${user.contactNo }">
 								<input type="email" name="email" value="${user.email }">
 							<div class="pull-right">

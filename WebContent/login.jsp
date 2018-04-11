@@ -75,7 +75,7 @@
 						<h3 class="title">Login</h3>
 					</div>
 					<div class = "login-section">
-						<strong>Username:</strong> <input class = "login-section-content" type = "text" name = "username" /><br>
+						<strong>Username:</strong> <input class = "login-section-content" pattern="[A-Za-zñ._-\s]{1,50}" type = "text" name = "username" /><br>
 						<strong>Password:</strong> <input class = "login-section-content" type = "password" name = "password" /><br>
 						<input class = "main-btn login-section-content" type="submit" value="Login">
 						<a a href = "signup.jsp"><button class = "main-btn login-section-content" type="button" >Create an Account</button></a>

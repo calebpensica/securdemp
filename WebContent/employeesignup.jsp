@@ -90,7 +90,7 @@
 						<strong>Last Name:<font color="red">*</font></strong> <input class = "signup-section-content" type = "text" pattern="[A-Za-zñ\s]{1,50}" oninvalid="NameInvalidMsg(this)" name = "lName" required /><br>
 						<strong>Email:<font color="red">*</font></strong> <input class = "signup-section-content" type = "email" name = "email" required /><br>
 						<strong>Contact Number:<font color="red">*</font></strong> <input class = "signup-section-content" type = "number" name = "contact" required /><br>
-						<strong>Address:<font color="red">*</font></strong> <input class = "signup-section-content" type = "text" name = "address" required /><br>
+						<strong>Address:<font color="red">*</font></strong> <input class = "signup-section-content" type = "text"  pattern="[A-Za-zñ._\s]{1,50}" name = "address" required /><br>
 						<% if (request.getAttribute("error") != null)  {
 							boolean error = (boolean) request.getAttribute("error");
 							if (error) { %>

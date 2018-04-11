@@ -23,7 +23,7 @@
 					<!-- Search -->
 					<div class="header-search">
 						<form action = "search">
-							<input class="input search-input" type="text" placeholder="Enter your keyword" name = "searchkey">
+							<input class="input search-input" type="text" pattern="[0-9A-Za-z.]{0,50}" placeholder="Enter your keyword" name = "searchkey">
 							<select class="input search-categories">
 								<option value="0">By Name</option>
 								<option value="1">By Tag</option>
