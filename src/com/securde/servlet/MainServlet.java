@@ -40,6 +40,8 @@ class URLPatterns
 	public final static String CONFIRMCHECKOUT = "/confirmcheckout";
 	public final static String CONFIRMCONTACT = "/confirmcontact";
 	public final static String CHECKOUT = "/checkout";
+	public final static String TRANSACTIONS = "/transactions";
+	public final static String DELETETRANSACTION = "/deletetransaction";
 }
 
 /**
@@ -62,7 +64,9 @@ class URLPatterns
 			 URLPatterns.LOGOUT,
 			 URLPatterns.CONFIRMCHECKOUT,
 			 URLPatterns.CONFIRMCONTACT,
-			 URLPatterns.CHECKOUT
+			 URLPatterns.CHECKOUT,
+			 URLPatterns.TRANSACTIONS,
+			 URLPatterns.DELETETRANSACTION
 			 })
 public class MainServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -147,6 +151,12 @@ public class MainServlet extends HttpServlet {
 				break;
 			case URLPatterns.CHECKOUT:
 				checkout(request, response);
+				break;
+			case URLPatterns.TRANSACTIONS:
+				showTransactions(request, response);
+				break;
+			case URLPatterns.DELETETRANSACTION:
+				deleteTransaction(request, response);
 				break;
 		}
 		
@@ -673,6 +683,23 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 		System.out.println(ProductService.deleteProduct(id));
 		
 		showProducts(request, response);
+	}
+	
+	private void showTransactions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		List<Transaction> transactions = TransactionService.getAllTransactions();
+		for(Transaction transaction: transactions) {
+			System.out.println(transaction.getId());
+		}
+		request.setAttribute("transactions", transactions);
+		request.getRequestDispatcher("transactionlist.jsp").forward(request, response);
+	}
+	
+	private void deleteTransaction(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int id = Integer.parseInt(request.getParameter("id"));
+		
+		System.out.println(TransactionService.deleteTransaction(id));
+		
+		showTransactions(request, response);
 	}
 	
 	private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

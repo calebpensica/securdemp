@@ -81,7 +81,7 @@
 										<td style="text-align:left;">${transaction.deliveryAdd}</td>
 										<td style="text-align:left;">${transaction.sum}</td>
 										<td align="center">
-											<a href="editselectedClient.do?clientID=${client.id}">
+											<a href="deleteTransaction?id=${transaction.transactionid}">
 												<i class="fa fa-trash fa-lg" style="color: #d03431;" aria-hidden="true"></i>
 											</a> 
 										</td>
