@@ -55,7 +55,7 @@ DROP TABLE IF EXISTS `cart`;
 CREATE TABLE `cart` (
   `cartid` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`cartid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -64,6 +64,7 @@ CREATE TABLE `cart` (
 
 LOCK TABLES `cart` WRITE;
 /*!40000 ALTER TABLE `cart` DISABLE KEYS */;
+INSERT INTO `cart` VALUES (1),(2),(3);
 /*!40000 ALTER TABLE `cart` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -136,7 +137,7 @@ CREATE TABLE `client` (
   `contactNo` varchar(100) NOT NULL,
   `homeAdd` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`clientid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -145,6 +146,7 @@ CREATE TABLE `client` (
 
 LOCK TABLES `client` WRITE;
 /*!40000 ALTER TABLE `client` DISABLE KEYS */;
+INSERT INTO `client` VALUES (1,'seanprgs','@2Kboihehe','Sean','Paragas','heyhey@email.com','09179013836','here'),(2,'cripplingDep','f5a961a7d26d00bd60e636671e825b85','hey','no','stop@now.com','234','asifuaif');
 /*!40000 ALTER TABLE `client` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -173,6 +175,32 @@ CREATE TABLE `inventorystaff` (
 LOCK TABLES `inventorystaff` WRITE;
 /*!40000 ALTER TABLE `inventorystaff` DISABLE KEYS */;
 /*!40000 ALTER TABLE `inventorystaff` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `log`
+--
+
+DROP TABLE IF EXISTS `log`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `source` varchar(255) NOT NULL,
+  `log` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `log`
+--
+
+LOCK TABLES `log` WRITE;
+/*!40000 ALTER TABLE `log` DISABLE KEYS */;
+/*!40000 ALTER TABLE `log` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -213,7 +241,9 @@ CREATE TABLE `product_tags` (
   `productid` int(11) NOT NULL,
   `tagid` int(11) NOT NULL,
   PRIMARY KEY (`productid`,`tagid`),
-  CONSTRAINT `FK1b1ldc9ol1t4piayqrbsi0c8p` FOREIGN KEY (`productid`) REFERENCES `product` (`productid`)
+  KEY `FKti6l89ifjqxk92qi6t2vs78c3` (`tagid`),
+  CONSTRAINT `FK1b1ldc9ol1t4piayqrbsi0c8p` FOREIGN KEY (`productid`) REFERENCES `product` (`productid`),
+  CONSTRAINT `FKti6l89ifjqxk92qi6t2vs78c3` FOREIGN KEY (`tagid`) REFERENCES `tag` (`tagid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -318,9 +348,12 @@ CREATE TABLE `transaction` (
   `timeReceived` varchar(45) DEFAULT NULL,
   `cart` int(11) NOT NULL,
   `buyer_clientid` int(11) NOT NULL,
+  `cart_cartid` int(11) DEFAULT NULL,
   PRIMARY KEY (`transactionid`),
   KEY `FKkdchb4tr4t84axfksv4wdh952` (`buyer_clientid`),
-  CONSTRAINT `FKkdchb4tr4t84axfksv4wdh952` FOREIGN KEY (`buyer_clientid`) REFERENCES `client` (`clientid`)
+  KEY `FKlvn2ts142rqedwdr3mrscjeiw` (`cart_cartid`),
+  CONSTRAINT `FKkdchb4tr4t84axfksv4wdh952` FOREIGN KEY (`buyer_clientid`) REFERENCES `client` (`clientid`),
+  CONSTRAINT `FKlvn2ts142rqedwdr3mrscjeiw` FOREIGN KEY (`cart_cartid`) REFERENCES `cart` (`cartid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -342,4 +375,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-08 20:31:38
+-- Dump completed on 2018-04-12  3:34:43
