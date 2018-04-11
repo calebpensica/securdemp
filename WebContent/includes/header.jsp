@@ -88,6 +88,7 @@
 						<!-- /Account -->
 
 						<!-- Cart -->
+						<%		if (session.getAttribute("userType") == "Client"){ %>
 						<li class="header-cart dropdown default-dropdown">
 							<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
 								<div class="header-btns-icon">
@@ -122,10 +123,11 @@
 								</div>
 							</div>
 						</li>
+						<% } %>
 						<!-- /Cart -->
 
 						<!-- Mobile nav toggle-->
-						<li class="nav-toggle">
+						<li class="nav-toggle">	
 							<button class="nav-toggle-btn main-btn icon-btn"><i class="fa fa-bars"></i></button>
 						</li>
 						<!-- / Mobile nav toggle -->
