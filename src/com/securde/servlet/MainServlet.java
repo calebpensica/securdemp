@@ -271,7 +271,7 @@ public class MainServlet extends HttpServlet {
 		request.getRequestDispatcher("index.jsp").forward(request, response);
 	}
 
-private void registerEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	private void registerEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		MessageDigest MD5;
 	
 		String username = request.getParameter("username");
@@ -372,7 +372,7 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 		
 		System.out.println(contactNo);
 		
-		if(checkDuplicates(username)) {
+		if(!checkDuplicates(username)) {
 			Client c = new Client();
 			c.setUsername(username);
 			c.setPassword(sb.toString());
@@ -387,7 +387,7 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 		} else {
 			request.setAttribute("error", true);
 			request.setAttribute("errorMessage", "Invalid Username.");
-			request.getRequestDispatcher("employeesignup.jsp").forward(request, response);
+			request.getRequestDispatcher("signup.jsp").forward(request, response);
 		}
 		
 	}
