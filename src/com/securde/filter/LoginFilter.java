@@ -56,6 +56,8 @@ public class LoginFilter implements Filter {
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		HttpSession session = httpRequest.getSession();
 		
+		
+		
 		//retrieve use from cookie
 		Cookie[] cookies = httpRequest.getCookies();
 		String uuid = null;
@@ -73,8 +75,12 @@ public class LoginFilter implements Filter {
 			}
 		}
 		
+		System.out.println(httpRequest.getServletPath());
+		
 		//if exists
 		if (!session.isNew()) {
+			boolean allowAccess = false;
+			
 			if (uuid != null) {
 				boolean found = false;
 				List<Client> clientList = ClientService.getAllClients();
@@ -151,20 +157,167 @@ public class LoginFilter implements Filter {
 	
 				// pass the request along the filter chain
 				if (found) {
-					System.out.println("FOUND");
-					chain.doFilter(request, response);
+					if (checkToAllowAccess(httpRequest.getServletPath(), (String)session.getAttribute("userType"))) {
+						System.out.println("FOUND");
+						System.out.println(httpRequest.getServletPath());
+						chain.doFilter(request, response);
+					} else {
+						httpResponse.sendRedirect("/Papema/MainServlet");
+					}
 				} else {
 					System.out.println("NOT FOUND");
+					
 					httpResponse.sendRedirect("/Papema/login");
 				}
 				
 			} else {
+				
 				httpResponse.sendRedirect("/Papema/login");
 			}
 		} else {
+			
 			httpResponse.sendRedirect("/Papema/logout");
 		}
 
+	}
+	
+	public boolean checkToAllowAccess(String servletPath, String userType) {
+
+		switch (servletPath) {
+		case "/MainServlet":
+			if (userType.equals("Client"))
+				return true;
+			else if (userType.equals("Admin"))
+				return true;
+			else if (userType.equals("Manager"))
+				return true;
+			else if (userType.equals("Staff"))
+				return true;
+			else
+				return false;
+		case "/search":
+			if (userType.equals("Client"))
+				return true;
+			else if (userType.equals("Admin"))
+				return true;
+			else if (userType.equals("Manager"))
+				return true;
+			else if (userType.equals("Staff"))
+				return true;
+			else
+				return false;
+		case "/regemployee":
+			if (userType.equals("Client"))
+				return false;
+			else if (userType.equals("Admin"))
+				return true;
+			else if (userType.equals("Manager"))
+				return false;
+			else if (userType.equals("Staff"))
+				return false;
+			else
+				return false;
+		case "/addproduct":
+			if (userType.equals("Client"))
+				return false;
+			else if (userType.equals("Admin"))
+				return true;
+			else if (userType.equals("Manager"))
+				return true;
+			else if (userType.equals("Staff"))
+				return true;
+			else
+				return false;
+		case "/showproducts":
+			if (userType.equals("Client"))
+				return true;
+			else if (userType.equals("Admin"))
+				return true;
+			else if (userType.equals("Manager"))
+				return true;
+			else if (userType.equals("Staff"))
+				return true;
+			else
+				return false;
+		case "/product":
+			if (userType.equals("Client"))
+				return true;
+			else if (userType.equals("Admin"))
+				return true;
+			else if (userType.equals("Manager"))
+				return true;
+			else if (userType.equals("Staff"))
+				return true;
+			else
+				return false;
+		case "/editproduct":
+			if (userType.equals("Client"))
+				return false;
+			else if (userType.equals("Admin"))
+				return true;
+			else if (userType.equals("Manager"))
+				return true;
+			else if (userType.equals("Staff"))
+				return true;
+			else
+				return false;
+		case "/commiteditproduct":
+			if (userType.equals("Client"))
+				return false;
+			else if (userType.equals("Admin"))
+				return true;
+			else if (userType.equals("Manager"))
+				return true;
+			else if (userType.equals("Staff"))
+				return true;
+			else
+				return false;
+		case "/buyproduct":
+			if (userType.equals("Client"))
+				return true;
+			else if (userType.equals("Admin"))
+				return true;
+			else if (userType.equals("Manager"))
+				return true;
+			else if (userType.equals("Staff"))
+				return true;
+			else
+				return false;
+		case "/accountdetails":
+			if (userType.equals("Client"))
+				return true;
+			else if (userType.equals("Admin"))
+				return true;
+			else if (userType.equals("Manager"))
+				return true;
+			else if (userType.equals("Staff"))
+				return true;
+			else
+				return false;
+		case "/deleteproduct":
+			if (userType.equals("Client"))
+				return false;
+			else if (userType.equals("Admin"))
+				return true;
+			else if (userType.equals("Manager"))
+				return true;
+			else if (userType.equals("Staff"))
+				return true;
+			else
+				return false;
+		default:
+			if (userType.equals("Client"))
+				return false;
+			else if (userType.equals("Admin"))
+				return false;
+			else if (userType.equals("Manager"))
+				return false;
+			else if (userType.equals("Staff"))
+				return false;
+			else
+				return false;
+		}
+		
 	}
 
 	/**
