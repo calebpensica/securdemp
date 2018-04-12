@@ -14,7 +14,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-	<title>Product Page</title>
+	<title>Checkout</title>
 
 	<!-- Google font -->
 	<link href="https://fonts.googleapis.com/css?family=Hind:400,700" rel="stylesheet">
@@ -50,11 +50,6 @@
 <body>
 	<!-- HEADER -->
 	<header>
-		<!-- top Header -->
-		<!-- /top Header -->
-
-		<!-- header -->
-		<header>
 			<%@include file="includes/header.jsp" %>
 	</header>
 	<!-- /HEADER -->
@@ -67,9 +62,8 @@
 	<div id="breadcrumb">
 		<div class="container">
 			<ul class="breadcrumb">
-				<li><a href="index.jsp">Home</a></li>
-				<li><a href="showproducts.jsp">Products</a></li>
-				<li class="active">${product.name}</li>
+				<li><a href="#">Home</a></li>
+				<li class="active">Checkout</li>
 			</ul>
 		</div>
 	</div>
@@ -81,51 +75,23 @@
 		<div class="container">
 			<!-- row -->
 			<div class="row">
-				<!--  Product Details -->
-				<div class="product product-details clearfix">
-					<div class="col-md-6">
-						<div id="product-main-view">
-							<div class="product-view">
-								<img src="./img/main-product01.jpg" alt="">
-							</div>
-						</div>
-					</div>
-					
-					<div class="col-md-6">
-						<div class="product-body">
-							<h2 class="product-name">${product.name}</h2>
-							<h3 class="product-price">Php ${product.price}0</h3>
-							
-							<p><strong>Availability:</strong> In Stock</p>
-							<p>Product Description</p>
-						
+				<form method="post" action="checkout" id="checkout-form" class="clearfix">
 
-							<div class="product-btns">
-								<form method = "post" action = "buyproduct">
-									<input type="hidden" name="productid" value="<c:out value="${product.id}"/>" >
-									<div class="qty-input">
-										<span class="text-uppercase">QTY: </span>
-										<input class="input" type="number" name = "quantity" value = "1">
-									</div>
-									<button class="primary-btn add-to-cart" type = "submit"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
-								</form>
-								<% if (session.getAttribute("user") != null) {
-										if (session.getAttribute("userType") == "Staff" || session.getAttribute("userType") == "Manager" || session.getAttribute("userType") == "Admin") {%>
-											<form method ="post" action="editproduct">
-												<input type="hidden" name="productid" value="<c:out value="${product.id}"/>" >	
-												<button class="primary-btn add-to-cart" type = "submit">Edit Product</button>
-											</form>
-											<form method = "post" action="deleteproduct">
-												<input type="hidden" name="productid" value="<c:out value="${product.id}"/>" >	
-												<button class="primary-btn add-to-cart" type = "submit">Delete Product</button>
-											</form>
-										<% }
-								}%>
+					<div class="col-md-12">
+						<div class="order-summary clearfix">
+							<div class="section-title">
+								<h3 class="title">Order Review</h3>
+							</div>
+								put address inputs here
+								<input type="text"  pattern="[A-Za-zñ._-\s]{1,50}" name="homeAdd" value="${user.homeAdd }">
+								<input type="number" name="contactNo" value="${user.contactNo }">
+								<input type="email" name="email" value="${user.email }">
+							<div class="pull-right">
+								<button type="submit" class="primary-btn">Confirm Address</button>
 							</div>
 						</div>
 					</div>
-				</div>
-				<!-- /Product Details -->
+				</form>
 			</div>
 			<!-- /row -->
 		</div>
@@ -133,13 +99,8 @@
 	</div>
 	<!-- /section -->
 
-	<!-- section -->
-	
-	<!-- /section -->
-
-
 	<!-- FOOTER -->
-		<footer id="footer" class="section section-grey">
+	<footer id="footer" class="section section-grey">
 		<%@include file="includes/footer.jsp" %>
 	</footer>
 	<!-- /FOOTER -->
@@ -151,6 +112,7 @@
 	<script src="js/nouislider.min.js"></script>
 	<script src="js/jquery.zoom.min.js"></script>
 	<script src="js/main.js"></script>
+
 </body>
 
 </html>

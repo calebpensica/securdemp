@@ -111,18 +111,9 @@
 							<%	if (session.getAttribute("user") == null) { %>
 								<a href="login.jsp" class="text-uppercase">Login</a> / <a href="signup.jsp" class="text-uppercase">Join</a>
 							<% } %>
-							<ul class="custom-menu">
-								<li><a href="#"><i class="fa fa-user-o"></i> My Account</a></li>
-								<li><a href="#"><i class="fa fa-check"></i> Checkout</a></li>
-								<% if (session.getAttribute("user") == null) { %>
-									<li><a href="login.jsp"><i class="fa fa-unlock-alt"></i> Login</a></li>
-									<li><a href="signup.jsp"><i class="fa fa-user-plus"></i> Create An Account</a></li>
-								<% } else {
-									if (session.getAttribute("userType") == "Admin") {%>
-										<li><a href="employeesignup.jsp"><i class="fa fa-user-plus"></i> Create An Employee Account</a></li>
-								<% } 
-								}	%>
-							</ul>
+						<ul class="custom-menu">
+						<%@include file="includes/dropdown.jsp" %>
+						</ul>
 						</li>
 						<!-- /Account -->
 
@@ -219,28 +210,8 @@
 
 	<!-- FOOTER -->
 	<footer id="footer" class="section section-grey">
-		<!-- container -->
-		<div class="container">
-			<!-- row -->
-			
-			<!-- /row -->
-			<hr>
-			<!-- row -->
-			<div class="row">
-				<div class="col-md-8 col-md-offset-2 text-center">
-					<!-- footer copyright -->
-					<div class="footer-copyright">
-						<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-						Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-						<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-					</div>
-					<!-- /footer copyright -->
-				</div>
-			</div>
-			<!-- /row -->
-		</div>
-		<!-- /container -->
-	</footer>
+		<%@include file="includes/footer.jsp" %>
+	</footer> 	
 	<!-- /FOOTER -->
 
 	<!-- jQuery Plugins -->

@@ -75,8 +75,7 @@ public class CartService
 			
 			Cart c = em.find(Cart.class, id);
 			
-			c.setTransaction(newinfo.getTransaction());
-			c.setItems((HashSet<CartItem>)newinfo.getItems());
+			//c.setItems((HashSet<CartItem>)newinfo.getItems());
 			
 			em.merge(c);
 			trans.commit();

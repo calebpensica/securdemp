@@ -1,10 +1,8 @@
-CREATE DATABASE  IF NOT EXISTS `papema` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `papema`;
--- MySQL dump 10.13  Distrib 5.7.12, for Win32 (AMD64)
+-- MySQL dump 10.13  Distrib 5.7.12, for Win64 (x86_64)
 --
 -- Host: localhost    Database: papema
 -- ------------------------------------------------------
--- Server version	5.7.15-log
+-- Server version	5.7.16-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -32,7 +30,7 @@ CREATE TABLE `admin` (
   `lName` varchar(100) NOT NULL,
   `email` varchar(100) NOT NULL,
   PRIMARY KEY (`adminid`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +39,7 @@ CREATE TABLE `admin` (
 
 LOCK TABLES `admin` WRITE;
 /*!40000 ALTER TABLE `admin` DISABLE KEYS */;
-INSERT INTO `admin` VALUES (1,'o','op','ops','1','2'),(2,'sean','naes','mah','boi','@kek'),(3,'0','9','8','7','6'),(4,'a','b','c','d','e');
+INSERT INTO `admin` VALUES (1,'o','op','ops','1','2'),(2,'sean','naes','mah','boi','@kek'),(3,'0','9','8','7','6'),(4,'a','b','c','d','e'),(5,'adminsean','2444','Sean','Paragas','sean@sean.com'),(6,'adminacc','399f8043559e7ca79cd7a56715547a8f','caleb','pensica','securde@lmao.com');
 /*!40000 ALTER TABLE `admin` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -54,11 +52,8 @@ DROP TABLE IF EXISTS `cart`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `cart` (
   `cartid` int(11) NOT NULL AUTO_INCREMENT,
-  `transactionid` int(11) NOT NULL,
-  PRIMARY KEY (`cartid`,`transactionid`),
-  KEY `FKb2wkgnh9q3fnvk7v0u31y7o9u` (`transactionid`),
-  CONSTRAINT `FKb2wkgnh9q3fnvk7v0u31y7o9u` FOREIGN KEY (`transactionid`) REFERENCES `transaction` (`transactionid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`cartid`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,6 +62,7 @@ CREATE TABLE `cart` (
 
 LOCK TABLES `cart` WRITE;
 /*!40000 ALTER TABLE `cart` DISABLE KEYS */;
+INSERT INTO `cart` VALUES (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11);
 /*!40000 ALTER TABLE `cart` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -80,7 +76,7 @@ DROP TABLE IF EXISTS `cart_items`;
 CREATE TABLE `cart_items` (
   `cartid` int(11) NOT NULL,
   `citemid` int(11) NOT NULL,
-  PRIMARY KEY (`cartid`)
+  PRIMARY KEY (`cartid`,`citemid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -110,7 +106,7 @@ CREATE TABLE `cartitem` (
   KEY `FKdn0h3m726afuk0yv9u2ogrs6q` (`product_productid`),
   CONSTRAINT `FKdn0h3m726afuk0yv9u2ogrs6q` FOREIGN KEY (`product_productid`) REFERENCES `product` (`productid`),
   CONSTRAINT `FKtc9npvycs1rruynyqdhyrybqw` FOREIGN KEY (`cartid`) REFERENCES `cart` (`cartid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -119,6 +115,7 @@ CREATE TABLE `cartitem` (
 
 LOCK TABLES `cartitem` WRITE;
 /*!40000 ALTER TABLE `cartitem` DISABLE KEYS */;
+INSERT INTO `cartitem` VALUES (1,1,4,1),(2,1,5,1),(3,1,6,1),(4,1,11,1),(5,1,11,2),(6,1,11,3);
 /*!40000 ALTER TABLE `cartitem` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -139,7 +136,7 @@ CREATE TABLE `client` (
   `contactNo` varchar(100) NOT NULL,
   `homeAdd` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`clientid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -148,6 +145,7 @@ CREATE TABLE `client` (
 
 LOCK TABLES `client` WRITE;
 /*!40000 ALTER TABLE `client` DISABLE KEYS */;
+INSERT INTO `client` VALUES (1,'seanprgs','@2Kboihehe','Sean','Paragas','heyhey@email.com','09179013836','here'),(2,'cripplingDep','f5a961a7d26d00bd60e636671e825b85','hey','no','stop@now.com','234','asifuaif'),(3,'calebca','a8b6bb3b34339f5a6d439a0ef7fc7878','aslkdj','alksdj','asdklajsd@aslkdjasldk','123123','sdasd'),(4,'calebca','a8b6bb3b34339f5a6d439a0ef7fc7878','aksdljaslkdj','alksdjaslkdj','aklsjdalksdj@gmail.com','123132','kajfdlkajdlkas');
 /*!40000 ALTER TABLE `client` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -179,6 +177,32 @@ LOCK TABLES `inventorystaff` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `log`
+--
+
+DROP TABLE IF EXISTS `log`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `source` varchar(255) NOT NULL,
+  `log` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `log`
+--
+
+LOCK TABLES `log` WRITE;
+/*!40000 ALTER TABLE `log` DISABLE KEYS */;
+/*!40000 ALTER TABLE `log` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `product`
 --
 
@@ -192,7 +216,7 @@ CREATE TABLE `product` (
   `status` bit(1) NOT NULL,
   `price` float NOT NULL,
   PRIMARY KEY (`productid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -201,6 +225,7 @@ CREATE TABLE `product` (
 
 LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` DISABLE KEYS */;
+INSERT INTO `product` VALUES (1,'beh',NULL,'',1),(2,'aaa',NULL,'',1),(3,'one',NULL,'',2);
 /*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -215,7 +240,9 @@ CREATE TABLE `product_tags` (
   `productid` int(11) NOT NULL,
   `tagid` int(11) NOT NULL,
   PRIMARY KEY (`productid`,`tagid`),
-  CONSTRAINT `FK1b1ldc9ol1t4piayqrbsi0c8p` FOREIGN KEY (`productid`) REFERENCES `product` (`productid`)
+  KEY `FKti6l89ifjqxk92qi6t2vs78c3` (`tagid`),
+  CONSTRAINT `FK1b1ldc9ol1t4piayqrbsi0c8p` FOREIGN KEY (`productid`) REFERENCES `product` (`productid`),
+  CONSTRAINT `FKti6l89ifjqxk92qi6t2vs78c3` FOREIGN KEY (`tagid`) REFERENCES `tag` (`tagid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -225,6 +252,7 @@ CREATE TABLE `product_tags` (
 
 LOCK TABLES `product_tags` WRITE;
 /*!40000 ALTER TABLE `product_tags` DISABLE KEYS */;
+INSERT INTO `product_tags` VALUES (1,2),(2,4),(3,6);
 /*!40000 ALTER TABLE `product_tags` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -266,7 +294,7 @@ CREATE TABLE `tag` (
   `tagid` int(11) NOT NULL AUTO_INCREMENT,
   `tag` varchar(255) NOT NULL,
   PRIMARY KEY (`tagid`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -275,30 +303,8 @@ CREATE TABLE `tag` (
 
 LOCK TABLES `tag` WRITE;
 /*!40000 ALTER TABLE `tag` DISABLE KEYS */;
+INSERT INTO `tag` VALUES (1,'boi'),(2,'boi'),(3,'q'),(4,'q'),(5,'po'),(6,'po');
 /*!40000 ALTER TABLE `tag` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `tags`
---
-
-DROP TABLE IF EXISTS `tags`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `tags` (
-  `tagid` int(11) NOT NULL,
-  `tag` varchar(100) NOT NULL,
-  PRIMARY KEY (`tagid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `tags`
---
-
-LOCK TABLES `tags` WRITE;
-/*!40000 ALTER TABLE `tags` DISABLE KEYS */;
-/*!40000 ALTER TABLE `tags` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -339,12 +345,15 @@ CREATE TABLE `transaction` (
   `deliveryAdd` varchar(255) NOT NULL,
   `timeOrder` varchar(45) DEFAULT NULL,
   `timeReceived` varchar(45) DEFAULT NULL,
-  `cart` int(11) NOT NULL,
+  `cart` int(11) DEFAULT NULL,
   `buyer_clientid` int(11) NOT NULL,
+  `cart_cartid` int(11) DEFAULT NULL,
   PRIMARY KEY (`transactionid`),
   KEY `FKkdchb4tr4t84axfksv4wdh952` (`buyer_clientid`),
-  CONSTRAINT `FKkdchb4tr4t84axfksv4wdh952` FOREIGN KEY (`buyer_clientid`) REFERENCES `client` (`clientid`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  KEY `FKlvn2ts142rqedwdr3mrscjeiw` (`cart_cartid`),
+  CONSTRAINT `FKkdchb4tr4t84axfksv4wdh952` FOREIGN KEY (`buyer_clientid`) REFERENCES `client` (`clientid`),
+  CONSTRAINT `FKlvn2ts142rqedwdr3mrscjeiw` FOREIGN KEY (`cart_cartid`) REFERENCES `cart` (`cartid`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -353,6 +362,7 @@ CREATE TABLE `transaction` (
 
 LOCK TABLES `transaction` WRITE;
 /*!40000 ALTER TABLE `transaction` DISABLE KEYS */;
+INSERT INTO `transaction` VALUES (1,1,'sdasd','ah',NULL,NULL,3,6),(2,4,'sdasd','ah',NULL,NULL,3,11);
 /*!40000 ALTER TABLE `transaction` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -365,4 +375,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-02-28 21:16:37
+-- Dump completed on 2018-04-12 14:57:42

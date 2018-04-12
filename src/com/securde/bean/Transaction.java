@@ -21,12 +21,11 @@ public class Transaction
 	
 	@Column
 	private String timeReceived;
-	
+		
 	@ManyToOne(cascade = CascadeType.ALL)
 	private Client buyer;
 	
-	@OneToOne(mappedBy = "transaction", cascade = CascadeType.ALL, 
-            fetch = FetchType.LAZY, optional = false)
+	@OneToOne(cascade = CascadeType.ALL)
 	private Cart cart;
 	
 	public Transaction() {

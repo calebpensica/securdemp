@@ -3,11 +3,17 @@ package com.securde.servlet;
 import com.securde.bean.*;
 import com.securde.service.*;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -33,6 +39,11 @@ class URLPatterns
 	public final static String ACCOUNTDETAILS = "/accountdetails";
 	public final static String DELETEPRODUCT = "/deleteproduct";
 	public final static String LOGOUT = "/logout";
+	public final static String CONFIRMCHECKOUT = "/confirmcheckout";
+	public final static String CONFIRMCONTACT = "/confirmcontact";
+	public final static String CHECKOUT = "/checkout";
+	public final static String TRANSACTIONS = "/transactions";
+	public final static String DELETETRANSACTION = "/deletetransaction";
 }
 
 /**
@@ -53,6 +64,11 @@ class URLPatterns
 			 URLPatterns.ACCOUNTDETAILS,
 			 URLPatterns.DELETEPRODUCT,
 			 URLPatterns.LOGOUT,
+			 URLPatterns.CONFIRMCHECKOUT,
+			 URLPatterns.CONFIRMCONTACT,
+			 URLPatterns.CHECKOUT,
+			 URLPatterns.TRANSACTIONS,
+			 URLPatterns.DELETETRANSACTION
 			 })
 public class MainServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -129,23 +145,56 @@ public class MainServlet extends HttpServlet {
 			case URLPatterns.LOGOUT:
 				logoutUser(request, response);
 				break;
+			case URLPatterns.CONFIRMCHECKOUT:
+				confirmproducts(request, response);
+				break;
+			case URLPatterns.CONFIRMCONTACT:
+				confirmcontact(request, response);
+				break;
+			case URLPatterns.CHECKOUT:
+				checkout(request, response);
+				break;
+			case URLPatterns.TRANSACTIONS:
+				showTransactions(request, response);
+				break;
+			case URLPatterns.DELETETRANSACTION:
+				deleteTransaction(request, response);
+				break;
 		}
 		
 	}
 
 	private void loginUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{		
+		MessageDigest MD5, messageDigest;
 		HttpSession session = request.getSession();
-		
-		System.out.println("Hello");
+		StringBuffer sb = new StringBuffer();
+		StringBuffer sb2 = new StringBuffer();
+		Date date;
 
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
+		if(username==null || password==null)
+			request.getRequestDispatcher("login.jsp").forward(request, response);
 		
-		Client c = ClientService.findClient(username, password);
-		Admin a = AdminService.findAdmin(username, password);
-		InventoryStaff i = InventoryStaffService.findStaff(username, password);
-		StoreManager s = StoreManagerService.findManager(username, password);
+		/* Password Encryption */
+		try {
+			MD5 = MessageDigest.getInstance("MD5");
+			MD5.update(password.getBytes());
+			byte[] messageDigestMD5 = MD5.digest();
+			for(byte bytes : messageDigestMD5) {
+				sb.append(String.format("%02x", bytes & 0xff));
+			}
+		} catch (NoSuchAlgorithmException exception) {
+            // TODO Auto-generated catch block
+            exception.printStackTrace();
+        }
+		
+		Client c = ClientService.findClient(username, sb.toString());
+		Admin a = AdminService.findAdmin(username, sb.toString());
+		InventoryStaff i = InventoryStaffService.findStaff(username, sb.toString());
+		StoreManager s = StoreManagerService.findManager(username, sb.toString());
+		
 		
 		if(c != null) {
 			String uuid = UUID.randomUUID().toString().replace("-", "");
@@ -161,7 +210,7 @@ public class MainServlet extends HttpServlet {
 			System.out.println(session.getMaxInactiveInterval());
 			session.setAttribute("user", c);
 			session.setAttribute("userType", "Client");
-			request.getRequestDispatcher("showproducts.jsp").forward(request, response);
+			showProducts(request,response);
 		} else {
 			if(i != null) {
 				String uuid = UUID.randomUUID().toString().replace("-", "");
@@ -176,7 +225,7 @@ public class MainServlet extends HttpServlet {
 				session.setMaxInactiveInterval(60*15);
 				session.setAttribute("user", i);
 				session.setAttribute("userType", "Staff");
-				request.getRequestDispatcher("showproducts.jsp").forward(request, response);
+				showProducts(request,response);
 			} else {
 				if(s != null) {
 					String uuid = UUID.randomUUID().toString().replace("-", "");
@@ -191,7 +240,7 @@ public class MainServlet extends HttpServlet {
 					session.setMaxInactiveInterval(60*15);
 					session.setAttribute("user", s);
 					session.setAttribute("userType", "Manager");
-					request.getRequestDispatcher("showproducts.jsp").forward(request, response);
+					showProducts(request,response);
 				} else {
 					if(a != null) {
 						String uuid = UUID.randomUUID().toString().replace("-", "");
@@ -206,9 +255,51 @@ public class MainServlet extends HttpServlet {
 						session.setMaxInactiveInterval(60*15);
 						session.setAttribute("user", a);
 						session.setAttribute("userType", "Admin");
-						request.getRequestDispatcher("showproducts.jsp").forward(request, response);
+						showProducts(request,response);
 					} else {
 						request.setAttribute("error", new Boolean(true));
+						/* Brute Force Attack Prevention */
+						int loginAttempt;
+			            if (session.getAttribute("loginCount") == null)
+			            {
+			                session.setAttribute("loginCount", 0);
+			                loginAttempt = 0;
+			            }
+			            else
+			            {
+			                 loginAttempt = (Integer) session.getAttribute("loginCount");
+			            }
+
+			            //this is 3 attempts counting from 0,1,2
+			            if (loginAttempt >= 4 )
+			            {
+			            	
+			                long lastAccessedTime = session.getLastAccessedTime();
+			                date = new Date();
+			                long currentTime = date.getTime();
+			                long timeDiff = currentTime - lastAccessedTime;
+			                // 20 minutes in milliseconds  
+			                if (timeDiff >= 120000)
+			                {
+			                    //invalidate user session, so they can try again
+			                    session.invalidate();
+			                }
+			                else
+			                {
+			                     // Error message 
+			                     request.setAttribute("errorMessage","You have exceeded the 5 failed login attempt. Please try logging in in 20 minutes.");
+			                }  
+
+			            }
+			            else
+			            {
+			                 loginAttempt++;
+			                 int allowLogin = 5-loginAttempt;
+			                 session.setAttribute("message","loginAttempt= "+loginAttempt+". Invalid username or password. You have "+allowLogin+" attempts remaining. Please try again! <br>Not a registered cusomer? Please <a href=\"register.jsp\">register</a>!");
+			                 request.setAttribute("errorMessage", "Invalid username or password. You have "+allowLogin+" attempts remaining. Please try again!");
+			            }
+			            request.setAttribute("errorMessage", "Invalid Username and/or Password. Please try again");
+			            session.setAttribute("loginCount",loginAttempt);
 						request.getRequestDispatcher("login.jsp").forward(request, response);
 					}
 				}
@@ -242,16 +333,32 @@ public class MainServlet extends HttpServlet {
 		//response.sendRedirect("/Papema/MainServlet");
 		response.sendRedirect("/Papema/login");
 		
-		//request.getRequestDispatcher("index.jsp").forward(request, response);
+		//request.getRequestDispatcher("showproducts.jsp"").forward(request, response);
 	}
 
-private void registerEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+	private void registerEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		MessageDigest MD5;
+	
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		String fName = request.getParameter("fName");
 		String lName = request.getParameter("lName");
 		String email = request.getParameter("email");
+		
+		/* Password Encryption */
+		StringBuffer sb = new StringBuffer();
+		try {
+			MD5 = MessageDigest.getInstance("MD5");
+			MD5.update(password.getBytes());
+			byte[] messageDigestMD5 = MD5.digest();
+			for(byte bytes : messageDigestMD5) {
+				sb.append(String.format("%02x", bytes & 0xff));
+			}
+		} catch (NoSuchAlgorithmException exception) {
+            // TODO Auto-generated catch block
+            exception.printStackTrace();
+        }
+
 		
 		StoreManager s = null;
 		InventoryStaff is = null;
@@ -271,7 +378,7 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 			    System.out.println("uuid = " + uuid);
 			    
 				s.setUsername(username);
-				s.setPassword(password);
+				s.setPassword(sb.toString());
 				s.setfName(fName);
 				s.setlName(lName);
 				s.setEmail(email);
@@ -291,19 +398,14 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 		}
 		else {
 			
-			List<InventoryStaff> staffs = InventoryStaffService.getAllInventoryStaffs();
-			for(InventoryStaff i : staffs)
-				if(i.getUsername().equalsIgnoreCase(username))
-					exist = true;
-			
-			if(!exist)
+			if(!checkDuplicates(username))
 			{
 				is = new InventoryStaff();
 				String uuid = UUID.randomUUID().toString().replace("-", "");
 			    System.out.println("uuid = " + uuid);
 				
 				is.setUsername(username);
-				is.setPassword(password);
+				is.setPassword(sb.toString());
 				is.setfName(fName);
 				is.setlName(lName);
 				is.setEmail(email);
@@ -316,12 +418,18 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 				response.addCookie(cookie);
 				
 				request.getRequestDispatcher("login.jsp").forward(request, response);
-			} else
-				request.getRequestDispatcher("signup.jsp").forward(request, response);	
+			} else {
+				request.setAttribute("error", true);
+				request.setAttribute("errorMessage", "Invalid Username.");
+				request.getRequestDispatcher("employeesignup.jsp").forward(request, response);
+			}
 		}
 	}
 
 	private void registerUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		MessageDigest MD5;
+		StringBuffer sb = new StringBuffer();
 		
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
@@ -330,23 +438,31 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 		String email = request.getParameter("email");
 		String contactNo = request.getParameter("contact");
 		String homeAdd = request.getParameter("address");
+
+		/* Password Encryption */
+		try {
+			MD5 = MessageDigest.getInstance("MD5");
+			MD5.update(password.getBytes());
+			byte[] messageDigestMD5 = MD5.digest();
+			for(byte bytes : messageDigestMD5) {
+				sb.append(String.format("%02x", bytes & 0xff));
+			}
+		} catch (NoSuchAlgorithmException exception) {
+            // TODO Auto-generated catch block
+            exception.printStackTrace();
+        }
 		
 		List<Client> clients = ClientService.getAllClients();
-		boolean exist = false;
 		
 		System.out.println(contactNo);
 		
-		for(Client c : clients)
-			if(c.getUsername().equalsIgnoreCase(username))
-				exist = true;
-		
-		if(!exist) {
+		if(!checkDuplicates(username)) {
 			Client c = new Client();
 			String uuid = UUID.randomUUID().toString().replace("-", "");
 		    System.out.println("uuid = " + uuid);
 			
 			c.setUsername(username);
-			c.setPassword(password);
+			c.setPassword(sb.toString());
 			c.setfName(fName);
 			c.setlName(lName);
 			c.setEmail(email);
@@ -360,12 +476,17 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 			
 			System.out.println(ClientService.addClient(c)); 
 			request.getRequestDispatcher("login.jsp").forward(request, response);
-		} else
+		} else {
+			request.setAttribute("error", true);
+			request.setAttribute("errorMessage", "Invalid Username.");
 			request.getRequestDispatcher("signup.jsp").forward(request, response);
+		}
 		
 	}
 
 	private void registerAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		MessageDigest MD5;
+		StringBuffer sb = new StringBuffer();
 		
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
@@ -373,14 +494,23 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 		String lName = request.getParameter("lName");
 		String email = request.getParameter("email");
 		
-		List<Admin> admins = AdminService.getAllAdmins();
-		boolean exist = false;
+		/* Password Encryption */
+		try {
+			MD5 = MessageDigest.getInstance("MD5");
+			MD5.update(password.getBytes());
+			byte[] messageDigestMD5 = MD5.digest();
+			for(byte bytes : messageDigestMD5) {
+				sb.append(String.format("%02x", bytes & 0xff));
+			}
+		} catch (NoSuchAlgorithmException exception) {
+            // TODO Auto-generated catch block
+            exception.printStackTrace();
+        }
+
 		
-		for(Admin ad : admins)
-			if(ad.getUsername().equalsIgnoreCase(username))
-				exist = true;
+		/* CHECKS FOR DUPLICATES */
 		
-		if(!exist) {
+		if(!checkDuplicates(username)) {
 			Admin a = new Admin();
 			String uuid = UUID.randomUUID().toString().replace("-", "");
 		    System.out.println("uuid = " + uuid);
@@ -398,8 +528,38 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 			response.addCookie(cookie);
 			
 			request.getRequestDispatcher("login.jsp").forward(request, response);
-		} else
-			request.getRequestDispatcher("signup.jsp").forward(request, response);
+		} else {
+			request.setAttribute("error", true);
+			request.setAttribute("errorMessage", "Invalid Username.");
+			request.getRequestDispatcher("employeesignup.jsp").forward(request, response);
+		}
+	}
+	
+	public boolean checkDuplicates(String username) {
+		for(Client client: ClientService.getAllClients() ) {
+			if(username==client.getUsername()) {
+				return true;
+			}
+			System.out.println(username);
+			System.out.println("client: " + client.getUsername() );
+		}
+		
+		for(Admin admin: AdminService.getAllAdmins() ) {
+			if(username==admin.getUsername())
+				return true;
+		}
+		
+		for(StoreManager manager: StoreManagerService.getAllManagers() ) {
+			if(username==manager.getUsername())
+				return true;
+		}
+		
+		for(InventoryStaff staff: InventoryStaffService.getAllInventoryStaffs() ) {
+			if(username==staff.getUsername())
+				return true;
+		}
+		
+		return false;
 	}
 	
 	private void addProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -468,32 +628,154 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 	private void buyProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 		HttpSession session = request.getSession();
-		Cart cart = (Cart)session.getAttribute("cart");
-		if(cart==null){
+		Cart cart;
+		if(session.getAttribute("cartID")==null){
 			cart = new Cart();
-			HashSet<CartItem> items = new HashSet<CartItem>();
-			cart.setItems(items);
-			CartService.addCart(cart);
+			CartService.addCart(cart);	
+			for(Cart newCart: CartService.getAllCarts()) {
+				cart.setCartid(newCart.getCartid());
+			}
+			System.out.println("Cart Instantiated: " +cart.getCartid());
+			session.setAttribute("cartID", cart.getCartid());
 		}
+		else {
+			cart = CartService.getCart((int)session.getAttribute("cartID"));
+		}
+		
+		cart.setCartid((int)session.getAttribute("cartID"));
+		
+		System.out.println("CARTID: " + Integer.toString((int)session.getAttribute("cartID")));
 		
 		Product product = ProductService.getProduct(Integer.parseInt(request.getParameter("productid")));
 		CartItem item = new CartItem();
 		item.setProduct(product);
 		item.setQuantity(Integer.parseInt(request.getParameter("quantity")));
 		item.setCart(cart);
-		cart.addCartItem(item);
-		Transaction transaction = new Transaction();
 		Client client = (Client)session.getAttribute("user");
-		transaction.setBuyer(client);
-		transaction.setDeliveryAdd(client.getHomeAdd());
-		transaction.setSum(product.getPrice()*item.getQuantity());
-		Calendar c = Calendar.getInstance();
-		transaction.setTimeOrder(c.toString());
+		if(client==null) 
+			loginUser(request,response);
+		
+		ArrayList<CartItem> items = (ArrayList<CartItem>)session.getAttribute("items");
+		if(items==null){
+			items = new ArrayList();
+			session.setAttribute("items", items);
+		}
+		items.add(item);
+		session.setAttribute("items", items);
+
 		//transaction.setTimeReceived(timeReceived);
-		CartItemService.addCartItem(item);
-		TransactionService.addTransaction(transaction);
 		
 		showProducts(request,response);
+		
+	}
+	
+	private void confirmproducts(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		Cart cart;
+		if(session.getAttribute("cartID")==null) {
+			cart = new Cart();
+			System.out.println("Cart Null");
+			showProducts(request,response);
+		}
+		else {
+			cart = CartService.getCart((int)session.getAttribute("cartID"));
+			System.out.print("ahh cart gotten: ");
+			System.out.println(cart);
+		}
+		
+		Client client = (Client)session.getAttribute("user");
+		if(client==null) {
+			System.out.println("Client Null");
+			showProducts(request,response);
+		}
+		ArrayList<CartItem> items = (ArrayList<CartItem>)session.getAttribute("items");
+		if(items==null) {
+			System.out.println("CartItems Null");
+			showProducts(request,response);
+		}
+		
+		double total = 0.0;
+		for(CartItem item: items) {
+			total += (item.getQuantity()*item.getProduct().getPrice());
+		}
+		
+		session.setAttribute("total", total);
+		
+
+		request.getRequestDispatcher("checkout.jsp").forward(request, response);
+		
+	}
+	
+	private void confirmcontact(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		Cart cart;
+		if(session.getAttribute("cartID")==null) {
+			cart = new Cart();
+			System.out.println("Cart Null");
+			showProducts(request,response);
+		}
+		else {
+			cart = CartService.getCart((int)session.getAttribute("cartID"));
+			System.out.print("ahh cart gotten: ");
+			System.out.println(cart);
+		}
+		Client client = (Client)session.getAttribute("user");
+		if(client==null) {
+			System.out.println("Client Null");
+			showProducts(request,response);
+		}
+		ArrayList<CartItem> items = (ArrayList<CartItem>)session.getAttribute("items");
+		if(items==null) {
+			System.out.println("CartItems Null");
+			showProducts(request,response);
+		}
+		request.getRequestDispatcher("confirmaddress.jsp").forward(request, response);
+	}
+	
+	private void checkout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		Cart cart;
+		if(session.getAttribute("cartID")==null) {
+			cart = new Cart();
+			System.out.println("Cart Null");
+			showProducts(request,response);
+		}
+		else {
+			cart = CartService.getCart((int)session.getAttribute("cartID"));
+			System.out.print("ahh cart gotten: ");
+			System.out.println(cart);
+		}
+		Client client = (Client)session.getAttribute("user");
+		if(client==null) {
+			System.out.println("Client Null");
+			showProducts(request,response);
+		}
+		
+		ArrayList<CartItem> items = (ArrayList<CartItem>)session.getAttribute("items");
+		if(items==null) {
+			System.out.println("CartItems Null");
+			showProducts(request,response);
+		}
+		for(CartItem item: items) {
+			item.setCart(cart);
+			CartItemService.addCartItem(item);
+		}
+		
+		Transaction transaction = new Transaction();
+		transaction.setBuyer(client);
+		transaction.setCart(cart);
+		System.out.print("CART: WIP");
+		System.out.println(cart);
+		transaction.setDeliveryAdd(request.getParameter("homeAdd"));
+		transaction.setSum((float)((double)session.getAttribute("total")));
+		transaction.setTimeOrder("ah");
+		TransactionService.addTransaction(transaction);
+		System.out.println("Transaction Created");
+		session.removeAttribute("cart");
+		session.removeAttribute("items");
+		session.removeAttribute("total");
+		session.setAttribute("total", 0.00);
+		request.getRequestDispatcher("showproducts.jsp").forward(request,response);
 		
 	}
 	
@@ -503,6 +785,26 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 		System.out.println(ProductService.deleteProduct(id));
 		
 		showProducts(request, response);
+	}
+	
+	private void showTransactions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		List<Transaction> transactions = TransactionService.getAllTransactions();
+		for(Transaction transaction: transactions) {
+			System.out.println(transaction.getId());
+		}
+		request.setAttribute("transactions", transactions);
+		request.getRequestDispatcher("transactionlist.jsp").forward(request, response);
+	}
+	
+	private void deleteTransaction(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+			System.out.println("AAAAH");
+		HttpSession session = request.getSession();
+		int id = Integer.parseInt(request.getParameter("id"));
+		
+		System.out.println(TransactionService.deleteTransaction(id));
+		List<Transaction> transactions = TransactionService.getAllTransactions();
+		session.setAttribute("transactions", transactions);
+		showTransactions(request,response);
 	}
 	
 	private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -525,7 +827,7 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 				break;	
 		}
 		
-		request.getRequestDispatcher("index.jsp").forward(request, response);
+		request.getRequestDispatcher("showproducts.jsp").forward(request, response);
 	}
 	
 	
