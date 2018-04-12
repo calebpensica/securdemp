@@ -842,8 +842,14 @@ public class MainServlet extends HttpServlet {
 	private void deleteProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("productid"));
 		System.out.println("AAH DELETE");
+	/*	Product product = ProductService.getProduct(id);
+		List<CartItem> items = CartItemService.getAllCartItems();
+		for(CartItem item: items) {
+			if(item.getProduct().getId()==product.getId());
+				CartItemService.deleteCartItem(item.getCitemid());
+		}
+*/
 		System.out.println(ProductService.deleteProduct(id));
-		
 		showProducts(request, response);
 	}
 	
