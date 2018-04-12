@@ -82,12 +82,14 @@
 							<div class="section-title">
 								<h3 class="title">Order Review</h3>
 							</div>
-								put address inputs here
-								<input type="text"  pattern="[A-Za-zñ._-\s]{1,50}" name="homeAdd" value="${user.homeAdd }">
-								<input type="number" name="contactNo" value="${user.contactNo }">
-								<input type="email" name="email" value="${user.email }">
+								Confirm Address
+						<div class = "signup-section">
+								<strong>Delivery Address: </strong><input class="signup-section-content" type="text"  pattern="[A-Za-zñ._-\s]{1,50}" name="homeAdd" value="${user.homeAdd }"><br>
+								<strong>Contact No: </strong><input class="signup-section-content" type="number" name="contactNo" value="${user.contactNo }"><br>
+								<strong>Email: </strong><input class="signup-section-content" type="email" name="email" value="${user.email }"><br>
 							<div class="pull-right">
 								<button type="submit" class="primary-btn">Confirm Address</button>
+							</div>
 							</div>
 						</div>
 					</div>

@@ -8,10 +8,14 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.TypedQuery;
 
 import com.securde.bean.CartItem;
+import com.securde.bean.Product;
 import com.securde.util.DBUtil;
 
 public class CartItemService 
 {
+	
+	private static final String COL_CART = "cartid";
+	
 	public static List<CartItem> getAllCartItems()
 	{
 		List<CartItem> cartitems = new ArrayList<CartItem>();
@@ -147,5 +151,42 @@ public class CartItemService
 		}
 		
 		return ci;
+	}
+	
+	public static boolean deleteCartItems(int cartid)
+	{
+		boolean deleted = false;
+		List<CartItem> items = new ArrayList<>();
+		EntityManager em = DBUtil.getEntityManager();
+		EntityTransaction trans = em.getTransaction();
+		
+		try {
+			trans.begin();
+			String query = "FROM cartitem where " + COL_CART + " = :cart"; 
+			TypedQuery<CartItem> q = em.createQuery(query, CartItem.class);
+			q.setParameter("cart", cartid);
+			items = q.getResultList();
+			trans.commit();
+			deleted = true;
+			
+			for(CartItem ci: items)
+			{
+				if(deleteCartItem(ci.getCitemid()))
+					deleted = true;
+				else {
+					deleted = false;
+					break;
+				}
+			}
+		} catch(Exception e) { 	
+			if(trans != null) {
+				trans.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			em.close();
+		}
+		
+		return deleted;
 	}
 }

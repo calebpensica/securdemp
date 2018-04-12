@@ -15,7 +15,7 @@ import java.util.UUID;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
+import java.text.SimpleDateFormat;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -46,6 +46,7 @@ class URLPatterns
 	public final static String CHECKOUT = "/checkout";
 	public final static String TRANSACTIONS = "/transactions";
 	public final static String DELETETRANSACTION = "/deletetransaction";
+	public final static String REMOVEFROMCART = "/removefromcart";
 }
 
 /**
@@ -70,7 +71,8 @@ class URLPatterns
 			 URLPatterns.CONFIRMCONTACT,
 			 URLPatterns.CHECKOUT,
 			 URLPatterns.TRANSACTIONS,
-			 URLPatterns.DELETETRANSACTION
+			 URLPatterns.DELETETRANSACTION,
+			 URLPatterns.REMOVEFROMCART
 			 })
 public class MainServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -160,6 +162,9 @@ public class MainServlet extends HttpServlet {
 				break;
 			case URLPatterns.DELETETRANSACTION:
 				deleteTransaction(request, response);
+				break;
+			case URLPatterns.REMOVEFROMCART:
+				removeFromCart(request, response);
 				break;
 		}
 		
@@ -323,6 +328,32 @@ public class MainServlet extends HttpServlet {
 			}
 		}
 			
+	}
+	
+	private void removeFromCart(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		Long id = Long.parseLong(request.getParameter("itemID"));
+		ArrayList<CartItem> items = (ArrayList<CartItem>)session.getAttribute("items");
+		ArrayList<CartItem> newItems = new ArrayList<CartItem>();
+		
+		if(items==null) {
+			System.out.println("Cart Null");
+			showProducts(request,response);
+		}
+		
+		for(CartItem item: items) {
+			if(item.getCitemid()!=id)
+				newItems.add(item);
+		}
+		
+		if(newItems.size()<1) {
+			session.removeAttribute("items");
+			showProducts(request,response);
+		}
+		
+		session.setAttribute("items", newItems);
+		confirmproducts(request,response);
+	
 	}
 	
 	private void logoutUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -545,7 +576,7 @@ public class MainServlet extends HttpServlet {
 		    System.out.println("uuid = " + uuid);
 			
 			a.setUsername(username);
-			a.setPassword(password);
+			a.setPassword(sb.toString());
 			a.setfName(fName);
 			a.setlName(lName);
 			a.setEmail(email);
@@ -566,7 +597,7 @@ public class MainServlet extends HttpServlet {
 	
 	public boolean checkDuplicates(String username) {
 		for(Client client: ClientService.getAllClients() ) {
-			if(username==client.getUsername()) {
+			if(username.equalsIgnoreCase(client.getUsername())) {
 				return true;
 			}
 			System.out.println(username);
@@ -574,17 +605,17 @@ public class MainServlet extends HttpServlet {
 		}
 		
 		for(Admin admin: AdminService.getAllAdmins() ) {
-			if(username==admin.getUsername())
+			if(username.equalsIgnoreCase(admin.getUsername()))
 				return true;
 		}
 		
 		for(StoreManager manager: StoreManagerService.getAllManagers() ) {
-			if(username==manager.getUsername())
+			if(username.equalsIgnoreCase(manager.getUsername()))
 				return true;
 		}
 		
 		for(InventoryStaff staff: InventoryStaffService.getAllInventoryStaffs() ) {
-			if(username==staff.getUsername())
+			if(username.equalsIgnoreCase(staff.getUsername()))
 				return true;
 		}
 		
@@ -620,10 +651,10 @@ public class MainServlet extends HttpServlet {
 	}
 	
 	private void editProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+		HttpSession session = request.getSession();
 		Product product = ProductService.getProduct(Integer.parseInt(request.getParameter("productid")));
-		request.setAttribute("product", product);
-		request.getRequestDispatcher("editproduct.jsp").forward(request, response);
+		session.setAttribute("product", product);
+		request.getRequestDispatcher("editProduct.jsp").forward(request, response);
 	}
 	
 	private void commitEditProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -796,7 +827,8 @@ public class MainServlet extends HttpServlet {
 		System.out.println(cart);
 		transaction.setDeliveryAdd(request.getParameter("homeAdd"));
 		transaction.setSum((float)((double)session.getAttribute("total")));
-		transaction.setTimeOrder("ah");
+		String timeOrder = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+		transaction.setTimeOrder(timeOrder);
 		TransactionService.addTransaction(transaction);
 		System.out.println("Transaction Created");
 		session.removeAttribute("cart");
@@ -809,13 +841,33 @@ public class MainServlet extends HttpServlet {
 	
 	private void deleteProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("productid"));
-		
+		System.out.println("AAH DELETE");
+	/*	Product product = ProductService.getProduct(id);
+		List<CartItem> items = CartItemService.getAllCartItems();
+		for(CartItem item: items) {
+			if(item.getProduct().getId()==product.getId());
+				CartItemService.deleteCartItem(item.getCitemid());
+		}
+*/
 		System.out.println(ProductService.deleteProduct(id));
-		
 		showProducts(request, response);
 	}
 	
 	private void showTransactions(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+			HttpSession session = request.getSession();
+			try {
+			Admin a = (Admin)session.getAttribute("user");
+			if(a==null) {
+				request.getRequestDispatcher("login.jsp").forward(request, response);
+			}
+			else if(AdminService.getAdmin(a.getId())==null){
+				showProducts(request,response);
+			}
+		
+			} catch(ClassCastException e) {
+				showProducts(request,response);
+			}
+
 		List<Transaction> transactions = TransactionService.getAllTransactions();
 		for(Transaction transaction: transactions) {
 			System.out.println(transaction.getId());
@@ -829,13 +881,12 @@ public class MainServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		int id = Integer.parseInt(request.getParameter("id"));
 		
-		Transaction trans = TransactionService.getTransaction(id);
+		Transaction t = TransactionService.getTransaction(id);
+		Cart c = CartService.getCart(t.getCart().getCartid());
 		
-		System.out.println(trans.getCart().getCartid());
-		System.out.println("Deleting Cart");
-		CartService.deleteCart(trans.getCart().getCartid());
-		
-		System.out.println(TransactionService.deleteTransaction(id));
+		System.out.println(CartItemService.deleteCartItems(c.getCartid()) + " - Cart Items have been deleted");
+		System.out.println(CartService.deleteCart(c.getCartid()) + " - Cart has been deleted");
+		System.out.println(TransactionService.deleteTransaction(id) + " - Transaction has been deleted");
 		List<Transaction> transactions = TransactionService.getAllTransactions();
 		session.setAttribute("transactions", transactions);
 		showTransactions(request,response);
