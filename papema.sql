@@ -1,8 +1,10 @@
--- MySQL dump 10.13  Distrib 5.7.12, for Win64 (x86_64)
+CREATE DATABASE  IF NOT EXISTS `papema` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `papema`;
+-- MySQL dump 10.13  Distrib 5.7.12, for Win32 (AMD64)
 --
 -- Host: localhost    Database: papema
 -- ------------------------------------------------------
--- Server version	5.7.16-log
+-- Server version	5.7.15-log
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -29,8 +31,10 @@ CREATE TABLE `admin` (
   `fName` varchar(100) NOT NULL,
   `lName` varchar(100) NOT NULL,
   `email` varchar(100) NOT NULL,
-  PRIMARY KEY (`adminid`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+  `userhash` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`adminid`),
+  UNIQUE KEY `userhash_UNIQUE` (`userhash`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,7 +43,7 @@ CREATE TABLE `admin` (
 
 LOCK TABLES `admin` WRITE;
 /*!40000 ALTER TABLE `admin` DISABLE KEYS */;
-INSERT INTO `admin` VALUES (1,'o','op','ops','1','2'),(2,'sean','naes','mah','boi','@kek'),(3,'0','9','8','7','6'),(4,'a','b','c','d','e'),(5,'adminsean','2444','Sean','Paragas','sean@sean.com'),(6,'adminacc','399f8043559e7ca79cd7a56715547a8f','caleb','pensica','securde@lmao.com');
+INSERT INTO `admin` VALUES (1,'o','op','ops','1','2',NULL),(2,'sean','naes','mah','boi','@kek',NULL),(3,'0','9','8','7','6',NULL),(4,'a','b','c','d','e',NULL),(5,'adminsean','2444','Sean','Paragas','sean@sean.com',NULL),(6,'adminacc','399f8043559e7ca79cd7a56715547a8f','caleb','pensica','securde@lmao.com',NULL);
 /*!40000 ALTER TABLE `admin` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -53,7 +57,7 @@ DROP TABLE IF EXISTS `cart`;
 CREATE TABLE `cart` (
   `cartid` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`cartid`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -62,7 +66,7 @@ CREATE TABLE `cart` (
 
 LOCK TABLES `cart` WRITE;
 /*!40000 ALTER TABLE `cart` DISABLE KEYS */;
-INSERT INTO `cart` VALUES (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11);
+INSERT INTO `cart` VALUES (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12);
 /*!40000 ALTER TABLE `cart` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -106,7 +110,7 @@ CREATE TABLE `cartitem` (
   KEY `FKdn0h3m726afuk0yv9u2ogrs6q` (`product_productid`),
   CONSTRAINT `FKdn0h3m726afuk0yv9u2ogrs6q` FOREIGN KEY (`product_productid`) REFERENCES `product` (`productid`),
   CONSTRAINT `FKtc9npvycs1rruynyqdhyrybqw` FOREIGN KEY (`cartid`) REFERENCES `cart` (`cartid`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -115,7 +119,7 @@ CREATE TABLE `cartitem` (
 
 LOCK TABLES `cartitem` WRITE;
 /*!40000 ALTER TABLE `cartitem` DISABLE KEYS */;
-INSERT INTO `cartitem` VALUES (1,1,4,1),(2,1,5,1),(3,1,6,1),(4,1,11,1),(5,1,11,2),(6,1,11,3);
+INSERT INTO `cartitem` VALUES (1,1,4,1),(2,1,5,1),(3,1,6,1),(4,1,11,1),(5,1,11,2),(6,1,11,3),(7,1,12,3),(8,1,12,2);
 /*!40000 ALTER TABLE `cartitem` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -135,8 +139,10 @@ CREATE TABLE `client` (
   `email` varchar(100) NOT NULL,
   `contactNo` varchar(100) NOT NULL,
   `homeAdd` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`clientid`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+  `userhash` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`clientid`),
+  UNIQUE KEY `userhash_UNIQUE` (`userhash`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -145,7 +151,7 @@ CREATE TABLE `client` (
 
 LOCK TABLES `client` WRITE;
 /*!40000 ALTER TABLE `client` DISABLE KEYS */;
-INSERT INTO `client` VALUES (1,'seanprgs','@2Kboihehe','Sean','Paragas','heyhey@email.com','09179013836','here'),(2,'cripplingDep','f5a961a7d26d00bd60e636671e825b85','hey','no','stop@now.com','234','asifuaif'),(3,'calebca','a8b6bb3b34339f5a6d439a0ef7fc7878','aslkdj','alksdj','asdklajsd@aslkdjasldk','123123','sdasd'),(4,'calebca','a8b6bb3b34339f5a6d439a0ef7fc7878','aksdljaslkdj','alksdjaslkdj','aklsjdalksdj@gmail.com','123132','kajfdlkajdlkas');
+INSERT INTO `client` VALUES (1,'seanprgs','@2Kboihehe','Sean','Paragas','heyhey@email.com','09179013836','here',NULL),(2,'cripplingDep','f5a961a7d26d00bd60e636671e825b85','hey','no','stop@now.com','234','asifuaif',NULL),(3,'calebca','a8b6bb3b34339f5a6d439a0ef7fc7878','aslkdj','alksdj','asdklajsd@aslkdjasldk','123123','sdasd',NULL),(4,'calebca','a8b6bb3b34339f5a6d439a0ef7fc7878','aksdljaslkdj','alksdjaslkdj','aklsjdalksdj@gmail.com','123132','kajfdlkajdlkas',NULL),(5,'qwertyuiop','cefbff00ac887ed468e16e4561534dfd','asufhsdf','asdasdasda','asdasdas@uni.com','12312312312','dlasdunsfyhsf',NULL);
 /*!40000 ALTER TABLE `client` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -163,7 +169,9 @@ CREATE TABLE `inventorystaff` (
   `fName` varchar(100) NOT NULL,
   `lName` varchar(100) NOT NULL,
   `email` varchar(100) NOT NULL,
-  PRIMARY KEY (`staffid`)
+  `userhash` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`staffid`),
+  UNIQUE KEY `userhash_UNIQUE` (`userhash`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -190,7 +198,7 @@ CREATE TABLE `log` (
   `log` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -199,6 +207,7 @@ CREATE TABLE `log` (
 
 LOCK TABLES `log` WRITE;
 /*!40000 ALTER TABLE `log` DISABLE KEYS */;
+INSERT INTO `log` VALUES (1,'2018-04-12 15:19:49','qwertyuiop','Logged in successfully.');
 /*!40000 ALTER TABLE `log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -270,7 +279,9 @@ CREATE TABLE `storemanager` (
   `fName` varchar(100) NOT NULL,
   `lName` varchar(100) NOT NULL,
   `email` varchar(100) NOT NULL,
-  PRIMARY KEY (`managerid`)
+  `userhash` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`managerid`),
+  UNIQUE KEY `userhash_UNIQUE` (`userhash`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -346,14 +357,14 @@ CREATE TABLE `transaction` (
   `timeOrder` varchar(45) DEFAULT NULL,
   `timeReceived` varchar(45) DEFAULT NULL,
   `cart` int(11) DEFAULT NULL,
-  `buyer_clientid` int(11) NOT NULL,
+  `buyer_clientid` int(11) DEFAULT NULL,
   `cart_cartid` int(11) DEFAULT NULL,
   PRIMARY KEY (`transactionid`),
   KEY `FKkdchb4tr4t84axfksv4wdh952` (`buyer_clientid`),
   KEY `FKlvn2ts142rqedwdr3mrscjeiw` (`cart_cartid`),
-  CONSTRAINT `FKkdchb4tr4t84axfksv4wdh952` FOREIGN KEY (`buyer_clientid`) REFERENCES `client` (`clientid`),
-  CONSTRAINT `FKlvn2ts142rqedwdr3mrscjeiw` FOREIGN KEY (`cart_cartid`) REFERENCES `cart` (`cartid`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+  CONSTRAINT `FKkdchb4tr4t84axfksv4wdh952` FOREIGN KEY (`buyer_clientid`) REFERENCES `client` (`clientid`) ON DELETE SET NULL ON UPDATE SET NULL,
+  CONSTRAINT `FKlvn2ts142rqedwdr3mrscjeiw` FOREIGN KEY (`cart_cartid`) REFERENCES `cart` (`cartid`) ON DELETE SET NULL ON UPDATE SET NULL
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -362,7 +373,7 @@ CREATE TABLE `transaction` (
 
 LOCK TABLES `transaction` WRITE;
 /*!40000 ALTER TABLE `transaction` DISABLE KEYS */;
-INSERT INTO `transaction` VALUES (1,1,'sdasd','ah',NULL,NULL,3,6),(2,4,'sdasd','ah',NULL,NULL,3,11);
+INSERT INTO `transaction` VALUES (1,1,'sdasd','ah',NULL,NULL,3,6),(2,4,'sdasd','ah',NULL,NULL,3,11),(3,3,'dlasdunsfyhsf','ah',NULL,NULL,5,12);
 /*!40000 ALTER TABLE `transaction` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -375,4 +386,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-12 14:57:42
+-- Dump completed on 2018-04-13  0:15:18
