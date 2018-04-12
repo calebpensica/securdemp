@@ -84,6 +84,7 @@ public class ClientService
 			c.setPassword(newinfo.getPassword());
 			c.setContactNo(newinfo.getContactNo());
 			c.setHomeAdd(newinfo.getHomeAdd());
+			c.setUserHash(newinfo.getUserHash());
 			
 			em.merge(c);
 			trans.commit();

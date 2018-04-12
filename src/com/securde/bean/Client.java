@@ -32,6 +32,9 @@ public class Client
 	@Column
 	private String homeAdd;
 	
+	@Column(name="userhash")
+	private String userHash;
+	
 	public Client() {
 		// TODO Auto-generated constructor stub
 	}
@@ -100,6 +103,13 @@ public class Client
 		this.email = email;
 	}
 	
+	public String getUserHash() {
+		return this.userHash;
+	}
 	
+	public void setUserHash(String hash) {
+		this.userHash = hash;
+	}
+
 
 }

@@ -7,9 +7,11 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -134,6 +136,8 @@ public class MainServlet extends HttpServlet {
 	private void loginUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{		
 		HttpSession session = request.getSession();
+		
+		System.out.println("Hello");
 
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
@@ -144,21 +148,62 @@ public class MainServlet extends HttpServlet {
 		StoreManager s = StoreManagerService.findManager(username, password);
 		
 		if(c != null) {
+			String uuid = UUID.randomUUID().toString().replace("-", "");
+		    System.out.println("uuid = " + uuid);
+			c.setUserHash(uuid);
+			ClientService.updateClient(c.getId(), c);
+			
+			Cookie cookie = new Cookie("uuid", c.getUserHash());
+			cookie.setMaxAge(60*60*24*365*2);
+			response.addCookie(cookie);
+			
+			session.setMaxInactiveInterval(60*15);
+			System.out.println(session.getMaxInactiveInterval());
 			session.setAttribute("user", c);
 			session.setAttribute("userType", "Client");
 			request.getRequestDispatcher("showproducts.jsp").forward(request, response);
 		} else {
 			if(i != null) {
+				String uuid = UUID.randomUUID().toString().replace("-", "");
+			    System.out.println("uuid = " + uuid);
+				i.setUserHash(uuid);
+				InventoryStaffService.updateStaff(i.getId(), i);
+				
+				Cookie cookie = new Cookie("uuid", i.getUserHash());
+				cookie.setMaxAge(60*60*24*365*2);
+				response.addCookie(cookie);
+				
+				session.setMaxInactiveInterval(60*15);
 				session.setAttribute("user", i);
 				session.setAttribute("userType", "Staff");
 				request.getRequestDispatcher("showproducts.jsp").forward(request, response);
 			} else {
 				if(s != null) {
+					String uuid = UUID.randomUUID().toString().replace("-", "");
+				    System.out.println("uuid = " + uuid);
+					s.setUserHash(uuid);
+					StoreManagerService.updateManager(s.getId(), s);
+					
+					Cookie cookie = new Cookie("uuid", s.getUserHash());
+					cookie.setMaxAge(60*60*24*365*2);
+					response.addCookie(cookie);
+					
+					session.setMaxInactiveInterval(60*15);
 					session.setAttribute("user", s);
 					session.setAttribute("userType", "Manager");
 					request.getRequestDispatcher("showproducts.jsp").forward(request, response);
 				} else {
 					if(a != null) {
+						String uuid = UUID.randomUUID().toString().replace("-", "");
+					    System.out.println("uuid = " + uuid);
+						a.setUserHash(uuid);
+						AdminService.updateAdmin(a.getId(), a);
+						
+						Cookie cookie = new Cookie("uuid", a.getUserHash());
+						cookie.setMaxAge(60*60*24*365*2);
+						response.addCookie(cookie);
+						
+						session.setMaxInactiveInterval(60*15);
 						session.setAttribute("user", a);
 						session.setAttribute("userType", "Admin");
 						request.getRequestDispatcher("showproducts.jsp").forward(request, response);
@@ -175,9 +220,29 @@ public class MainServlet extends HttpServlet {
 	private void logoutUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		
-		session.setAttribute("user", null);
+		session.invalidate();
+		// kill cookie
+		Cookie[] cookies = request.getCookies();
+		if(cookies!=null){
+			for(int i = 0; i < cookies.length; i++){
+				Cookie currentCookie = cookies[i];
+				if(currentCookie.getName().equals("uuid")){
+					currentCookie.setMaxAge(0);
+					response.addCookie(currentCookie);
+				}
+				if (currentCookie.getName().equals("JSESSIONID")) {
+					System.out.println("FOUND JSESSIONID");
+					currentCookie.setMaxAge(0);
+					response.addCookie(currentCookie);
+				}
+			}
+		}
 		
-		request.getRequestDispatcher("index.jsp").forward(request, response);
+		// go to index.jsp
+		//response.sendRedirect("/Papema/MainServlet");
+		response.sendRedirect("/Papema/login");
+		
+		//request.getRequestDispatcher("index.jsp").forward(request, response);
 	}
 
 private void registerEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -202,11 +267,20 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 			if(!exist)
 			{
 				s = new StoreManager();
+				String uuid = UUID.randomUUID().toString().replace("-", "");
+			    System.out.println("uuid = " + uuid);
+			    
 				s.setUsername(username);
 				s.setPassword(password);
 				s.setfName(fName);
 				s.setlName(lName);
 				s.setEmail(email);
+				s.setUserHash(uuid);
+				
+				Cookie cookie = new Cookie("uuid", s.getUserHash());
+				cookie.setMaxAge(60*60*24*365*2);
+				response.addCookie(cookie);
+				
 				System.out.println(StoreManagerService.addManager(s));
 				request.getRequestDispatcher("login.jsp").forward(request, response);
 			}else
@@ -225,12 +299,22 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 			if(!exist)
 			{
 				is = new InventoryStaff();
+				String uuid = UUID.randomUUID().toString().replace("-", "");
+			    System.out.println("uuid = " + uuid);
+				
 				is.setUsername(username);
 				is.setPassword(password);
 				is.setfName(fName);
 				is.setlName(lName);
 				is.setEmail(email);
+				is.setUserHash(uuid);
+				
 				System.out.println(InventoryStaffService.addStaff(is)); 
+				
+				Cookie cookie = new Cookie("uuid", is.getUserHash());
+				cookie.setMaxAge(60*60*24*365*2);
+				response.addCookie(cookie);
+				
 				request.getRequestDispatcher("login.jsp").forward(request, response);
 			} else
 				request.getRequestDispatcher("signup.jsp").forward(request, response);	
@@ -258,6 +342,9 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 		
 		if(!exist) {
 			Client c = new Client();
+			String uuid = UUID.randomUUID().toString().replace("-", "");
+		    System.out.println("uuid = " + uuid);
+			
 			c.setUsername(username);
 			c.setPassword(password);
 			c.setfName(fName);
@@ -265,6 +352,11 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 			c.setEmail(email);
 			c.setContactNo(contactNo);
 			c.setHomeAdd(homeAdd);
+			c.setUserHash(uuid);
+			
+			Cookie cookie = new Cookie("uuid", c.getUserHash());
+			cookie.setMaxAge(60*60*24*365*2);
+			response.addCookie(cookie);
 			
 			System.out.println(ClientService.addClient(c)); 
 			request.getRequestDispatcher("login.jsp").forward(request, response);
@@ -290,12 +382,21 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 		
 		if(!exist) {
 			Admin a = new Admin();
+			String uuid = UUID.randomUUID().toString().replace("-", "");
+		    System.out.println("uuid = " + uuid);
+			
 			a.setUsername(username);
 			a.setPassword(password);
 			a.setfName(fName);
 			a.setlName(lName);
 			a.setEmail(email);
-			System.out.println(AdminService.addAdmin(a));
+			a.setUserHash(uuid);
+			AdminService.addAdmin(a);
+			
+			Cookie cookie = new Cookie("uuid", a.getUserHash());
+			cookie.setMaxAge(60*60*24*365*2);
+			response.addCookie(cookie);
+			
 			request.getRequestDispatcher("login.jsp").forward(request, response);
 		} else
 			request.getRequestDispatcher("signup.jsp").forward(request, response);
@@ -433,6 +534,7 @@ private void registerEmployee(HttpServletRequest request, HttpServletResponse re
 		for(Product product: products) {
 			System.out.println(product.getName());
 		}
+		System.out.println("SHOWING");
 		request.setAttribute("products", products);
 		request.getRequestDispatcher("showproducts.jsp").forward(request, response);
 	}

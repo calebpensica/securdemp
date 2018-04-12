@@ -82,6 +82,7 @@ public class AdminService
 			a.setlName(newinfo.getlName());
 			a.setUsername(newinfo.getUsername());
 			a.setPassword(newinfo.getPassword());
+			a.setUserHash(newinfo.getUserHash());
 			
 			em.merge(a);
 			trans.commit();
