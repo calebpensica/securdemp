@@ -85,12 +85,12 @@
 							<option value="Admin">Admin</option>
 						</select><br>	
 						<strong>Username:<font color="red">*</font></strong> <input class = "signup-section-content" type = "text" oninvalid="UsernameInvalidMsg(this)" pattern="[0-9A-Za-z.-_]{7,}" size="15" name = "username" required /><br>
-						<strong>Password:<font color="red">*</font></strong> <input class = "signup-section-content" type = "password" oninvalid="PasswordInvalidMsg(this)" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@!%*?&])[A-Za-z\d@!%*?&]{8,}" size="20" name = "password" required /><br>
+						<strong>Password:<font color="red">*</font></strong> <input class = "signup-section-content" type = "password" oninvalid="PasswordInvalidMsg(this)" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&.])[A-Za-z\d$@$!%*?&.]{8,}" size="20" name = "password" required /><br>
 						<strong>First Name:<font color="red">*</font></strong> <input class = "signup-section-content" type = "text" pattern="[A-Za-zñ\s]{1,50}" oninvalid="NameInvalidMsg(this)" name = "fName" required /><br>
 						<strong>Last Name:<font color="red">*</font></strong> <input class = "signup-section-content" type = "text" pattern="[A-Za-zñ\s]{1,50}" oninvalid="NameInvalidMsg(this)" name = "lName" required /><br>
 						<strong>Email:<font color="red">*</font></strong> <input class = "signup-section-content" type = "email" name = "email" required /><br>
 						<strong>Contact Number:<font color="red">*</font></strong> <input class = "signup-section-content" type = "number" name = "contact" required /><br>
-						<strong>Address:<font color="red">*</font></strong> <input class = "signup-section-content" type = "text"  pattern="[A-Za-zñ._\s]{1,50}" name = "address" required /><br>
+						<strong>Address:<font color="red">*</font></strong> <input class = "signup-section-content" type = "text"  pattern="[0-9A-Za-zñ,._\s]{1,120}" name = "address" required /><br>
 						<% if (request.getAttribute("error") != null)  {
 							boolean error = (boolean) request.getAttribute("error");
 							if (error) { %>
