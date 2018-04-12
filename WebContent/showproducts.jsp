@@ -91,7 +91,6 @@
 										<option value="0">Name</option>
 										<option value="1">Price</option>
 									</select>
-								<a href="#" class="main-btn icon-btn"><i class="fa fa-arrow-down"></i></a>
 							</div>
 						</div>
 						<div class="pull-right">
@@ -153,7 +152,6 @@
 										<option value="0">Name</option>
 										<option value="1">Price</option>
 									</select>
-								<a href="#" class="main-btn icon-btn"><i class="fa fa-arrow-down"></i></a>
 							</div>
 						</div>
 						<div class="pull-right">

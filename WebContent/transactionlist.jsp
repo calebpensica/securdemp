@@ -50,7 +50,7 @@
 <body>
 	<!-- HEADER -->
 	<header>
-			<%@include file="includes/header.jsp" %>
+<%@include file="includes/header.jsp" %>
 	</header>
 	<!-- /HEADER -->
 

@@ -75,9 +75,11 @@
 		<div class="container">
 			<!-- row -->
 			<div class="row">
+			<%if(session.getAttribute("user")!=null){ %>
 				<form id="checkout-form" class="clearfix" method="post" action="confirmcontact">
-
-					<div class="col-md-12">
+				<%}else{ %>
+				<form id="checkout-form" class="clearfix" method="post" action="/login.jsp">
+				<%} %>
 						<div class="order-summary clearfix">
 							<div class="section-title">
 								<h3 class="title">Order Review</h3>
@@ -116,7 +118,7 @@
 									</tr>
 								</tfoot>
 							</table>
-							<div class="pull-right">
+							<div class="pull-right"><
 								<button type="submit" class="primary-btn">Place Order</button>
 							</div>
 						</div>

@@ -14,7 +14,7 @@
 				<div class="pull-left">
 					<!-- Logo -->
 					<div class="header-logo">
-						<a class="logo" href="index.jsp">
+						<a class="logo" href="showproducts	">
 							<img src="./img/Papema_Logo.png" alt="">
 						</a>
 					</div>
@@ -93,7 +93,9 @@
 							<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
 								<div class="header-btns-icon">
 									<i class="fa fa-shopping-cart"></i>
-									<span class="qty">3</span>
+									<%if(request.getAttribute("size")!=null){ %>
+										<span class="qty">${items.size }</span>
+									<%} %>
 								</div>
 								<strong class="text-uppercase">My Cart:</strong>
 								<br>
@@ -115,11 +117,15 @@
 										</div>
 										</c:forEach>
 									</div>
+									<%if(session.getAttribute("items")!=null){ %>
 									<div class="shopping-cart-btns">
 										<form method="post" action="confirmcheckout">
 											<button type="submit" class="primary-btn">Checkout</button>
 										</form>
 									</div>
+									<%} else{ %>
+										<h2 class="product-name">Cart Empty</h2>
+									<%} %>
 								</div>
 							</div>
 						</li>

@@ -164,14 +164,17 @@ public class MainServlet extends HttpServlet {
 
 	private void loginUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{		
-		MessageDigest MD5;
+		MessageDigest MD5, messageDigest;
 		HttpSession session = request.getSession();
-		String url;
+		StringBuffer sb = new StringBuffer();
+		StringBuffer sb2 = new StringBuffer();
 		Date date;
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
+		if(username==null || password==null)
+			request.getRequestDispatcher("login.jsp").forward(request, response);
+		
 		/* Password Encryption */
-		StringBuffer sb = new StringBuffer();
 		try {
 			MD5 = MessageDigest.getInstance("MD5");
 			MD5.update(password.getBytes());
@@ -189,28 +192,26 @@ public class MainServlet extends HttpServlet {
 		InventoryStaff i = InventoryStaffService.findStaff(username, sb.toString());
 		StoreManager s = StoreManagerService.findManager(username, sb.toString());
 		
-
-
 		
 		if(c != null) {
 			session.setAttribute("user", c);
 			session.setAttribute("userType", "Client");
-			request.getRequestDispatcher("showproducts.jsp").forward(request, response);
+			showProducts(request,response);
 		} else {
 			if(i != null) {
 				session.setAttribute("user", i);
 				session.setAttribute("userType", "Staff");
-				request.getRequestDispatcher("showproducts.jsp").forward(request, response);
+				showProducts(request,response);
 			} else {
 				if(s != null) {
 					session.setAttribute("user", s);
 					session.setAttribute("userType", "Manager");
-					request.getRequestDispatcher("showproducts.jsp").forward(request, response);
+					showProducts(request,response);
 				} else {
 					if(a != null) {
 						session.setAttribute("user", a);
 						session.setAttribute("userType", "Admin");
-						request.getRequestDispatcher("showproducts.jsp").forward(request, response);
+						showProducts(request,response);
 					} else {
 						request.setAttribute("error", new Boolean(true));
 						/* Brute Force Attack Prevention */
@@ -268,7 +269,7 @@ public class MainServlet extends HttpServlet {
 		
 		session.invalidate();
 		
-		request.getRequestDispatcher("index.jsp").forward(request, response);
+		request.getRequestDispatcher("showproducts.jsp").forward(request, response);
 	}
 
 	private void registerEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -541,6 +542,7 @@ public class MainServlet extends HttpServlet {
 			cart = CartService.getCart((int)session.getAttribute("cartID"));
 		}
 		
+		cart.setCartid((int)session.getAttribute("cartID"));
 		
 		System.out.println("CARTID: " + Integer.toString((int)session.getAttribute("cartID")));
 		
@@ -673,7 +675,7 @@ public class MainServlet extends HttpServlet {
 		session.removeAttribute("items");
 		session.removeAttribute("total");
 		session.setAttribute("total", 0.00);
-		request.getRequestDispatcher("index.jsp").forward(request,response);
+		request.getRequestDispatcher("showproducts.jsp").forward(request,response);
 		
 	}
 	
@@ -722,7 +724,7 @@ public class MainServlet extends HttpServlet {
 				break;	
 		}
 		
-		request.getRequestDispatcher("index.jsp").forward(request, response);
+		request.getRequestDispatcher("showproducts.jsp").forward(request, response);
 	}
 	
 	
