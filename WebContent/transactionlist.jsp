@@ -76,7 +76,7 @@
 							<c:forEach items="${transactions}" var="transaction">
 								<tr ${(count%2 == 1) ? 'class="even"' : '' } >
 									<c:set var="count" value="${count+1}" />
-										<td style="text-align:left;">${transaction.transactionid}</td>
+										<td style="text-align:left;">${transaction.id}</td>
 										<td style="text-align:left;">${transaction.client.fName transaction.client.lName}</td>
 										<td style="text-align:left;">${transaction.deliveryAdd}</td>
 										<td style="text-align:left;">${transaction.sum}</td>
