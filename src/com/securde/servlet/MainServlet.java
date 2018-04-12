@@ -195,6 +195,7 @@ public class MainServlet extends HttpServlet {
 		InventoryStaff i = InventoryStaffService.findStaff(username, sb.toString());
 		StoreManager s = StoreManagerService.findManager(username, sb.toString());
 		
+		Log log = new Log();
 		
 		if(c != null) {
 			String uuid = UUID.randomUUID().toString().replace("-", "");
@@ -210,6 +211,9 @@ public class MainServlet extends HttpServlet {
 			System.out.println(session.getMaxInactiveInterval());
 			session.setAttribute("user", c);
 			session.setAttribute("userType", "Client");
+			log.setSource(c.getUsername());
+			log.setLog("Logged in successfully.");
+			LogService.addLog(log);
 			showProducts(request,response);
 		} else {
 			if(i != null) {
@@ -225,6 +229,9 @@ public class MainServlet extends HttpServlet {
 				session.setMaxInactiveInterval(60*15);
 				session.setAttribute("user", i);
 				session.setAttribute("userType", "Staff");
+				log.setSource(i.getUsername());
+				log.setLog("Logged in successfully.");
+				LogService.addLog(log);
 				showProducts(request,response);
 			} else {
 				if(s != null) {
@@ -240,6 +247,9 @@ public class MainServlet extends HttpServlet {
 					session.setMaxInactiveInterval(60*15);
 					session.setAttribute("user", s);
 					session.setAttribute("userType", "Manager");
+					log.setSource(s.getUsername());
+					log.setLog("Logged in successfully.");
+					LogService.addLog(log);
 					showProducts(request,response);
 				} else {
 					if(a != null) {
@@ -255,6 +265,9 @@ public class MainServlet extends HttpServlet {
 						session.setMaxInactiveInterval(60*15);
 						session.setAttribute("user", a);
 						session.setAttribute("userType", "Admin");
+						log.setSource(a.getUsername());
+						log.setLog("Logged in successfully.");
+						LogService.addLog(log);
 						showProducts(request,response);
 					} else {
 						request.setAttribute("error", new Boolean(true));
@@ -298,8 +311,11 @@ public class MainServlet extends HttpServlet {
 			                 session.setAttribute("message","loginAttempt= "+loginAttempt+". Invalid username or password. You have "+allowLogin+" attempts remaining. Please try again! <br>Not a registered cusomer? Please <a href=\"register.jsp\">register</a>!");
 			                 request.setAttribute("errorMessage", "Invalid username or password. You have "+allowLogin+" attempts remaining. Please try again!");
 			            }
+			            log.setSource("Anonymous user");
+						log.setLog("Logged in failed.");
+						LogService.addLog(log);
 			            request.setAttribute("errorMessage", "Invalid Username and/or Password. Please try again");
-			            session.setAttribute("loginCount",loginAttempt);
+			            session.setAttribute("loginCount", loginAttempt);
 						request.getRequestDispatcher("login.jsp").forward(request, response);
 					}
 				}
@@ -332,7 +348,6 @@ public class MainServlet extends HttpServlet {
 		// go to index.jsp
 		//response.sendRedirect("/Papema/MainServlet");
 		response.sendRedirect("/Papema/login");
-		
 		//request.getRequestDispatcher("showproducts.jsp"").forward(request, response);
 	}
 
@@ -364,6 +379,8 @@ public class MainServlet extends HttpServlet {
 		InventoryStaff is = null;
 		boolean exist = false;
 		
+		Log log = new Log();
+		
 		if(request.getParameter("employeetype").equals("StoreManager")) {
 			
 			List<StoreManager> managers = StoreManagerService.getAllManagers();
@@ -389,8 +406,14 @@ public class MainServlet extends HttpServlet {
 				response.addCookie(cookie);
 				
 				System.out.println(StoreManagerService.addManager(s));
+				log.setSource(username);
+				log.setLog("Created new manager.");
+				LogService.addLog(log);
 				request.getRequestDispatcher("login.jsp").forward(request, response);
 			}else
+				log.setSource("Anonymous user");
+				log.setLog("Failed to create new user: invalid username - " + username);
+				LogService.addLog(log);
 				request.getRequestDispatcher("signup.jsp").forward(request, response);
 		}
 		else if(request.getParameter("employeetype").equals("Admin")) {
@@ -411,16 +434,21 @@ public class MainServlet extends HttpServlet {
 				is.setEmail(email);
 				is.setUserHash(uuid);
 				
-				System.out.println(InventoryStaffService.addStaff(is)); 
+				System.out.println(InventoryStaffService.addStaff(is));
+				log.setSource(username);
+				log.setLog("Created new staff.");
+				LogService.addLog(log);
 				
 				Cookie cookie = new Cookie("uuid", is.getUserHash());
 				cookie.setMaxAge(60*60*24*365*2);
 				response.addCookie(cookie);
-				
 				request.getRequestDispatcher("login.jsp").forward(request, response);
 			} else {
 				request.setAttribute("error", true);
 				request.setAttribute("errorMessage", "Invalid Username.");
+				log.setSource("Anonymous user");
+				log.setLog("Failed to create new user: invalid username - " + username);
+				LogService.addLog(log);
 				request.getRequestDispatcher("employeesignup.jsp").forward(request, response);
 			}
 		}

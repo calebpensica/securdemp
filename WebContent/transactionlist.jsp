@@ -63,6 +63,7 @@
 				<div class="section-title">
 					<h3 class="title">Transaction List</h3>
 				</div>
+
 				<div class="order-summary clearfix">
 							<div class="section-title">
 								<h3 class="title">Order Review</h3>
