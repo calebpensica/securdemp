@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -16,6 +17,7 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -169,6 +171,7 @@ public class MainServlet extends HttpServlet {
 		StringBuffer sb = new StringBuffer();
 		StringBuffer sb2 = new StringBuffer();
 		Date date;
+
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		if(username==null || password==null)
@@ -195,6 +198,17 @@ public class MainServlet extends HttpServlet {
 		Log log = new Log();
 		
 		if(c != null) {
+			String uuid = UUID.randomUUID().toString().replace("-", "");
+		    System.out.println("uuid = " + uuid);
+			c.setUserHash(uuid);
+			ClientService.updateClient(c.getId(), c);
+			
+			Cookie cookie = new Cookie("uuid", c.getUserHash());
+			cookie.setMaxAge(60*60*24*365*2);
+			response.addCookie(cookie);
+			
+			session.setMaxInactiveInterval(60*15);
+			System.out.println(session.getMaxInactiveInterval());
 			session.setAttribute("user", c);
 			session.setAttribute("userType", "Client");
 			log.setSource(c.getUsername());
@@ -203,6 +217,16 @@ public class MainServlet extends HttpServlet {
 			showProducts(request,response);
 		} else {
 			if(i != null) {
+				String uuid = UUID.randomUUID().toString().replace("-", "");
+			    System.out.println("uuid = " + uuid);
+				i.setUserHash(uuid);
+				InventoryStaffService.updateStaff(i.getId(), i);
+				
+				Cookie cookie = new Cookie("uuid", i.getUserHash());
+				cookie.setMaxAge(60*60*24*365*2);
+				response.addCookie(cookie);
+				
+				session.setMaxInactiveInterval(60*15);
 				session.setAttribute("user", i);
 				session.setAttribute("userType", "Staff");
 				log.setSource(i.getUsername());
@@ -211,6 +235,16 @@ public class MainServlet extends HttpServlet {
 				showProducts(request,response);
 			} else {
 				if(s != null) {
+					String uuid = UUID.randomUUID().toString().replace("-", "");
+				    System.out.println("uuid = " + uuid);
+					s.setUserHash(uuid);
+					StoreManagerService.updateManager(s.getId(), s);
+					
+					Cookie cookie = new Cookie("uuid", s.getUserHash());
+					cookie.setMaxAge(60*60*24*365*2);
+					response.addCookie(cookie);
+					
+					session.setMaxInactiveInterval(60*15);
 					session.setAttribute("user", s);
 					session.setAttribute("userType", "Manager");
 					log.setSource(s.getUsername());
@@ -219,6 +253,16 @@ public class MainServlet extends HttpServlet {
 					showProducts(request,response);
 				} else {
 					if(a != null) {
+						String uuid = UUID.randomUUID().toString().replace("-", "");
+					    System.out.println("uuid = " + uuid);
+						a.setUserHash(uuid);
+						AdminService.updateAdmin(a.getId(), a);
+						
+						Cookie cookie = new Cookie("uuid", a.getUserHash());
+						cookie.setMaxAge(60*60*24*365*2);
+						response.addCookie(cookie);
+						
+						session.setMaxInactiveInterval(60*15);
 						session.setAttribute("user", a);
 						session.setAttribute("userType", "Admin");
 						log.setSource(a.getUsername());
@@ -284,10 +328,27 @@ public class MainServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		
 		session.invalidate();
+		// kill cookie
+		Cookie[] cookies = request.getCookies();
+		if(cookies!=null){
+			for(int i = 0; i < cookies.length; i++){
+				Cookie currentCookie = cookies[i];
+				if(currentCookie.getName().equals("uuid")){
+					currentCookie.setMaxAge(0);
+					response.addCookie(currentCookie);
+				}
+				if (currentCookie.getName().equals("JSESSIONID")) {
+					System.out.println("FOUND JSESSIONID");
+					currentCookie.setMaxAge(0);
+					response.addCookie(currentCookie);
+				}
+			}
+		}
 		
-		
-		
-		request.getRequestDispatcher("showproducts.jsp").forward(request, response);
+		// go to index.jsp
+		//response.sendRedirect("/Papema/MainServlet");
+		response.sendRedirect("/Papema/login");
+		//request.getRequestDispatcher("showproducts.jsp"").forward(request, response);
 	}
 
 	private void registerEmployee(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -330,11 +391,20 @@ public class MainServlet extends HttpServlet {
 			if(!exist)
 			{
 				s = new StoreManager();
+				String uuid = UUID.randomUUID().toString().replace("-", "");
+			    System.out.println("uuid = " + uuid);
+			    
 				s.setUsername(username);
 				s.setPassword(sb.toString());
 				s.setfName(fName);
 				s.setlName(lName);
 				s.setEmail(email);
+				s.setUserHash(uuid);
+				
+				Cookie cookie = new Cookie("uuid", s.getUserHash());
+				cookie.setMaxAge(60*60*24*365*2);
+				response.addCookie(cookie);
+				
 				System.out.println(StoreManagerService.addManager(s));
 				log.setSource(username);
 				log.setLog("Created new manager.");
@@ -354,15 +424,24 @@ public class MainServlet extends HttpServlet {
 			if(!checkDuplicates(username))
 			{
 				is = new InventoryStaff();
+				String uuid = UUID.randomUUID().toString().replace("-", "");
+			    System.out.println("uuid = " + uuid);
+				
 				is.setUsername(username);
 				is.setPassword(sb.toString());
 				is.setfName(fName);
 				is.setlName(lName);
 				is.setEmail(email);
-				System.out.println(InventoryStaffService.addStaff(is)); 
+				is.setUserHash(uuid);
+				
+				System.out.println(InventoryStaffService.addStaff(is));
 				log.setSource(username);
 				log.setLog("Created new staff.");
 				LogService.addLog(log);
+				
+				Cookie cookie = new Cookie("uuid", is.getUserHash());
+				cookie.setMaxAge(60*60*24*365*2);
+				response.addCookie(cookie);
 				request.getRequestDispatcher("login.jsp").forward(request, response);
 			} else {
 				request.setAttribute("error", true);
@@ -407,6 +486,9 @@ public class MainServlet extends HttpServlet {
 		
 		if(!checkDuplicates(username)) {
 			Client c = new Client();
+			String uuid = UUID.randomUUID().toString().replace("-", "");
+		    System.out.println("uuid = " + uuid);
+			
 			c.setUsername(username);
 			c.setPassword(sb.toString());
 			c.setfName(fName);
@@ -414,6 +496,11 @@ public class MainServlet extends HttpServlet {
 			c.setEmail(email);
 			c.setContactNo(contactNo);
 			c.setHomeAdd(homeAdd);
+			c.setUserHash(uuid);
+			
+			Cookie cookie = new Cookie("uuid", c.getUserHash());
+			cookie.setMaxAge(60*60*24*365*2);
+			response.addCookie(cookie);
 			
 			System.out.println(ClientService.addClient(c)); 
 			request.getRequestDispatcher("login.jsp").forward(request, response);
@@ -453,12 +540,21 @@ public class MainServlet extends HttpServlet {
 		
 		if(!checkDuplicates(username)) {
 			Admin a = new Admin();
+			String uuid = UUID.randomUUID().toString().replace("-", "");
+		    System.out.println("uuid = " + uuid);
+			
 			a.setUsername(username);
 			a.setPassword(password);
 			a.setfName(fName);
 			a.setlName(lName);
 			a.setEmail(email);
-			System.out.println(AdminService.addAdmin(a));
+			a.setUserHash(uuid);
+			AdminService.addAdmin(a);
+			
+			Cookie cookie = new Cookie("uuid", a.getUserHash());
+			cookie.setMaxAge(60*60*24*365*2);
+			response.addCookie(cookie);
+			
 			request.getRequestDispatcher("login.jsp").forward(request, response);
 		} else {
 			request.setAttribute("error", true);
@@ -729,11 +825,14 @@ public class MainServlet extends HttpServlet {
 	}
 	
 	private void deleteTransaction(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+			System.out.println("AAAAH");
+		HttpSession session = request.getSession();
 		int id = Integer.parseInt(request.getParameter("id"));
 		
 		System.out.println(TransactionService.deleteTransaction(id));
-		
-		showTransactions(request, response);
+		List<Transaction> transactions = TransactionService.getAllTransactions();
+		session.setAttribute("transactions", transactions);
+		showTransactions(request,response);
 	}
 	
 	private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -765,6 +864,7 @@ public class MainServlet extends HttpServlet {
 		for(Product product: products) {
 			System.out.println(product.getName());
 		}
+		System.out.println("SHOWING");
 		request.setAttribute("products", products);
 		request.getRequestDispatcher("showproducts.jsp").forward(request, response);
 	}

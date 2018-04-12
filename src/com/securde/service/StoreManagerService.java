@@ -79,6 +79,7 @@ public class StoreManagerService
 			s.setlName(newinfo.getlName());
 			s.setUsername(newinfo.getUsername());
 			s.setPassword(newinfo.getPassword());
+			s.setUserHash(newinfo.getUserHash());
 			
 			em.merge(s);
 			trans.commit();

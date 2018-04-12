@@ -80,6 +80,7 @@ public class InventoryStaffService
 			i.setlName(newinfo.getlName());
 			i.setUsername(newinfo.getUsername());
 			i.setPassword(newinfo.getPassword());
+			i.setUserHash(newinfo.getUserHash());
 			
 			em.merge(i);
 			trans.commit();

@@ -25,6 +25,9 @@ public class Admin
 	@Column(nullable=false)
 	private String email;
 	
+	@Column(name="userhash")
+	private String userHash;
+	
 	public Admin() {
 		// TODO Auto-generated constructor stub
 	}
@@ -75,6 +78,14 @@ public class Admin
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	public String getUserHash() {
+		return this.userHash;
+	}
+	
+	public void setUserHash(String hash) {
+		this.userHash = hash;
 	}
 
 }

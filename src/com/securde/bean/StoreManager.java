@@ -24,6 +24,9 @@ public class StoreManager
 	
 	@Column(nullable=false)
 	private String email;
+	
+	@Column(name="userhash")
+	private String userHash;
 
 	public StoreManager() {
 		// TODO Auto-generated constructor stub
@@ -75,6 +78,14 @@ public class StoreManager
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	public String getUserHash() {
+		return this.userHash;
+	}
+	
+	public void setUserHash(String hash) {
+		this.userHash = hash;
 	}
 
 }
