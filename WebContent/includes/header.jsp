@@ -77,6 +77,7 @@
 									<li><a href="addproduct.jsp"><i class="fa fa-user-plus"></i> Add Product</a></li>
 								<%	if (session.getAttribute("userType") == "Admin") { %>
 									<li><a href="employeesignup.jsp"><i class="fa fa-user-plus"></i> Create An Employee Account</a></li>
+									<li><a href="transactions"><i class="fa fa-bar-chart"></i> View Transactions</a></li>
 								<% } %>	
 							<% } %>
 							<form method = "post" action = "logout">

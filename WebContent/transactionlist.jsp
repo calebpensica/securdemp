@@ -14,7 +14,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
 
-	<title>Add Product</title>
+	<title>Transactions</title>
 
 	<!-- Google font -->
 	<link href="https://fonts.googleapis.com/css?family=Hind:400,700" rel="stylesheet">
@@ -63,31 +63,33 @@
 				<div class="section-title">
 					<h3 class="title">Transaction List</h3>
 				</div>
-				<div class = "login-section">
-					<table width="100%" border="0" cellspacing="0" cellpadding="6">
-							<tr>
-								<th style="text-align: left;"><i aria-hidden="true"></i> TRANSACTION ID</th>
-								<th style="text-align: left;"><i aria-hidden="true"></i> SOLD TO</th>
-								<th style="text-align: left;"><i aria-hidden="true"></i> DELIVERY ADDRESS</th>
-								<th style="text-align: left;"><i aria-hidden="true"></i> TOTAL</th>
-								<th><i class="fa fa-pencil" aria-hidden="true"></i> ACTION</th>
-							</tr>
-							
-							<c:forEach items="${transactions}" var="transaction">
-								<tr ${(count%2 == 1) ? 'class="even"' : '' } >
-									<c:set var="count" value="${count+1}" />
-										<td style="text-align:left;">${transaction.transactionid}</td>
-										<td style="text-align:left;">${transaction.client.fName transaction.client.lName}</td>
-										<td style="text-align:left;">${transaction.deliveryAdd}</td>
-										<td style="text-align:left;">${transaction.sum}</td>
-										<td align="center">
-											<a href="deleteTransaction?id=${transaction.transactionid}">
-												<i class="fa fa-trash fa-lg" style="color: #d03431;" aria-hidden="true"></i>
-											</a> 
-										</td>
-								</tr>
-							</c:forEach>	
-						</table>
+				<div class="order-summary clearfix">
+							<div class="section-title">
+								<h3 class="title">Order Review</h3>
+							</div>
+						<table class="shopping-cart-table table">
+								<thead>
+									<tr>
+										<th>Transaction ID</th>
+										<th class="text-center">Sold To</th>
+										<th class="text-center">Delivered Address</th>
+										<th class="text-center">Total</th>
+										<th class="text-center">Action</th>
+									</tr>
+								</thead>
+								<tbody>
+								
+							<c:forEach items="${transactions}" var ="transaction">
+									<tr>
+										<td class="thumb">${transaction.id}</td>
+										<td class="price text-center"><strong>${transaction.buyer.fName} ${transaction.buyer.lName}</strong></td>
+										<td class="qty text-center">${transaction.deliveryAdd}</td>
+										<td class="total text-center"><strong class="primary-color">${transaction.sum }</strong></td>
+										<td class="text-right"><button class="main-btn icon-btn" onClick="deleteTransaction(${transaction.id})" ><i class="fa fa-close"></i></button></td>
+									</tr>
+								</c:forEach>
+								</tbody>
+							</table>
 				</div>
 			</div>
 			<!-- /row -->
@@ -106,11 +108,17 @@
 	<script src="js/jquery.min.js"></script>
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/slick.min.js"></script>
-	<script src="js/nouislider.min.js"></script>
+	<script src="js/nouislider.min.js"></script>	
 	<script src="js/jquery.zoom.min.js"></script>
 	<script src="js/main.js"></script>
 
 </body>
-
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script>
+	function deleteTransaction(id) {
+		window.location.href = "deletetransaction?id=" + id;	
+	}
+</script>
 </html>
+
 	

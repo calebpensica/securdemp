@@ -697,11 +697,14 @@ public class MainServlet extends HttpServlet {
 	}
 	
 	private void deleteTransaction(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+			System.out.println("AAAAH");
+		HttpSession session = request.getSession();
 		int id = Integer.parseInt(request.getParameter("id"));
 		
 		System.out.println(TransactionService.deleteTransaction(id));
-		
-		showTransactions(request, response);
+		List<Transaction> transactions = TransactionService.getAllTransactions();
+		session.setAttribute("transactions", transactions);
+		showTransactions(request,response);
 	}
 	
 	private void deleteUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

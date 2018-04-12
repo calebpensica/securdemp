@@ -106,7 +106,7 @@
 										<td class="price text-center"><strong>$${item.product.price }</strong></td>
 										<td class="qty text-center"><input class="input" type="number" name="quantity" id="quantity" value="${item.quantity }"></td>
 										<td class="total text-center"><strong class="primary-color">${item.product.price*item.quantity }</strong></td>
-										<td class="text-right"><button class="main-btn icon-btn"><i class="fa fa-close"></i></button></td>
+										<td class="text-right"><a href="deletetransaction?id=${transaction.id }"><i class="fa fa-close"></i></a></td>
 									</tr>
 								</c:forEach>
 								</tbody>
