@@ -829,7 +829,12 @@ public class MainServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		int id = Integer.parseInt(request.getParameter("id"));
 		
-		System.out.println(TransactionService.deleteTransaction(id));
+		Transaction t = TransactionService.getTransaction(id);
+		Cart c = CartService.getCart(t.getCart().getCartid());
+		
+		System.out.println(CartItemService.deleteCartItems(c.getCartid()) + " - Cart Items have been deleted");
+		System.out.println(CartService.deleteCart(c.getCartid()) + " - Cart has been deleted");
+		System.out.println(TransactionService.deleteTransaction(id) + " - Transaction has been deleted");
 		List<Transaction> transactions = TransactionService.getAllTransactions();
 		session.setAttribute("transactions", transactions);
 		showTransactions(request,response);

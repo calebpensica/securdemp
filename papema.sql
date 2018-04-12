@@ -57,7 +57,7 @@ DROP TABLE IF EXISTS `cart`;
 CREATE TABLE `cart` (
   `cartid` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`cartid`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -66,7 +66,7 @@ CREATE TABLE `cart` (
 
 LOCK TABLES `cart` WRITE;
 /*!40000 ALTER TABLE `cart` DISABLE KEYS */;
-INSERT INTO `cart` VALUES (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12);
+INSERT INTO `cart` VALUES (1),(2),(3),(4),(5),(7),(8),(9),(10),(11);
 /*!40000 ALTER TABLE `cart` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -104,13 +104,13 @@ CREATE TABLE `cartitem` (
   `citemid` int(11) NOT NULL AUTO_INCREMENT,
   `quantity` int(11) NOT NULL,
   `cartid` int(11) NOT NULL,
-  `product_productid` int(11) NOT NULL,
+  `product_productid` int(11) DEFAULT NULL,
   PRIMARY KEY (`citemid`),
   KEY `FKtc9npvycs1rruynyqdhyrybqw` (`cartid`),
   KEY `FKdn0h3m726afuk0yv9u2ogrs6q` (`product_productid`),
-  CONSTRAINT `FKdn0h3m726afuk0yv9u2ogrs6q` FOREIGN KEY (`product_productid`) REFERENCES `product` (`productid`),
-  CONSTRAINT `FKtc9npvycs1rruynyqdhyrybqw` FOREIGN KEY (`cartid`) REFERENCES `cart` (`cartid`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
+  CONSTRAINT `FKdn0h3m726afuk0yv9u2ogrs6q` FOREIGN KEY (`product_productid`) REFERENCES `product` (`productid`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `FKtc9npvycs1rruynyqdhyrybqw` FOREIGN KEY (`cartid`) REFERENCES `cart` (`cartid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -119,7 +119,7 @@ CREATE TABLE `cartitem` (
 
 LOCK TABLES `cartitem` WRITE;
 /*!40000 ALTER TABLE `cartitem` DISABLE KEYS */;
-INSERT INTO `cartitem` VALUES (1,1,4,1),(2,1,5,1),(3,1,6,1),(4,1,11,1),(5,1,11,2),(6,1,11,3),(7,1,12,3),(8,1,12,2);
+INSERT INTO `cartitem` VALUES (1,1,4,NULL),(2,1,5,NULL),(4,1,11,NULL),(5,1,11,NULL),(6,1,11,3);
 /*!40000 ALTER TABLE `cartitem` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -151,7 +151,7 @@ CREATE TABLE `client` (
 
 LOCK TABLES `client` WRITE;
 /*!40000 ALTER TABLE `client` DISABLE KEYS */;
-INSERT INTO `client` VALUES (1,'seanprgs','@2Kboihehe','Sean','Paragas','heyhey@email.com','09179013836','here',NULL),(2,'cripplingDep','f5a961a7d26d00bd60e636671e825b85','hey','no','stop@now.com','234','asifuaif',NULL),(3,'calebca','a8b6bb3b34339f5a6d439a0ef7fc7878','aslkdj','alksdj','asdklajsd@aslkdjasldk','123123','sdasd',NULL),(4,'calebca','a8b6bb3b34339f5a6d439a0ef7fc7878','aksdljaslkdj','alksdjaslkdj','aklsjdalksdj@gmail.com','123132','kajfdlkajdlkas',NULL),(5,'qwertyuiop','cefbff00ac887ed468e16e4561534dfd','asufhsdf','asdasdasda','asdasdas@uni.com','12312312312','dlasdunsfyhsf',NULL);
+INSERT INTO `client` VALUES (1,'seanprgs','@2Kboihehe','Sean','Paragas','heyhey@email.com','09179013836','here',NULL),(2,'cripplingDep','f5a961a7d26d00bd60e636671e825b85','hey','no','stop@now.com','234','asifuaif',NULL),(4,'calebca','a8b6bb3b34339f5a6d439a0ef7fc7878','aksdljaslkdj','alksdjaslkdj','aklsjdalksdj@gmail.com','123132','kajfdlkajdlkas',NULL),(5,'qwertyuiop','cefbff00ac887ed468e16e4561534dfd','asufhsdf','asdasdasda','asdasdas@uni.com','12312312312','dlasdunsfyhsf','2c4d159788a14a59ab31692217ec2903');
 /*!40000 ALTER TABLE `client` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -198,7 +198,7 @@ CREATE TABLE `log` (
   `log` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -207,7 +207,7 @@ CREATE TABLE `log` (
 
 LOCK TABLES `log` WRITE;
 /*!40000 ALTER TABLE `log` DISABLE KEYS */;
-INSERT INTO `log` VALUES (1,'2018-04-12 15:19:49','qwertyuiop','Logged in successfully.');
+INSERT INTO `log` VALUES (1,'2018-04-12 15:19:49','qwertyuiop','Logged in successfully.'),(2,'2018-04-12 18:32:59','qwertyuiop','Logged in successfully.'),(3,'2018-04-12 19:13:18','qwertyuiop','Logged in successfully.');
 /*!40000 ALTER TABLE `log` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -234,7 +234,7 @@ CREATE TABLE `product` (
 
 LOCK TABLES `product` WRITE;
 /*!40000 ALTER TABLE `product` DISABLE KEYS */;
-INSERT INTO `product` VALUES (1,'beh',NULL,'',1),(2,'aaa',NULL,'',1),(3,'one',NULL,'',2);
+INSERT INTO `product` VALUES (3,'one',NULL,'',2);
 /*!40000 ALTER TABLE `product` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -261,7 +261,7 @@ CREATE TABLE `product_tags` (
 
 LOCK TABLES `product_tags` WRITE;
 /*!40000 ALTER TABLE `product_tags` DISABLE KEYS */;
-INSERT INTO `product_tags` VALUES (1,2),(2,4),(3,6);
+INSERT INTO `product_tags` VALUES (3,6);
 /*!40000 ALTER TABLE `product_tags` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -362,9 +362,9 @@ CREATE TABLE `transaction` (
   PRIMARY KEY (`transactionid`),
   KEY `FKkdchb4tr4t84axfksv4wdh952` (`buyer_clientid`),
   KEY `FKlvn2ts142rqedwdr3mrscjeiw` (`cart_cartid`),
-  CONSTRAINT `FKkdchb4tr4t84axfksv4wdh952` FOREIGN KEY (`buyer_clientid`) REFERENCES `client` (`clientid`) ON DELETE SET NULL ON UPDATE SET NULL,
-  CONSTRAINT `FKlvn2ts142rqedwdr3mrscjeiw` FOREIGN KEY (`cart_cartid`) REFERENCES `cart` (`cartid`) ON DELETE SET NULL ON UPDATE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+  CONSTRAINT `FKkdchb4tr4t84axfksv4wdh952` FOREIGN KEY (`buyer_clientid`) REFERENCES `client` (`clientid`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FKlvn2ts142rqedwdr3mrscjeiw` FOREIGN KEY (`cart_cartid`) REFERENCES `cart` (`cartid`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -373,7 +373,7 @@ CREATE TABLE `transaction` (
 
 LOCK TABLES `transaction` WRITE;
 /*!40000 ALTER TABLE `transaction` DISABLE KEYS */;
-INSERT INTO `transaction` VALUES (1,1,'sdasd','ah',NULL,NULL,3,6),(2,4,'sdasd','ah',NULL,NULL,3,11),(3,3,'dlasdunsfyhsf','ah',NULL,NULL,5,12);
+INSERT INTO `transaction` VALUES (2,4,'sdasd','ah',NULL,NULL,NULL,11),(4,7,'dlasdunsfyhsf','ah',NULL,NULL,5,NULL),(5,4,'dlasdunsfyhsf','ah',NULL,NULL,5,NULL);
 /*!40000 ALTER TABLE `transaction` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -386,4 +386,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-04-13  0:15:18
+-- Dump completed on 2018-04-13  3:45:10
