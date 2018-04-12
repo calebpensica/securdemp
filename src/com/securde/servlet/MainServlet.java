@@ -651,10 +651,10 @@ public class MainServlet extends HttpServlet {
 	}
 	
 	private void editProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+		HttpSession session = request.getSession();
 		Product product = ProductService.getProduct(Integer.parseInt(request.getParameter("productid")));
-		request.setAttribute("product", product);
-		request.getRequestDispatcher("editproduct.jsp").forward(request, response);
+		session.setAttribute("product", product);
+		request.getRequestDispatcher("editProduct.jsp").forward(request, response);
 	}
 	
 	private void commitEditProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -841,7 +841,7 @@ public class MainServlet extends HttpServlet {
 	
 	private void deleteProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("productid"));
-		
+		System.out.println("AAH DELETE");
 		System.out.println(ProductService.deleteProduct(id));
 		
 		showProducts(request, response);

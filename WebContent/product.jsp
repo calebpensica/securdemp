@@ -101,6 +101,7 @@
 						
 
 							<div class="product-btns">
+							<%if (session.getAttribute("userType") != "Staff" &&  session.getAttribute("userType") != "Manager" && session.getAttribute("userType") != "Admin"){  %>
 								<form method = "post" action = "buyproduct">
 									<input type="hidden" name="productid" value="<c:out value="${product.id}"/>" >
 									<div class="qty-input">
@@ -109,15 +110,16 @@
 									</div>
 									<button class="primary-btn add-to-cart" type = "submit"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
 								</form>
+								<%} %>
 								<% if (session.getAttribute("user") != null) {
 										if (session.getAttribute("userType") == "Staff" || session.getAttribute("userType") == "Manager" || session.getAttribute("userType") == "Admin") {%>
 											<form method ="post" action="editproduct">
-												<input type="hidden" name="productid" value="<c:out value="${product.id}"/>" >	
-												<button class="primary-btn add-to-cart" type = "submit">Edit Product</button>
+												<input type="hidden" name="productid" value="<c:out value="${product.id}"/>" >
+												<button class="primary-btn add-to-cart" type = "submit">Edit Product</button><br>
 											</form>
 											<form method = "post" action="deleteproduct">
 												<input type="hidden" name="productid" value="<c:out value="${product.id}"/>" >	
-												<button class="primary-btn add-to-cart" type = "submit">Delete Product</button>
+												<button class="primary-btn add-to-cart" type = "submit">Delete Product</button><br>
 											</form>
 										<% }
 								}%>

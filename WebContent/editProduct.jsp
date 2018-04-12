@@ -85,7 +85,7 @@
 					</div>
 					<div class = "login-section">
 						<input type="hidden" name="productid" value="<c:out value="${product.id}"/>" /><br>
-						<strong>Name:</strong> <input class = "login-section-content" type="text" pattern="[A-Za-zñ._\s]{1,50}" name="productName" value="<c:out value="${product.name}"/>" /><br>
+						<strong>Name:</strong> <input class = "login-section-content" type="text" pattern="[0-9A-Za-z.,'-_\s]{0,100}" name="productName" value="<c:out value="${product.name}"/>" /><br>
 						<strong>Price:</strong> <input class = "login-section-content" type = "number" name = "productPrice"  value="<c:out value="${product.price}"/>"required/><br>
 						<input class = "main-btn login-section-content" type="submit" name="Update Product" value="Update Product">
 					</div>
