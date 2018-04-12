@@ -2,6 +2,8 @@ package com.securde.servlet;
 
 import com.securde.bean.*;
 import com.securde.service.*;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -72,7 +74,6 @@ class URLPatterns
 			 })
 public class MainServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -591,8 +592,7 @@ public class MainServlet extends HttpServlet {
 	}
 	
 	private void addProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-
+		
 		Product p = new Product();
 		Tag tag = new Tag();
 		tag.setTag(request.getParameter("productTag"));

@@ -194,7 +194,7 @@ public class LoginFilter implements Filter {
 			else if (userType.equals("Staff"))
 				return true;
 			else
-				return false;
+				return true;
 		case "/search":
 			if (userType.equals("Client"))
 				return true;
@@ -205,7 +205,7 @@ public class LoginFilter implements Filter {
 			else if (userType.equals("Staff"))
 				return true;
 			else
-				return false;
+				return true;
 		case "/regemployee":
 			if (userType.equals("Client"))
 				return false;
@@ -238,7 +238,7 @@ public class LoginFilter implements Filter {
 			else if (userType.equals("Staff"))
 				return true;
 			else
-				return false;
+				return true;
 		case "/product":
 			if (userType.equals("Client"))
 				return true;
@@ -249,7 +249,7 @@ public class LoginFilter implements Filter {
 			else if (userType.equals("Staff"))
 				return true;
 			else
-				return false;
+				return true;
 		case "/editproduct":
 			if (userType.equals("Client"))
 				return false;
