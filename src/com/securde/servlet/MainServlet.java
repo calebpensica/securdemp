@@ -4,7 +4,6 @@ import com.securde.bean.*;
 import com.securde.service.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -297,7 +296,7 @@ public class MainServlet extends HttpServlet {
 			                long currentTime = date.getTime();
 			                long timeDiff = currentTime - lastAccessedTime;
 			                // 20 minutes in milliseconds  
-			                if (timeDiff >= 120000)
+			                if (timeDiff >= 12000)
 			                {
 			                    //invalidate user session, so they can try again
 			                    session.invalidate();
@@ -311,10 +310,14 @@ public class MainServlet extends HttpServlet {
 			            }
 			            else
 			            {
-			                 loginAttempt++;
-			                 int allowLogin = 5-loginAttempt;
-			                 session.setAttribute("message","loginAttempt= "+loginAttempt+". Invalid username or password. You have "+allowLogin+" attempts remaining. Please try again! <br>Not a registered cusomer? Please <a href=\"register.jsp\">register</a>!");
-			                 request.setAttribute("errorMessage", "Invalid username or password. You have "+allowLogin+" attempts remaining. Please try again!");
+			            	System.out.println("AHH");
+			            	loginAttempt++;
+			                int allowLogin = 5-loginAttempt;
+			                session.setAttribute("errorMessage","loginAttempt= "+loginAttempt+". Invalid username or password. You have "+allowLogin+" attempts remaining. Please try again! <br>Not a registered cusomer? Please <a href=\"register.jsp\">register</a>!");
+			                request.setAttribute("errorMessage", "Invalid username or password. You have "+allowLogin+" attempts remaining. Please try again!");
+			                log.setSource("Anonymous user");
+			                log.setLog("Attempt " + loginAttempt + "/5 to log in failed.");
+							LogService.addLog(log);
 			            }
 			            log.setSource("Anonymous user");
 						log.setLog("Logged in failed.");
@@ -512,6 +515,7 @@ public class MainServlet extends HttpServlet {
         }
 		
 		List<Client> clients = ClientService.getAllClients();
+		Log log = new Log();
 		
 		System.out.println(contactNo);
 		
@@ -532,12 +536,17 @@ public class MainServlet extends HttpServlet {
 			Cookie cookie = new Cookie("uuid", c.getUserHash());
 			cookie.setMaxAge(60*60*24*365*2);
 			response.addCookie(cookie);
-			
+			log.setSource(c.getUsername());
+			log.setLog("New user signed up successfully.");
+			LogService.addLog(log);
 			System.out.println(ClientService.addClient(c)); 
 			request.getRequestDispatcher("login.jsp").forward(request, response);
 		} else {
 			request.setAttribute("error", true);
 			request.setAttribute("errorMessage", "Invalid Username.");
+			log.setSource("Anonymous user");
+			log.setLog("New user failed to sign up");
+			LogService.addLog(log);
 			request.getRequestDispatcher("signup.jsp").forward(request, response);
 		}
 		
@@ -567,6 +576,8 @@ public class MainServlet extends HttpServlet {
         }
 
 		
+		Log log = new Log();
+		
 		/* CHECKS FOR DUPLICATES */
 		
 		if(!checkDuplicates(username)) {
@@ -585,11 +596,16 @@ public class MainServlet extends HttpServlet {
 			Cookie cookie = new Cookie("uuid", a.getUserHash());
 			cookie.setMaxAge(60*60*24*365*2);
 			response.addCookie(cookie);
-			
+			log.setSource(a.getUsername());
+			log.setLog("New user signed up successfully.");
+			LogService.addLog(log);
 			request.getRequestDispatcher("login.jsp").forward(request, response);
 		} else {
 			request.setAttribute("error", true);
 			request.setAttribute("errorMessage", "Invalid Username.");
+			log.setSource("Anonymous user");
+			log.setLog("New user failed to sign up.");
+			LogService.addLog(log);
 			request.getRequestDispatcher("employeesignup.jsp").forward(request, response);
 		}
 	}
@@ -645,7 +661,10 @@ public class MainServlet extends HttpServlet {
 
 		
 		System.out.println(ProductService.addProduct(p));
-		
+		Log log = new Log();
+		log.setSource("");
+		log.setLog("New product added - " + p.getName());
+		LogService.addLog(log);
 		request.getRequestDispatcher("showproducts.jsp").forward(request, response);
 		
 	}
@@ -654,6 +673,10 @@ public class MainServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		Product product = ProductService.getProduct(Integer.parseInt(request.getParameter("productid")));
 		session.setAttribute("product", product);
+		Log log = new Log();
+		log.setSource("");
+		log.setLog("Product edited - " + product.getName());
+		LogService.addLog(log);
 		request.getRequestDispatcher("editProduct.jsp").forward(request, response);
 	}
 	
@@ -835,6 +858,10 @@ public class MainServlet extends HttpServlet {
 		session.removeAttribute("items");
 		session.removeAttribute("total");
 		session.setAttribute("total", 0.00);
+		Log log = new Log();
+		log.setSource(client.getUsername());
+		log.setLog("User " + client.getUsername() + " successfully checked out" );
+		LogService.addLog(log);
 		request.getRequestDispatcher("showproducts.jsp").forward(request,response);
 		
 	}
@@ -849,7 +876,11 @@ public class MainServlet extends HttpServlet {
 				CartItemService.deleteCartItem(item.getCitemid());
 		}
 */
-		System.out.println(ProductService.deleteProduct(id));
+		
+		Log log = new Log();
+		log.setSource("");
+		log.setLog("Product deleted - " + ProductService.getProduct(id).getName() + " : " + ProductService.deleteProduct(id));
+		LogService.addLog(log);
 		showProducts(request, response);
 	}
 	
@@ -877,7 +908,7 @@ public class MainServlet extends HttpServlet {
 	}
 	
 	private void deleteTransaction(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-			System.out.println("AAAAH");
+		System.out.println("AAAAH");
 		HttpSession session = request.getSession();
 		int id = Integer.parseInt(request.getParameter("id"));
 		
@@ -887,8 +918,13 @@ public class MainServlet extends HttpServlet {
 		System.out.println(CartItemService.deleteCartItems(c.getCartid()) + " - Cart Items have been deleted");
 		System.out.println(CartService.deleteCart(c.getCartid()) + " - Cart has been deleted");
 		System.out.println(TransactionService.deleteTransaction(id) + " - Transaction has been deleted");
+		
 		List<Transaction> transactions = TransactionService.getAllTransactions();
 		session.setAttribute("transactions", transactions);
+		Log log = new Log();
+		log.setSource("");
+		log.setLog("Transaction ID#" + id + " deleted") ;
+		LogService.addLog(log);
 		showTransactions(request,response);
 	}
 	
