@@ -27,7 +27,7 @@ import com.securde.service.StoreManagerService;
 /**
  * Servlet Filter implementation class LoginFilter
  */
-@WebFilter(urlPatterns = {"/MainServlet", "/search", "/regemployee", "/addproduct", "/showproducts", "/product", "/editproduct", "/commiteditproduct", "/buyproduct", "/accountdetails", "/deleteproduct"})
+@WebFilter(urlPatterns = {"/MainServlet", "/search", "/regemployee", "/addproduct", "/showproducts", "/product", "/editproduct", "/commiteditproduct", "/buyproduct", "/accountdetails", "/deleteproduct", "/confirmcheckout", "/confirmcontact", "/checkout", "/transactions", "/deletetransaction", "/removefromcart"})
 public class LoginFilter implements Filter {
 
     /**
@@ -276,11 +276,11 @@ public class LoginFilter implements Filter {
 			if (userType.equals("Client"))
 				return true;
 			else if (userType.equals("Admin"))
-				return true;
+				return false;
 			else if (userType.equals("Manager"))
-				return true;
+				return false;
 			else if (userType.equals("Staff"))
-				return true;
+				return false;
 			else
 				return false;
 		case "/accountdetails":
@@ -303,6 +303,61 @@ public class LoginFilter implements Filter {
 				return true;
 			else if (userType.equals("Staff"))
 				return true;
+			else
+				return false;
+		case "/confirmcheckout":
+			if (userType.equals("Client"))
+				return true;
+			else if (userType.equals("Admin"))
+				return false;
+			else if (userType.equals("Manager"))
+				return false;
+			else if (userType.equals("Staff"))
+				return false;
+			else
+				return false;
+		case "/confirmcontact":
+			if (userType.equals("Client"))
+				return true;
+			else if (userType.equals("Admin"))
+				return false;
+			else if (userType.equals("Manager"))
+				return false;
+			else if (userType.equals("Staff"))
+				return false;
+			else
+				return false;
+		case "/transactions":
+			if (userType.equals("Client"))
+				return false;
+			else if (userType.equals("Admin"))
+				return true;
+			else if (userType.equals("Manager"))
+				return true;
+			else if (userType.equals("Staff"))
+				return false;
+			else
+				return false;
+		case "/deletetransaction":
+			if (userType.equals("Client"))
+				return false;
+			else if (userType.equals("Admin"))
+				return true;
+			else if (userType.equals("Manager"))
+				return true;
+			else if (userType.equals("Staff"))
+				return false;
+			else
+				return false;
+		case "/removefromcart":
+			if (userType.equals("Client"))
+				return true;
+			else if (userType.equals("Admin"))
+				return false;
+			else if (userType.equals("Manager"))
+				return false;
+			else if (userType.equals("Staff"))
+				return false;
 			else
 				return false;
 		default:
