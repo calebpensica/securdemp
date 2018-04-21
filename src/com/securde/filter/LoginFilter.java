@@ -2,6 +2,7 @@ package com.securde.filter;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -27,7 +28,7 @@ import com.securde.service.StoreManagerService;
 /**
  * Servlet Filter implementation class LoginFilter
  */
-@WebFilter(urlPatterns = {"/MainServlet", "/search", "/regemployee", "/addproduct", "/showproducts", "/product", "/editproduct", "/commiteditproduct", "/buyproduct", "/accountdetails", "/deleteproduct", "/confirmcheckout", "/confirmcontact", "/checkout", "/transactions", "/deletetransaction", "/removefromcart"})
+@WebFilter(urlPatterns = {"/MainServlet", "/search", "/regemployee", "/addproduct", "/product", "/editproduct", "/commiteditproduct", "/buyproduct", "/accountdetails", "/deleteproduct", "/confirmcheckout", "/confirmcontact", "/checkout", "/transactions", "/deletetransaction", "/removefromcart"})
 public class LoginFilter implements Filter {
 
     /**
@@ -167,12 +168,13 @@ public class LoginFilter implements Filter {
 				} else {
 					System.out.println("NOT FOUND");
 					
-					httpResponse.sendRedirect("/Papema/login");
+					//httpResponse.sendRedirect("/Papema/MainServlet");
+					httpResponse.sendRedirect("/Papema/showproducts");
 				}
 				
 			} else {
-				
-				httpResponse.sendRedirect("/Papema/login");
+				httpResponse.sendRedirect("/Papema/showproducts");
+	
 			}
 		} else {
 			
@@ -317,6 +319,17 @@ public class LoginFilter implements Filter {
 			else
 				return false;
 		case "/confirmcontact":
+			if (userType.equals("Client"))
+				return true;
+			else if (userType.equals("Admin"))
+				return false;
+			else if (userType.equals("Manager"))
+				return false;
+			else if (userType.equals("Staff"))
+				return false;
+			else
+				return false;
+		case "/checkout":
 			if (userType.equals("Client"))
 				return true;
 			else if (userType.equals("Admin"))

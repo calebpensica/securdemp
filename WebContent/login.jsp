@@ -80,9 +80,10 @@
 						<input class = "main-btn login-section-content" type="submit" value="Login">
 						<a a href = "signup.jsp"><button class = "main-btn login-section-content" type="button" >Create an Account</button></a>
 						<% if (request.getAttribute("error") != null)  {
+							System.out.println("ERROR");
 							boolean error = (boolean) request.getAttribute("error");
 							if (error) { %>
-								<strong><font color = "red"><p class = "login-section-content"><%request.getAttribute("errorMessage"); %>.</p></font></strong>
+								<strong><font color = "red"><p class = "login-section-content">${errorMessage } </p></font></strong>
 							<% } 
 						}%>
 					</div>

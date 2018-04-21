@@ -174,7 +174,6 @@ public class MainServlet extends HttpServlet {
 		MessageDigest MD5, messageDigest;
 		HttpSession session = request.getSession();
 		StringBuffer sb = new StringBuffer();
-		StringBuffer sb2 = new StringBuffer();
 		Date date;
 
 		String username = request.getParameter("username");
@@ -249,7 +248,7 @@ public class MainServlet extends HttpServlet {
 					cookie.setMaxAge(60*60*24*365*2);
 					response.addCookie(cookie);
 					
-					session.setMaxInactiveInterval(60*15);
+					session.setMaxInactiveInerval(60*15);
 					session.setAttribute("user", s);
 					session.setAttribute("userType", "Manager");
 					log.setSource(s.getUsername());
@@ -280,12 +279,15 @@ public class MainServlet extends HttpServlet {
 						int loginAttempt;
 			            if (session.getAttribute("loginCount") == null)
 			            {
+			            	System.out.println("LOGIN COUNT IS NULL");
 			                session.setAttribute("loginCount", 0);
 			                loginAttempt = 0;
 			            }
 			            else
 			            {
+			  
 			                 loginAttempt = (Integer) session.getAttribute("loginCount");
+			                 System.out.println(loginAttempt + " ATTEMPTS MADE");
 			            }
 
 			            //this is 3 attempts counting from 0,1,2
@@ -296,11 +298,11 @@ public class MainServlet extends HttpServlet {
 			                date = new Date();
 			                long currentTime = date.getTime();
 			                long timeDiff = currentTime - lastAccessedTime;
-			                // 20 minutes in milliseconds  
-			                if (timeDiff >= 12000)
+			                // 2 minutes in milliseconds  
+			                if (timeDiff >= 120000)
 			                {
 			                    //invalidate user session, so they can try again
-			                    session.invalidate();
+			                   logoutUser(request, response);
 			                }
 			                else
 			                {
@@ -323,7 +325,7 @@ public class MainServlet extends HttpServlet {
 			            log.setSource("Anonymous user");
 						log.setLog("Logged in failed.");
 						LogService.addLog(log);
-			            request.setAttribute("errorMessage", "Invalid Username and/or Password. Please try again");
+			         //   request.setAttribute("errorMessage", "Invalid Username and/or Password. Please try again");
 			            session.setAttribute("loginCount", loginAttempt);
 						request.getRequestDispatcher("login.jsp").forward(request, response);
 					}
@@ -639,7 +641,7 @@ public class MainServlet extends HttpServlet {
 	}
 	
 	private void addProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+		HttpSession session = request.getSession();
 		Product p = new Product();
 		Tag tag = new Tag();
 		tag.setTag(request.getParameter("productTag"));
@@ -655,17 +657,23 @@ public class MainServlet extends HttpServlet {
 		
 		String name = request.getParameter("productName");
 		float price = Float.parseFloat(request.getParameter("productPrice"));
-		p.setName(name);
-		p.setPrice(price);
-		p.setStatus(true);
-
-		
-		System.out.println(ProductService.addProduct(p));
-		Log log = new Log();
-		log.setSource("");
-		log.setLog("New product added - " + p.getName());
-		LogService.addLog(log);
-		request.getRequestDispatcher("showproducts.jsp").forward(request, response);
+		if(Sanitize.isCleanInput(name)) {
+			p.setName(name);
+			p.setPrice(price);
+			p.setStatus(true);
+	
+			
+			System.out.println(ProductService.addProduct(p));
+			Log log = new Log();
+	
+			log.setSource("");
+			log.setLog("New product added - " + p.getName());
+			LogService.addLog(log);
+			showProducts(request,response);
+		}
+		else {
+			request.getRequestDispatcher("addproduct.jsp").forward(request,response);
+		}
 		
 	}
 	
@@ -681,7 +689,7 @@ public class MainServlet extends HttpServlet {
 	}
 	
 	private void commitEditProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+		
 		int id = Integer.parseInt(request.getParameter("productid"));
 		Product p = ProductService.getProduct(id);
 	//	Tag tag = new Tag();
@@ -698,13 +706,18 @@ public class MainServlet extends HttpServlet {
 		
 		String name = request.getParameter("productName");
 		float price = Float.parseFloat(request.getParameter("productPrice"));
-		p.setName(name);
-		p.setPrice(price);
-
-		System.out.println(ProductService.updateProduct(id, p));
+		if (Sanitize.isCleanInput(name)) {
 		
-		showProducts(request,response);
+			p.setName(name);
+			p.setPrice(price);
+	
+			System.out.println(ProductService.updateProduct(id, p));
+			
+			showProducts(request,response);
 		
+		} else {
+			response.sendRedirect("/Papema/editproduct");
+		}
 	}
 	
 	private void buyProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -817,6 +830,7 @@ public class MainServlet extends HttpServlet {
 	private void checkout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		Cart cart;
+		System.out.println("CHECKING OUT");
 		if(session.getAttribute("cartID")==null) {
 			cart = new Cart();
 			System.out.println("Cart Null");
@@ -843,27 +857,33 @@ public class MainServlet extends HttpServlet {
 			CartItemService.addCartItem(item);
 		}
 		
-		Transaction transaction = new Transaction();
-		transaction.setBuyer(client);
-		transaction.setCart(cart);
-		System.out.print("CART: WIP");
-		System.out.println(cart);
-		transaction.setDeliveryAdd(request.getParameter("homeAdd"));
-		transaction.setSum((float)((double)session.getAttribute("total")));
-		String timeOrder = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
-		transaction.setTimeOrder(timeOrder);
-		TransactionService.addTransaction(transaction);
-		System.out.println("Transaction Created");
-		session.removeAttribute("cart");
-		session.removeAttribute("items");
-		session.removeAttribute("total");
-		session.setAttribute("total", 0.00);
-		Log log = new Log();
-		log.setSource(client.getUsername());
-		log.setLog("User " + client.getUsername() + " successfully checked out" );
-		LogService.addLog(log);
-		request.getRequestDispatcher("showproducts.jsp").forward(request,response);
+		String address = (String) request.getParameter("homeAdd");
 		
+		if (Sanitize.isCleanInput(address)) {
+			Transaction transaction = new Transaction();
+			transaction.setBuyer(client);
+			transaction.setCart(cart);
+			System.out.print("CART: WIP");
+			System.out.println(cart);
+			transaction.setDeliveryAdd(request.getParameter("homeAdd"));
+			transaction.setSum((float)((double)session.getAttribute("total")));
+			String timeOrder = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
+			transaction.setTimeOrder(timeOrder);
+			TransactionService.addTransaction(transaction);
+			System.out.println("Transaction Created");
+			session.removeAttribute("cart");
+			session.removeAttribute("items");
+			session.removeAttribute("total");
+			session.setAttribute("total", 0.00);
+			Log log = new Log();
+			log.setSource(client.getUsername());
+			log.setLog("User " + client.getUsername() + " successfully checked out" );
+			LogService.addLog(log);
+			request.getRequestDispatcher("showproducts.jsp").forward(request,response);
+		} else  {
+			//confirmcontact(request, response);
+			response.sendRedirect("/Papema/confirmcontact");
+		}
 	}
 	
 	private void deleteProduct(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -977,7 +997,7 @@ public class MainServlet extends HttpServlet {
 		String[] keywords = key.split(" ");
 		
 		List<Product> products = ProductService.getAllProducts();
-		
+		if(Sanitize.isCleanInput(key)) {
 		for(int i = 0; i < keywords.length; i++)
 		{
 			for(int j = 0; j < products.size(); j++)
@@ -1002,6 +1022,11 @@ public class MainServlet extends HttpServlet {
 		request.setAttribute("searchkey", key);
 		request.setAttribute("products", products);
 		request.getRequestDispatcher("showproducts.jsp").forward(request, response);
+		}
+		else {
+			response.sendRedirect("/Papema/showproducts");
+		}
+			
 		
 	}
 }
